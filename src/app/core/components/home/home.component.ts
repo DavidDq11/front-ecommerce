@@ -22,26 +22,34 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.newArrivalProducts();
-    // Optionally, you could load or validate image dimensions here
     this.validateImages();
   }
 
   newArrivalProducts() {
     this.isLoading = true;
-    const startIndex = Math.round(Math.random() * 20);
-    const lastIndex = startIndex + 6;
-    this._productService.get.subscribe(
+    this._productService.getProducts().subscribe(
       (data) => {
         this.isLoading = false;
+        console.log('Datos recibidos:', data); // Verifica los datos
+        const startIndex = Math.floor(Math.random() * (data.length - 6)); // Asegura que haya al menos 6 elementos
+        const lastIndex = startIndex + 6;
         this.products = data.slice(startIndex, lastIndex);
+        console.log('Productos seleccionados:', this.products); // Verifica los productos finales
       },
-      (error) => (this.error = error.message)
+      (error) => {
+        this.isLoading = false;
+        this.error = error.message;
+        console.error('HTTP Error:', error);
+      }
     );
   }
 
   validateImages() {
-    // Example: Log or validate image dimensions (you’d need a library or service for this)
     console.log('Validating images:', this.images);
-    // You could use an image loading service or Angular’s HttpClient to fetch and check image dimensions
+  }
+
+  onImageError(event: Event) {
+    (event.target as HTMLImageElement).src = 'assets/placeholder.jpg'; // Imagen fallback
+    console.log('Error cargando imagen:', (event.target as HTMLImageElement).src);
   }
 }
