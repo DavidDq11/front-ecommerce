@@ -10,9 +10,10 @@ import { AuthService } from 'src/app/shared/services/auth/auth.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  cart: Product[] = [];
-  menulist: { title: string; path: string }[] = MENU;
-  showAccountMenu: boolean = false; 
+  mobileMenuOpen = false;
+  showAccountMenu = false;
+  activeDropdown: string | null = null;
+  cart: any[] = [];
 
   constructor(private cartService: CartService, public authService: AuthService) {}
 
@@ -23,7 +24,19 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
     this.cart = this.cartService.getCart;
   }
-  toggleAccountMenu(): void {
+  toggleMobileMenu() {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+    if (!this.mobileMenuOpen) {
+      this.showAccountMenu = false;
+      this.activeDropdown = null;
+    }
+  }
+
+  toggleAccountMenu() {
     this.showAccountMenu = !this.showAccountMenu;
+  }
+
+  toggleDropdown(category: string) {
+    this.activeDropdown = this.activeDropdown === category ? null : category;
   }
 }

@@ -1,0 +1,16 @@
+// Ajustes para el hover de los íconos sociales
+svg {
+    transition: color 0.3s ease;
+  }
+  
+  // Ajustes para centrar texto en móviles
+  @media (max-width: 640px) {
+    .text-center {
+      text-align: center;
+    }
+  }
+  
+  // Ajuste para el logo rotado
+  .rotate-6 {
+    transform: rotate(6deg);
+  }

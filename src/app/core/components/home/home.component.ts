@@ -5,7 +5,7 @@ import { ProductService } from 'src/app/modules/product/services/product.service
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styles: []
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
   products: Product[] = [];
@@ -30,11 +30,11 @@ export class HomeComponent implements OnInit {
     this._productService.getProducts().subscribe(
       (data) => {
         this.isLoading = false;
-        console.log('Datos recibidos:', data); // Verifica los datos
-        const startIndex = Math.floor(Math.random() * (data.length - 6)); // Asegura que haya al menos 6 elementos
+        console.log('Datos recibidos:', data);
+        const startIndex = Math.floor(Math.random() * (data.length - 6));
         const lastIndex = startIndex + 6;
         this.products = data.slice(startIndex, lastIndex);
-        console.log('Productos seleccionados:', this.products); // Verifica los productos finales
+        console.log('Productos seleccionados:', this.products);
       },
       (error) => {
         this.isLoading = false;
@@ -49,7 +49,7 @@ export class HomeComponent implements OnInit {
   }
 
   onImageError(event: Event) {
-    (event.target as HTMLImageElement).src = 'assets/placeholder.jpg'; // Imagen fallback
+    (event.target as HTMLImageElement).src = 'assets/placeholder.jpg';
     console.log('Error cargando imagen:', (event.target as HTMLImageElement).src);
   }
 }

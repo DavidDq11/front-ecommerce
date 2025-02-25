@@ -1,0 +1,18 @@
+// Ajustes para la transición de las imágenes
+img {
+    display: block; // Evita espacios extra debajo de las imágenes
+  }
+  
+  // Hover effect para el botón de wishlist
+  button:hover i {
+    color: #9333ea; // Color púrpura para hover, acorde al tema
+  }
+  
+  // Ajustes para pantallas pequeñas
+  @media (max-width: 640px) {
+    .truncate {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
