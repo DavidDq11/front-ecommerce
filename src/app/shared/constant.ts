@@ -21,27 +21,27 @@ export const MENU:{
 }[]
 =[
     {
-        title:'Men',
+        title: 'Alimentos para Mascotas',
         path:'/categories/Men'
     },
     {
-        title:'Women',
+        title: 'Medicamentos y Suplementos',
         path:'/categories/Women'
     },
     {
-        title:'Groceries',
+        title: 'Juguetes y Accesorios',
         path:'/categories/Groceries'
     },
     {
-        title:'Packed Foods',
+        title: 'Higiene y Cuidado',
         path:'/categories/Packaged Foods'
     },
     {
-        title:'Beverages',
+        title: 'Productos Veterinarios',
         path:'/categories/Beverages'
     },
     {
-        title:'Electronics',
+        title: 'Otros',
         path:'/categories/Electronics'
     }
 ]

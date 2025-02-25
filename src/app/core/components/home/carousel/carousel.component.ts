@@ -1,30 +1,52 @@
-import { Component, Input,OnInit, ViewChild,ElementRef} from '@angular/core';
+// carousel.component.ts
+import { Component, Input, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 @Component({
   selector: 'app-carousel',
   templateUrl: './carousel.component.html',
-  styles: [
-  ]
+  styles: []
 })
-export class CarouselComponent implements OnInit{
-  @Input() slideImages!:string[];
-  @ViewChild('sliderRef') sliderRef!:ElementRef;
-  constructor(){
-  }
-  selectedSlide=0;
+export class CarouselComponent implements OnInit, AfterViewInit {
+  @Input() slideImages: string[] = []; // Images from parent
+  @Input() customHeight: string = 'auto'; // Optional input for custom height
+  @Input() customWidth: string = '100%'; // Optional input for custom width
+  
+  @ViewChild('sliderRef') sliderRef!: ElementRef;
 
-  selectSlide(index:number|any){
+  selectedSlide = 0;
+  private intervalId: any;
+
+  constructor() {}
+
+  ngOnInit(): void {
+    console.log('Imágenes del carrusel:', this.slideImages);
+  }
+
+  ngAfterViewInit(): void {
+    this.startAutoSlide();
+  }
+
+  ngOnDestroy(): void {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+  }
+
+  selectSlide(index: number) {
     this.selectedSlide = index;
   }
-  onPrev(){
-    let width=this.sliderRef.nativeElement.clientWidth;
-    this.sliderRef.nativeElement.scrollLeft=this.sliderRef.nativeElement.scrollLeft-width;
+
+  onPrev() {
+    this.selectedSlide = (this.selectedSlide - 1 + this.slideImages.length) % this.slideImages.length;
   }
-  onNext(){
-    let width=this.sliderRef.nativeElement.clientWidth;
-    this.sliderRef.nativeElement.scrollLeft=this.sliderRef.nativeElement.scrollLeft+width;
+
+  onNext() {
+    this.selectedSlide = (this.selectedSlide + 1) % this.slideImages.length;
   }
-  ngOnInit(): void {
+
+  private startAutoSlide(): void {
+    this.intervalId = setInterval(() => {
+      this.onNext();
+    }, 5000);
   }
-  
 }

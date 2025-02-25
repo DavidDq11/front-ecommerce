@@ -1,0 +1,22 @@
+.carousel-slide {
+    min-width: 100%;
+    transition: transform 0.7s ease-in-out;
+}
+
+.carousel-slide img {
+    display: block;
+    width: 100%;
+    height: auto; /* Ensures the image maintains its aspect ratio */
+    object-fit: contain; /* Keeps the entire image visible */
+    object-position: center; /* Centers the image if there’s extra space */
+}
+
+.carousel-container {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Optional: Add max-height to prevent the carousel from becoming too tall */
+.carousel {
+    max-height: none; /* Remove or adjust if necessary */
+}
