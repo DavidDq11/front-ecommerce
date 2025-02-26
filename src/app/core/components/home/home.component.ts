@@ -27,7 +27,7 @@ export class HomeComponent implements OnInit {
 
   newArrivalProducts() {
     this.isLoading = true;
-    this._productService.getProducts().subscribe(
+    this._productService.getProducts().subscribe( 
       (data) => {
         this.isLoading = false;
         console.log('Datos recibidos:', data);
