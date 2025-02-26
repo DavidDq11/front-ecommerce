@@ -10,7 +10,11 @@
   
     <!-- New Arrivals Section -->
     <article class="my-5 md:my-8">
-      <h3 class="text-xl sm:text-2xl font-semibold mb-5 text-center md:text-left">NUEVOS PRODUCTOS</h3>
+      <div class="flex items-center justify-center gap-3 mb-6">
+        <i class="fa-solid fa-paw text-orange-500 text-3xl"></i>
+        <h3 class="text-2xl sm:text-3xl font-bold text-gray-800">Nuevos Productos</h3>
+        <i class="fa-solid fa-bone text-orange-500 text-3xl"></i>
+    </div>
   
       <!-- Error State -->
       <div class="flex justify-center items-center h-[50vh] sm:h-[60vh]" *ngIf="error && isLoading">
@@ -44,9 +48,10 @@
               <h5 class="mb-1 sm:mb-2 text-xs sm:text-sm tracking-tight text-gray-900 truncate">{{product.title}}</h5>
             </a>
             <p class="text-xs sm:text-sm text-gray-700">
-              <span class="font-bold mr-2">₹{{product.price}}</span>
-              <span class="line-through mr-2 text-gray-500">₹{{product.prevprice}}</span>
+              <span class="font-bold mr-2">${{ product.price.toLocaleString('es-ES') }}</span>
+              <span class="line-through mr-2 text-gray-500">${{ product.prevprice.toLocaleString('es-ES') }}</span>
             </p>
+            
   
             <!-- Stock and Wishlist -->
             <div class="absolute top-2 right-2 flex flex-col gap-2 items-end">
