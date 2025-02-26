@@ -1,18 +1,87 @@
-// Ajustes para la transición de las imágenes
+/* Ajustes para la transición de las imágenes */
 img {
-    display: block; // Evita espacios extra debajo de las imágenes
+  display: block; /* Evita espacios extra debajo de las imágenes */
+}
+
+/* Hover effect para el botón de wishlist */
+button:hover i {
+  color: #9333ea; /* Color púrpura para hover, acorde al tema */
+}
+
+/* Categories Section Styling */
+.categories {
+  .category-item {
+      text-decoration: none;
+      color: inherit;
+      transition: color 0.3s ease;
+
+      &:hover {
+          color: #9333ea; /* Purple hover color to match the theme */
+      }
+
+      .icon-wrapper {
+          background-color: #e5e7eb; /* Light gray background */
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+      }
   }
   
-  // Hover effect para el botón de wishlist
-  button:hover i {
-    color: #9333ea; // Color púrpura para hover, acorde al tema
+  .categories-section {
+      position: relative;
+      overflow: hidden;
   }
-  
-  // Ajustes para pantallas pequeñas
-  @media (max-width: 640px) {
-    .truncate {
+
+  .category-item:hover .icon-wrapper {
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 640px) {
+  .categories-container {
+      display: grid; /* Cambiamos a grid para mejor control */
+      grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); /* Ajustamos las columnas */
+      gap: 1rem; /* Espaciado más ajustado */
+      padding: 1rem;
+      justify-items: center; /* Centra cada elemento en su celda */
+  }
+
+  .category-item {
+      width: 100%; /* Ocupa el ancho disponible en su celda */
+      max-width: 10rem; /* Límite máximo para mantener proporción */
+      margin: 0 auto; /* Centra el contenido */
+  }
+
+  .truncate {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-    }
   }
+
+  .category-item .icon-wrapper {
+      width: 4rem; /* Tamaño más pequeño para móviles */
+      height: 4rem;
+      transition: all 0.3s ease;
+  }
+
+  .category-item span {
+      font-size: 0.75rem; /* Texto más pequeño para móviles */
+      padding: 0 0.5rem;
+      white-space: normal; /* Texto adaptable */
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .categories-container {
+      display: flex; /* Regresamos a flex para pantallas más grandes */
+      flex-wrap: wrap;
+      justify-content: center;
+  }
+
+  .category-item .icon-wrapper {
+      width: 6rem;
+      height: 6rem;
+  }
+}

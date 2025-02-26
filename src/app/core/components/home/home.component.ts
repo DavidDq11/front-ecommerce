@@ -18,6 +18,14 @@ export class HomeComponent implements OnInit {
     'assets/banner/banner3.jpg'
   ];
 
+  categories = [
+    { id: 1, name: 'Alimentos', icon: 'fa-bone' },
+    { id: 2, name: 'Juguetes', icon: 'fa-dice' },
+    { id: 3, name: 'Cuidado', icon: 'fa-paw' },
+    { id: 4, name: 'Accesorios', icon: 'fa-gem' },
+    { id: 5, name: 'Snacks', icon: 'fa-cookie-bite' }
+  ];
+
   constructor(private _productService: ProductService) {}
 
   ngOnInit(): void {
