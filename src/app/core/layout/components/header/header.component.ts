@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CartService } from 'src/app/core/services/cart.service';
-import { Product } from 'src/app/modules/product/model';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 
 @Component({
@@ -13,11 +12,18 @@ export class HeaderComponent implements OnInit {
   showAccountMenu = false;
   activeDropdown: string | null = null;
   cart: any[] = [];
+  isHeaderTopHidden = false;
 
   constructor(private cartService: CartService, public authService: AuthService) {}
 
   ngOnInit(): void {
     this.cart = this.cartService.getCart;
+  }
+
+  @HostListener('window:scroll', ['$event'])
+  onScroll() {
+    const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+    this.isHeaderTopHidden = scrollPosition > 50; // Oculta header-top después de 50px
   }
 
   toggleMobileMenu() {

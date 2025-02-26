@@ -6,23 +6,21 @@
 /* Estilo base del menú desplegable */
 .dropdown-menu {
   position: absolute;
-  top: 100%; /* Aparece justo debajo del elemento padre */
+  top: 100%;
   left: 0;
   background-color: white;
-  border: 1px solid #e5e7eb; /* Borde gris claro */
-  border-radius: 0.375rem; /* Bordes redondeados */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
-  min-width: 200px; /* Ancho mínimo */
-  z-index: 1000; /* Aumentado para asegurar que esté por encima de todo */
-  display: none; /* Oculto por defecto */
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  z-index: 1000;
+  display: none;
 }
 
-/* Mostrar el menú cuando tiene la clase 'show' */
 .dropdown-menu.show {
-  display: block; /* Asegura que se muestre */
+  display: block;
 }
 
-/* Estilos de los ítems dentro del menú */
 .dropdown-menu ul {
   list-style: none;
   padding: 0;
@@ -56,13 +54,12 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border: 1px solid #e5e7eb;
   border-radius: 0.375rem;
-  z-index: 1000; /* Aumentado para asegurar visibilidad */
-  display: none; /* Oculto por defecto */
+  z-index: 1000;
+  display: none;
 }
 
-/* Mostrar el menú de cuenta cuando tiene la clase 'show' */
 .account-menu.show {
-  display: block; /* Asegura que se muestre */
+  display: block;
 }
 
 .account-menu ul {
@@ -92,14 +89,14 @@
 /* Ajustes para pantallas móviles (max-width: 768px) */
 @media (max-width: 768px) {
   .dropdown-menu {
-    position: static; /* No absoluto en móviles */
-    width: 100%; /* Ocupa todo el ancho */
-    box-shadow: none; /* Sin sombra */
-    border: none; /* Sin borde */
+    position: static;
+    width: 100%;
+    box-shadow: none;
+    border: none;
   }
 
   .dropdown-menu.show {
-    display: block; /* Mostrar en móviles */
+    display: block;
   }
 
   .account-menu {
@@ -107,14 +104,13 @@
     width: 100%;
     box-shadow: none;
     border: none;
-    display: none; /* Oculto por defecto */
+    display: none;
   }
 
   .account-menu.show {
-    display: block; /* Mostrar en móviles */
+    display: block;
   }
 
-  /* Espacio entre ítems en móviles */
   ul {
     gap: 0.5rem;
   }
@@ -130,23 +126,48 @@
     position: absolute;
     left: 0;
     top: 100%;
-    margin-top: 0.5rem; /* Espacio entre el botón y el menú */
+    margin-top: 0.5rem;
   }
 
   .account-menu {
     position: absolute;
     right: 0;
     top: 100%;
-    margin-top: 0.5rem; /* Espacio entre el botón y el menú */
+    margin-top: 0.5rem;
   }
 }
 
-/* Asegurar que el contenedor padre no corte el menú */
+/* Estilos para el header */
 header {
-  overflow: visible !important; /* Evita que el overflow-hidden del header corte el menú */
+  position: relative;
+  overflow: visible;
 }
 
+/* Parte superior que se oculta */
+.header-top {
+  transition: all 0.3s ease-in-out;
+}
+
+.header-top.hidden {
+  opacity: 0;
+  transform: translateY(-100%);
+  height: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Parte fija con logo, buscador y navegación */
+.header-fixed {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #8a5cf686;
+  width: 100%;
+}
+
+/* Navegación de categorías */
 nav {
   position: relative;
-  z-index: 500; /* Asegura que el nav esté por encima de otros elementos */
+  z-index: 500;
 }
