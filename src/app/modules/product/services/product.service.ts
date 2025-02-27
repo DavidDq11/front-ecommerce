@@ -8,14 +8,14 @@ import { Product } from '../model';
   providedIn: 'root'
 })
 export class ProductService {
-  private url = environment.baseAPIURL + 'products';
+  private url = environment.baseAPIURL + 'product'; // Cambia 'products' por 'product'
   products = new BehaviorSubject<Product[]>([]);
   ratingList: boolean[] = [];
 
   constructor(private http: HttpClient) {}
 
   getProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>(this.url).pipe( // Cambia a Product[]
+    return this.http.get<Product[]>(this.url + 's').pipe( // Añade 's' para obtener todos los productos desde /products
       map((data: Product[]) => {
         this.products.next(data); // Actualiza el BehaviorSubject con el array directamente
         return data;
@@ -25,23 +25,23 @@ export class ProductService {
   }
 
   getByCategory(category: string): Observable<Product[] | any> {
-    return this.http.get(this.url, {
+    return this.http.get(this.url + 's', { // Añade 's' para /products con filtros
       params: new HttpParams().set('category', category)
     });
   }
 
   getRelated(type: string): Observable<Product[] | any> {
-    return this.http.get(this.url, {
+    return this.http.get(this.url + 's', { // Añade 's' para /products con filtros
       params: new HttpParams().set('type', type)
     });
   }
 
   getProduct(id: number): Observable<Product> {
-    return this.http.get<Product>(this.url + '/' + id);
+    return this.http.get<Product>(`${this.url}/${id}`); // Usa directamente el ID sin '/product/'
   }
 
   search(query: string): Observable<Product[]> {
-    return this.http.get<Product[]>(this.url, {
+    return this.http.get<Product[]>(this.url + 's', { // Añade 's' para /products con búsqueda
       params: new HttpParams().set('q', query)
     });
   }
@@ -53,5 +53,4 @@ export class ProductService {
     });
     return this.ratingList;
   }
-  
 }

@@ -34,21 +34,27 @@ export class ProductdetailComponent implements OnInit{
     })
   }
 
-  getProduct(){
-    this.isLoading=true;
-    const id= this.route.snapshot.params['id'];
-    this.productService.getProduct(id).subscribe((data:Product)=>{
-      this.isLoading=false;
-      this.product=data;
-      const {images}=this.product;
-      this.images=images;
-      this.imageSrc=images[0];
-      this.category=data.category;
-      this.title=data.title;
-      this.discount=this.product&&Math.round(100-(this.product.price/this.product.prevprice)*100);
-      this.getRatingStar();
-      this.relatedProducts();
-    });
+  getProduct() {
+    this.isLoading = true;
+    const id = this.route.snapshot.params['id'];
+    this.productService.getProduct(id).subscribe(
+      (data: Product) => {
+        this.isLoading = false;
+        this.product = data;
+        this.images = data.images;
+        this.imageSrc = data.images[0];
+        this.category = data.category;
+        this.title = data.title;
+        this.discount = Math.round(100 - (data.price / data.prevprice) * 100);
+        this.getRatingStar();
+        this.relatedProducts();
+        console.log('Producto recibido:', data); // Para depurar
+      },
+      (error) => {
+        this.isLoading = false;
+        console.error('Error al cargar el producto:', error); // Verifica el error
+      }
+    );
   }
   
   scrollToTop(){
