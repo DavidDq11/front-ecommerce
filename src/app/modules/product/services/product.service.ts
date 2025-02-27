@@ -8,16 +8,17 @@ import { Product } from '../model';
   providedIn: 'root'
 })
 export class ProductService {
-  private url = environment.baseAPIURL + 'product'; // Cambia 'products' por 'product'
+  private baseUrl = environment.baseAPIURL;
+  private productsUrl = this.baseUrl + 'products'; // Para listar productos
   products = new BehaviorSubject<Product[]>([]);
   ratingList: boolean[] = [];
 
   constructor(private http: HttpClient) {}
 
   getProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>(this.url + 's').pipe( // Añade 's' para obtener todos los productos desde /products
+    return this.http.get<Product[]>(this.productsUrl).pipe(
       map((data: Product[]) => {
-        this.products.next(data); // Actualiza el BehaviorSubject con el array directamente
+        this.products.next(data);
         return data;
       }),
       catchError((error: any) => throwError(() => new Error(error.message)))
@@ -25,23 +26,23 @@ export class ProductService {
   }
 
   getByCategory(category: string): Observable<Product[] | any> {
-    return this.http.get(this.url + 's', { // Añade 's' para /products con filtros
+    return this.http.get(this.productsUrl, {
       params: new HttpParams().set('category', category)
     });
   }
 
   getRelated(type: string): Observable<Product[] | any> {
-    return this.http.get(this.url + 's', { // Añade 's' para /products con filtros
+    return this.http.get(this.productsUrl, {
       params: new HttpParams().set('type', type)
     });
   }
 
   getProduct(id: number): Observable<Product> {
-    return this.http.get<Product>(`${this.url}/${id}`); // Usa directamente el ID sin '/product/'
+    return this.http.get<Product>(this.baseUrl + 'product/' + id); // Usa directamente /product/:id
   }
 
   search(query: string): Observable<Product[]> {
-    return this.http.get<Product[]>(this.url + 's', { // Añade 's' para /products con búsqueda
+    return this.http.get<Product[]>(this.productsUrl, {
       params: new HttpParams().set('q', query)
     });
   }

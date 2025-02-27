@@ -37,22 +37,28 @@ export class ProductdetailComponent implements OnInit{
   getProduct() {
     this.isLoading = true;
     const id = this.route.snapshot.params['id'];
+    console.log('ID recibido:', id); // Verifica que el ID sea correcto
     this.productService.getProduct(id).subscribe(
       (data: Product) => {
         this.isLoading = false;
+        if (!data) {
+          console.warn('No se recibió ningún producto para el ID:', id);
+          return;
+        }
         this.product = data;
-        this.images = data.images;
-        this.imageSrc = data.images[0];
+        console.log('Producto cargado:', data); // Verifica los datos
+        const { images } = this.product;
+        this.images = images;
+        this.imageSrc = images[0];
         this.category = data.category;
         this.title = data.title;
-        this.discount = Math.round(100 - (data.price / data.prevprice) * 100);
+        this.discount = this.product && Math.round(100 - (this.product.price / this.product.prevprice) * 100);
         this.getRatingStar();
         this.relatedProducts();
-        console.log('Producto recibido:', data); // Para depurar
       },
       (error) => {
         this.isLoading = false;
-        console.error('Error al cargar el producto:', error); // Verifica el error
+        console.error('Error al cargar el producto:', error); // Verifica errores
       }
     );
   }
