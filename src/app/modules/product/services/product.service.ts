@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { BehaviorSubject, Observable, catchError, map, tap, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, map, throwError } from 'rxjs';
 import { Product } from '../model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
-  private url = environment.baseAPIURL + 'api/product'; // Cambia 'products' por 'product'
+  private url = environment.baseAPIURL + 'product'; // Cambia 'products' por 'product'
   products = new BehaviorSubject<Product[]>([]);
   ratingList: boolean[] = [];
 
@@ -37,14 +37,7 @@ export class ProductService {
   }
 
   getProduct(id: number): Observable<Product> {
-    console.log(`Requesting: ${this.url}/${id}`);
-    return this.http.get<Product>(`${this.url}/${id}`).pipe(
-      tap(response => console.log('Response:', response)),
-      catchError(error => {
-        console.error('Error:', error);
-        return throwError(() => new Error(error.message));
-      })
-    );
+    return this.http.get<Product>(`${this.url}/${id}`); // Usa directamente el ID sin '/product/'
   }
 
   search(query: string): Observable<Product[]> {

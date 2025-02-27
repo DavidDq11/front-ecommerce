@@ -22,7 +22,7 @@
   </article>
 
   <article class="mt-25 mb-10 bg-white pt-5">
-    <h3 class="text-2xl font-semibold mb-5">RELATED PRODUCTS</h3>
+    <h3 class="text-2xl font-semibold mb-5">PRODUCTOS RELACIONADOS</h3>
     <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 bg-white">
         <app-cardskeleton></app-cardskeleton>
         <app-cardskeleton></app-cardskeleton>
@@ -70,13 +70,12 @@
         <div>
           <p class="leading-relaxed text-gray-700">
             {{product.description}}.
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor vero laudantium error porro voluptatibus animi aliquid autem, iste iusto facere? Laborum reprehenderit minima officia voluptate et quod. Dolorem, repellat quia!
           </p>
         </div>
 
         <div class="flex">
-          <p class="mt-4 text-2xl font-bold">&#8377;{{product.price}}</p>
-          <p class="ml-4 mt-4 text-2xl text-gray-600 line-through" *ngIf="product.prevprice!==0">&#8377;{{product.prevprice}}</p>
+          <p class="mt-4 text-2xl font-bold">${{product.price}}</p>
+          <p class="ml-4 mt-4 text-2xl text-gray-600 line-through" *ngIf="product.prevprice!==0">${{product.prevprice}}</p>
           <p class="ml-4 mt-5 text-xl text-red-700" *ngIf="product.prevprice!==0">-{{discount}}%</p> 
         </div>
 
@@ -94,7 +93,7 @@
 
         <div class="w-full flex flex-col lg:flex-row gap-4 mt-6">
             <div *ngIf="product.stock=='Out of stock'" class="py-4 px-10 text-center font-semibold text-yellow-600 text-white">
-                NOT AVAILABLE
+                No disponible
           </div>
           <ng-template #addtocart>
             <button 
@@ -102,7 +101,7 @@
             class="py-4 px-10 bg-gray-800 text-white"
             (click)="addToCart(product)">
               <i title="Shopping Cart" class="fa-solid fa-bag-shopping mr-2"></i>
-              ADD TO CART
+              Agregar al Carro
             </button>
           </ng-template>
           <button 
@@ -110,23 +109,20 @@
           (click)="removeFromCart(product)"
           *ngIf="isProductInCart(product); else addtocart">
             <i class="fa-solid fa-trash mr-2"></i>
-            REMOVE
+            Eliminar
           </button>
 
           <button class="">
             <i title="Shopping Cart" class="fa-regular fa-heart mr-2"></i>
-            ADD TO WISHLIST
+            Adicionar a la lista
           </button>
         </div>
 
         <div class="mt-10">
-          <h3 class="text-xl font-bold">Product Details</h3>
+          <h3 class="text-xl font-bold">Detalles del Producto</h3>
           <div>
-            <h5 class="text-lg font-semibold text-gray-600">GENERAL INFORMATION</h5>
+            <h5 class="text-lg font-semibold text-gray-600">INFORMACIÓN GENERAL</h5>
             <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ex, officia nihil. 
-              Non rem at quasi earum fuga debitis animi hic expedita porro totam quaerat ut adipisci, 
-              cupiditate ea. Tempore, atque?
             </p>
           </div>
         </div>
