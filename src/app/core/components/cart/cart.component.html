@@ -29,14 +29,14 @@
         </div>
        
         <div class="flex justify-between pt-3">
-            <div class="text-lg font-semibold">Items: {{cart.length}}</div>
-            <div class="text-lg font-semibold">Total : <span class="ml-4">&#8377;{{total}}</span></div>
+            <div class="text-lg font-semibold">Productos: {{cart.length}}</div>
+            <div class="text-lg font-semibold">Total : <span class="ml-4">&#36;{{total | currency:'COP':'symbol':'1.0-0' }}</span></div>
         </div>
     </article>
     <article class="col-span-1 md:col-span-1 lg:col-span-1 mb-4">
         <div class="flex flex-col">
             <div class="flex-1">
-                <label for="promo-code" class="font-semibold text-gray-600">ENTER PROMO CODE</label>
+                <label for="promo-code" class="font-semibold text-gray-600">INGRESAR CODIGO PROMOCIONAL:</label>
                 <div class="flex flex-1 sm:flex-col lg:flex-row border border-gray-600">
                     <input type="text" name="promo-code" class="p-4 w-full">
                     <button type="submit" class="px-8 py-4 lg:px-16 text-center text-white bg-gray-800">Submit</button>
@@ -46,35 +46,35 @@
             <div class="mt-8">
                 <div class="flex justify-between pb-3">
                     <div>
-                        <span class="text-xl text-gray-600">Shipping Cost</span>
+                        <span class="text-xl text-gray-600">Costo de la Compra</span>
                     </div>
                     <div class="text-right">
-                        <span class="text-xl text-gray-600">&#8377;0.00</span>
+                        <span class="text-xl text-gray-600">&#36;0.00</span>
                     </div>
                 </div>
                 <div class="flex justify-between pb-3">
                     <div>
-                        <span class="text-xl text-gray-600">Discount</span>
+                        <span class="text-xl text-gray-600">Descuento</span>
                     </div>
                     <div class="text-right">
-                        <span class="text-xl text-gray-600">&#8377;0.00</span>
+                        <span class="text-xl text-gray-600">&#36;0.00</span>
                     </div>
                 </div>
                 <div class="flex justify-between pb-3">
                     <div>
-                        <span class="text-xl text-gray-600">GST(18%)</span>
+                        <span class="text-xl text-gray-600">IVA(19%)</span>
                     </div>
                     <div class="text-right">
-                        <span class="text-xl text-gray-600">{{gstAmount}}</span>
+                        <span class="text-xl text-gray-600">{{gstAmount | currency:'COP':'symbol':'1.0-0' }}</span>
                     </div>
                 </div>
 
                 <div class="flex justify-between pt-8">
                     <div>
-                        <span class="text-2xl font-semibold">Estimated Total</span>
+                        <span class="text-2xl font-semibold">Estimación Total</span>
                     </div>
                     <div class="text-right">
-                        <span class="text-2xl font-semibold">&#8377;{{estimatedTotal}}</span>
+                        <span class="text-2xl font-semibold">&#36;{{estimatedTotal | currency:'COP':'symbol':'1.0-0' }}</span>
                     </div>
                 </div>
 

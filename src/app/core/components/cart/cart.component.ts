@@ -28,7 +28,7 @@ export class CartComponent implements OnInit, OnDestroy{
   total!:number;
   gstAmount!:number;
   estimatedTotal!:number;
-  gstRate=0.18;
+  gstRate=0.19;
   shippingCost=0;
   subsTotal!:Subscription;
   subsGST!:Subscription;
