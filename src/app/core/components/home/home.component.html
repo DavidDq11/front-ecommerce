@@ -103,3 +103,20 @@
       </div>
     </article>
   </section>
+
+  <!-- News Section -->
+<article class="my-8 bg-gradient-to-b from-orange-100 to-white p-6 rounded-lg shadow-md">
+  <div class="flex items-center justify-center gap-3 mb-6">
+    <i class="fa-solid fa-newspaper text-orange-500 text-3xl"></i>
+    <h3 class="text-2xl sm:text-3xl font-bold text-gray-800">Noticias Importantes</h3>
+    <i class="fa-solid fa-paw text-orange-500 text-3xl"></i>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let news of newsItems" class="bg-white p-4 rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300">
+      <h4 class="text-lg font-semibold text-gray-900 mb-2">{{ news.title }}</h4>
+      <p class="text-sm text-gray-600 mb-4">{{ news.summary }}</p>
+      <a href="{{ news.link }}" target="_blank" class="text-orange-500 hover:text-purple-600 text-sm font-medium">Leer más</a>
+    </div>
+  </div>
+</article>

@@ -26,6 +26,24 @@ export class HomeComponent implements OnInit {
     { id: 5, name: 'Snacks', icon: 'fa-cookie-bite' }
   ];
 
+  newsItems = [
+    {
+      title: 'Descubren nueva dieta para perros con alta energía',
+      summary: 'Expertos en nutrición animal han desarrollado una dieta especial que mejora la vitalidad de los perros activos. ¡Ideal para combinar con nuestros nuevos snacks!',
+      link: '#'
+    },
+    {
+      title: 'Tips de cuidado para el invierno de tus mascotas',
+      summary: 'Aprende cómo proteger a tu mascota del frío con accesorios y cuidados esenciales que ofrecemos en nuestra tienda.',
+      link: '#'
+    },
+    {
+      title: 'Evento de adopción de mascotas este fin de semana',
+      summary: 'Únete a nosotros en un evento local para encontrar a tu nuevo mejor amigo. ¡Trae a tu mascota para una sesión gratis de cuidado!',
+      link: '#'
+    }
+  ];
+
   constructor(private _productService: ProductService) {}
 
   ngOnInit(): void {
@@ -35,7 +53,7 @@ export class HomeComponent implements OnInit {
 
   newArrivalProducts() {
     this.isLoading = true;
-    this._productService.getProducts().subscribe( 
+    this._productService.getProducts().subscribe(
       (data) => {
         this.isLoading = false;
         console.log('Datos recibidos:', data);
