@@ -20,11 +20,6 @@ export class HeaderComponent implements OnInit {
     this.cart = this.cartService.getCart;
   }
 
-  @HostListener('window:scroll', ['$event'])
-  onScroll() {
-    const scrollPosition = window.scrollY || document.documentElement.scrollTop;
-    this.isHeaderTopHidden = scrollPosition > 50; // Oculta header-top después de 50px
-  }
 
   toggleMobileMenu() {
     this.mobileMenuOpen = !this.mobileMenuOpen;
