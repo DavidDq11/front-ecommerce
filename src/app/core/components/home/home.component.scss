@@ -41,18 +41,18 @@ button:hover i {
 /* Ajustes para pantallas pequeñas */
 @media (max-width: 640px) {
   .categories-container {
-      display: grid; /* Cambiamos a grid para mejor control */
-      grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); /* Ajustamos las columnas */
-      gap: 1rem; /* Espaciado más ajustado */
-      padding: 1rem;
-      justify-items: center; /* Centra cada elemento en su celda */
-  }
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Mejor distribución */
+    gap: 0.75rem;
+    padding: 1rem;
+    justify-items: center;
+}
 
-  .category-item {
-      width: 100%; /* Ocupa el ancho disponible en su celda */
-      max-width: 10rem; /* Límite máximo para mantener proporción */
-      margin: 0 auto; /* Centra el contenido */
-  }
+.category-item {
+  width: 100%;
+  max-width: 9rem; /* Ajusta el tamaño máximo */
+  text-align: center;
+}
 
   .truncate {
       white-space: nowrap;
@@ -61,29 +61,32 @@ button:hover i {
   }
 
   .category-item .icon-wrapper {
-      width: 4rem; /* Tamaño más pequeño para móviles */
-      height: 4rem;
-      transition: all 0.3s ease;
-  }
+    width: 3.5rem; /* Tamaño más pequeño */
+    height: 3.5rem;
+    transition: all 0.3s ease;
+}
 
-  .category-item span {
-      font-size: 0.75rem; /* Texto más pequeño para móviles */
-      padding: 0 0.5rem;
-      white-space: normal; /* Texto adaptable */
-  }
+.category-item span {
+  font-size: 0.75rem; /* Texto más pequeño para móviles */
+  padding: 0 0.5rem;
+  white-space: normal;
+}
 }
 
 @media (min-width: 641px) and (max-width: 1024px) {
   .categories-container {
-      display: flex; /* Regresamos a flex para pantallas más grandes */
-      flex-wrap: wrap;
-      justify-content: center;
-  }
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.category-item {
+  max-width: 10rem;
+}
 
-  .category-item .icon-wrapper {
-      width: 6rem;
-      height: 6rem;
-  }
+.category-item .icon-wrapper {
+  width: 5rem;
+  height: 5rem;
+}
 }
 
 

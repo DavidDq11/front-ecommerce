@@ -43,24 +43,27 @@
           <div class="relative w-10 h-10 md:w-20 md:h-20 transition-all duration-300 group-hover:scale-110">
             <div class="absolute inset-0 bg-gradient-to-r from-purple-500 via-blue-500 to-purple-500 rounded-full opacity-0 group-hover:opacity-70 blur-md -z-10 animate-pulse"></div>
             <div class="w-full h-full bg-gradient-to-br from-purple-900 via-indigo-800 to-blue-900 rounded-full border-2 border-yellow-400 flex items-center justify-center overflow-hidden shadow-sm">
-              <img src="assets/images/logo.png" alt="DOGMYCAT" class="w-7 h-7 md:w-16 md:h-16 object-contain z-10" />
+              <img src="assets/images/logo.png" alt="DOGMICAT" class="w-7 h-7 md:w-16 md:h-16 object-contain z-10" />
             </div>
             <div class="absolute -bottom-1 -right-1 w-4 h-4 md:w-6 md:h-6 bg-yellow-400 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
               <i class="fa-solid fa-paw text-purple-900 text-xs"></i>
             </div>
             <div class="absolute -top-1 -left-1 w-4 h-4 md:w-6 md:h-6 bg-yellow-400 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity delay-100">
               <i class="fa-solid fa-paw text-purple-900 text-xs"></i>
+            </div></div>
+            <div class="ml-2 inline-flex">
+              <span
+                class="text-3xl sm:text-4xl font-extrabold text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-yellow-400 bg-clip-text px-4 py-1 rounded shadow-lg">
+                DOGMICAT
+              </span>
+            
             </div>
-          </div>
-          <div class="ml-2 inline-flex">
-            <span class="text-2xl sm:text-3xl font-extrabold text-transparent bg-gradient-to-r from-blue-600 via-blue-500 to-yellow-400 bg-clip-text px-3 sm:px-4 py-1 rounded rotate-3 drop-shadow-md">
-              DOGMYCAT
-            </span>                                           
-          </div>
-        </a>
-        <button class="md:hidden text-yellow-300 focus:outline-none p-1 rounded-full bg-purple-700 bg-opacity-80 hover:bg-yellow-400 hover:text-purple-900 transition-colors" (click)="toggleMobileMenu()">
-          <i class="fa-solid fa-bars text-xl"></i>
-        </button>
+            </a>
+            <button
+              class="md:hidden text-yellow-300 focus:outline-none p-1 rounded-full bg-purple-700 bg-opacity-80 hover:bg-yellow-400 hover:text-purple-900 transition-colors"
+              (click)="toggleMobileMenu()">
+              <i class="fa-solid fa-bars text-xl"></i>
+            </button>
       </div>
 
       <!-- Mobile menu -->
@@ -151,53 +154,105 @@
     </div>
 
     <!-- Category navigation -->
-    <nav class="bg-white text-purple-900 py-2 px-2 md:py-3 md:px-4 shadow-md">
-      <ul class="flex flex-col md:flex-row justify-center gap-2 md:gap-6">
+    <nav class="bg-white text-purple-900 py-3 px-4 shadow-md">
+      <ul class="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-6">
+        <!-- Perro -->
         <li class="flex items-center font-medium group relative" (click)="toggleDropdown('dog')" [ngClass]="{'active': activeDropdown === 'dog'}">
           <div class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-purple-600 to-blue-600 group-hover:w-full transition-all duration-300 md:block hidden"></div>
-          <img src="assets/icon/dog.png" alt="Perro" class="w-5 h-5 mr-1 transition-transform group-hover:scale-110" />
-          <a class="group-hover:text-purple-600 transition-colors cursor-pointer flex items-center gap-1 text-sm">
+          <img src="assets/icon/dog.png" alt="Perro" class="w-8 h-8 md:w-10 md:h-10 mr-2 transition-transform duration-300 group-hover:scale-110" />
+          <a class="group-hover:text-purple-600 transition-colors cursor-pointer flex items-center gap-1 text-base md:text-lg">
             Perro
-            <i class="fa-solid fa-chevron-down ml-1 text-xs"></i>
+            <i class="fa-solid fa-chevron-down ml-1 text-xs md:text-sm transform transition-transform duration-300 group-hover:rotate-180"></i>
           </a>
           <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'dog'}">
-            <ul class="py-2">
-              <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
-                <a routerLink="/categories/perro/alimento" class="text-purple-900 hover:text-purple-600 text-xs">Alimento</a>
+            <ul class="py-2 bg-white rounded-lg shadow-lg">
+              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <a routerLink="/categories/perro/alimento" class="text-purple-900 hover:text-purple-600 text-sm">Alimento</a>
               </li>
-              <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
-                <a routerLink="/categories/perro/cachorros" class="text-purple-900 hover:text-purple-600 text-xs">Cachorros</a>
+              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <a routerLink="/categories/perro/cachorros" class="text-purple-900 hover:text-purple-600 text-sm">Cachorros</a>
               </li>
-              <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
-                <a routerLink="/categories/perro/juguetes" class="text-purple-900 hover:text-purple-600 text-xs">Juguetes</a>
+              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <a routerLink="/categories/perro/juguetes" class="text-purple-900 hover:text-purple-600 text-sm">Juguetes</a>
               </li>
-              <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
-                <a routerLink="/categories/perro/farmapet" class="text-purple-900 hover:text-purple-600 text-xs">Farmapet</a>
-              </li>
-              <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
-                <a routerLink="/categories/perro/accesorios" class="text-purple-900 hover:text-purple-600 text-xs">Accesorios</a>
-              </li>
-              <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
-                <a routerLink="/categories/perro/cuidado-higiene" class="text-purple-900 hover:text-purple-600 text-xs">Cuidado e Higiene</a>
-              </li>
-              <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
-                <a routerLink="/categories/perro/snacks" class="text-purple-900 hover:text-purple-600 text-xs">Snacks</a>
-              </li>
+              <!-- Otros elementos... -->
             </ul>
           </div>
         </li>
+        <!-- Gato -->
         <li class="flex items-center font-medium group relative" (click)="toggleDropdown('cat')" [ngClass]="{'active': activeDropdown === 'cat'}">
           <div class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-purple-600 to-pink-600 group-hover:w-full transition-all duration-300 md:block hidden"></div>
-          <img src="assets/icon/cat.png" alt="Gato" class="w-5 h-5 mr-1 transition-transform group-hover:scale-110" />
-          <a class="group-hover:text-purple-600 transition-colors cursor-pointer flex items-center gap-1 text-sm">
+          <img src="assets/icon/cat.png" alt="Gato" class="w-8 h-8 md:w-10 md:h-10 mr-2 transition-transform duration-300 group-hover:scale-110" />
+          <a class="group-hover:text-purple-600 transition-colors cursor-pointer flex items-center gap-1 text-base md:text-lg">
             Gato
-            <i class="fa-solid fa-chevron-down ml-1 text-xs"></i>
+            <i class="fa-solid fa-chevron-down ml-1 text-xs md:text-sm transform transition-transform duration-300 group-hover:rotate-180"></i>
           </a>
           <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'cat'}">
-            <ul class="py-2">
-              <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
-                <a routerLink="/categories/gato/alimento" class="text-purple-900 hover:text-purple-600 text-xs">Alimento</a>
+            <ul class="py-2 bg-white rounded-lg shadow-lg">
+              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <a routerLink="/categories/gato/alimento" class="text-purple-900 hover:text-purple-600 text-sm">Alimento</a>
               </li>
+              <!-- Otros elementos... -->
+            </ul>
+          </div>
+        </li>
+        <!-- Caballo -->
+        <li class="flex items-center font-medium group relative" (click)="toggleDropdown('horse')" [ngClass]="{'active': activeDropdown === 'horse'}">
+          <div class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-purple-600 to-yellow-600 group-hover:w-full transition-all duration-300 md:block hidden"></div>
+          <img src="assets/icon/horse.png" alt="Caballo" class="w-8 h-8 md:w-10 md:h-10 mr-2 transition-transform duration-300 group-hover:scale-110" />
+          <a class="group-hover:text-purple-600 transition-colors cursor-pointer flex items-center gap-1 text-base md:text-lg">
+            Caballo
+            <i class="fa-solid fa-chevron-down ml-1 text-xs md:text-sm transform transition-transform duration-300 group-hover:rotate-180"></i>
+          </a>
+          <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'horse'}">
+            <ul class="py-2 bg-white rounded-lg shadow-lg">
+              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <a routerLink="/categories/caballo/alimento" class="text-purple-900 hover:text-purple-600 text-sm">Alimento</a>
+              </li>
+              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <a routerLink="/categories/caballo/accesorios" class="text-purple-900 hover:text-purple-600 text-sm">Accesorios</a>
+              </li>
+              <!-- Otros elementos... -->
+            </ul>
+          </div>
+        </li>
+        <!-- Pájaros -->
+        <li class="flex items-center font-medium group relative" (click)="toggleDropdown('bird')" [ngClass]="{'active': activeDropdown === 'bird'}">
+          <div class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-purple-600 to-green-600 group-hover:w-full transition-all duration-300 md:block hidden"></div>
+          <img src="assets/icon/bird.png" alt="Pájaros" class="w-8 h-8 md:w-10 md:h-10 mr-2 transition-transform duration-300 group-hover:scale-110" />
+          <a class="group-hover:text-purple-600 transition-colors cursor-pointer flex items-center gap-1 text-base md:text-lg">
+            Pájaros
+            <i class="fa-solid fa-chevron-down ml-1 text-xs md:text-sm transform transition-transform duration-300 group-hover:rotate-180"></i>
+          </a>
+          <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'bird'}">
+            <ul class="py-2 bg-white rounded-lg shadow-lg">
+              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <a routerLink="/categories/pajaros/alimento" class="text-purple-900 hover:text-purple-600 text-sm">Alimento</a>
+              </li>
+              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <a routerLink="/categories/pajaros/jaulas" class="text-purple-900 hover:text-purple-600 text-sm">Jaulas</a>
+              </li>
+              <!-- Otros elementos... -->
+            </ul>
+          </div>
+        </li>
+        <!-- Vaca -->
+        <li class="flex items-center font-medium group relative" (click)="toggleDropdown('cow')" [ngClass]="{'active': activeDropdown === 'cow'}">
+          <div class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-purple-600 to-red-600 group-hover:w-full transition-all duration-300 md:block hidden"></div>
+          <img src="assets/icon/cow.png" alt="Vaca" class="w-8 h-8 md:w-10 md:h-10 mr-2 transition-transform duration-300 group-hover:scale-110" />
+          <a class="group-hover:text-purple-600 transition-colors cursor-pointer flex items-center gap-1 text-base md:text-lg">
+            Vaca
+            <i class="fa-solid fa-chevron-down ml-1 text-xs md:text-sm transform transition-transform duration-300 group-hover:rotate-180"></i>
+          </a>
+          <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'cow'}">
+            <ul class="py-2 bg-white rounded-lg shadow-lg">
+              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <a routerLink="/categories/vaca/alimento" class="text-purple-900 hover:text-purple-600 text-sm">Alimento</a>
+              </li>
+              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <a routerLink="/categories/vaca/cuidado" class="text-purple-900 hover:text-purple-600 text-sm">Cuidado</a>
+              </li>
+              <!-- Otros elementos... -->
             </ul>
           </div>
         </li>
