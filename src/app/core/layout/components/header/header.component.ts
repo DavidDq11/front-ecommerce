@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { CartService } from 'src/app/core/services/cart.service';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 
@@ -8,6 +8,7 @@ import { AuthService } from 'src/app/shared/services/auth/auth.service';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
+  @ViewChild('carousel') carousel!: ElementRef;
   mobileMenuOpen = false;
   showAccountMenu = false;
   activeDropdown: string | null = null;
@@ -47,5 +48,15 @@ export class HeaderComponent implements OnInit {
 
   logOut() {
     this.authService.logout();
+  }
+
+  scrollCarousel(direction: 'left' | 'right') {
+    const carouselEl = this.carousel.nativeElement;
+    const scrollAmount = 150; // Cantidad de píxeles a desplazar (ajusta según necesites)
+    if (direction === 'left') {
+      carouselEl.scrollLeft -= scrollAmount;
+    } else {
+      carouselEl.scrollLeft += scrollAmount;
+    }
   }
 }
