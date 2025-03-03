@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./footer.component.scss']
 })
 export class FooterComponent {
-  brandlogo = 'https://www.pngkey.com/png/detail/361-3617936_b2b-e-commerce-b2b-e-commerce-icon.png';
+  brandlogo = '';
   year = new Date().getFullYear();
   brand = 'DOGMICAT';
 }

@@ -2,3 +2,28 @@
 main {
     min-height: 100vh;
 }
+
+app-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Asegura que quede por encima de otros elementos */
+    background-color: white; /* Ajusta según tu diseño */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Opcional: agrega sombra */
+  }
+  .app-container {
+    padding-top: 200px; /* Tamaño base para pantallas normales */
+  
+    @media (max-width: 1024px) {
+      padding-top: 200px; /* Ajuste para tablets */
+    }
+  
+    @media (max-width: 768px) {
+      padding-top: 240px; /* Ajuste para móviles */
+    }
+  
+    @media (max-width: 480px) {
+      padding-top: 250px; /* Ajuste para pantallas más pequeñas */
+    }
+  }
