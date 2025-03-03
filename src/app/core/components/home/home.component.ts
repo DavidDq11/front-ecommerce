@@ -19,11 +19,11 @@ export class HomeComponent implements OnInit {
   ];
 
   categories = [
-    { id: 1, name: 'Alimentos', icon: 'fa-bone' },
-    { id: 2, name: 'Juguetes', icon: 'fa-dice' },
-    { id: 3, name: 'Cuidado', icon: 'fa-paw' },
-    { id: 4, name: 'Accesorios', icon: 'fa-gem' },
-    { id: 5, name: 'Snacks', icon: 'fa-cookie-bite' }
+    { id: 1, name: 'Alimentos', icon: 'fa-bone', path: '/categories/Food' },
+    { id: 2, name: 'Juguetes', icon: 'fa-dice', path: '/categories/Toys' },
+    { id: 3, name: 'Cuidado', icon: 'fa-paw', path: '/categories/Hygiene' },
+    { id: 4, name: 'Accesorios', icon: 'fa-gem', path: '/categories/Accessories' },
+    { id: 5, name: 'Snacks', icon: 'fa-cookie-bite', path: '/categories/Snacks' }
   ];
 
   newsItems = [

@@ -22,27 +22,22 @@ export const MENU:{
 =[
     {
         title: 'Alimentos para Mascotas',
-        path:'/categories/Men'
-    },
-    {
-        title: 'Medicamentos y Suplementos',
-        path:'/categories/Women'
-    },
-    {
+        path:'/categories/Food'
+    },{
         title: 'Juguetes y Accesorios',
-        path:'/categories/Groceries'
+        path:'/categories/Toys'
     },
     {
         title: 'Higiene y Cuidado',
-        path:'/categories/Packaged Foods'
+        path:'/categories/Hygiene'
     },
     {
-        title: 'Productos Veterinarios',
-        path:'/categories/Beverages'
+        title: 'Productos Variados',
+        path:'/categories/Accessories'
     },
     {
-        title: 'Otros',
-        path:'/categories/Electronics'
+        title: 'Snacks',
+        path:'/categories/Snacks'
     }
 ]
 
