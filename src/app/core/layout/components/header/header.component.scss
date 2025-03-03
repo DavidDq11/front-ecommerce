@@ -102,12 +102,12 @@
     display: block;
   }
 
-  .account-menu {
-    position: static;
+  .dropdown-menu {
+    position: absolute; /* Cambia de fixed a absolute para probar */
+    top: 100%;
+    left: 0;
     width: 100%;
-    box-shadow: none;
-    border: none;
-    display: none;
+    max-height: none;
   }
 
   .account-menu.show {
@@ -230,7 +230,7 @@ nav {
 nav ul {
   display: flex;
   flex-wrap: nowrap;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 1rem;
   padding: 0;
