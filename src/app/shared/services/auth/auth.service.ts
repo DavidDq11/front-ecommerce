@@ -8,8 +8,9 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = environment.baseAPIURL
+  private apiUrl = environment.baseAPIURL;
   private tokenKey = 'authToken'; // Clave para almacenar el token en localStorage
+  private userKey = 'authUser';   // Clave para almacenar los datos del usuario en localStorage
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -28,14 +29,26 @@ export class AuthService {
     localStorage.setItem(this.tokenKey, token);
   }
 
+  // Guardar los datos del usuario
+  setUserData(user: any): void {
+    localStorage.setItem(this.userKey, JSON.stringify(user));
+  }
+
   // Obtener el token
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey);
   }
 
-  // Eliminar el token (logout)
+  // Obtener los datos del usuario
+  getUserData(): any {
+    const user = localStorage.getItem(this.userKey);
+    return user ? JSON.parse(user) : null; // Devuelve los datos del usuario o null si no hay datos
+  }
+
+  // Eliminar el token y los datos del usuario (logout)
   logout(): void {
     localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.userKey); // También elimina los datos del usuario
     this.router.navigate(['/login']); // Redirige al login
   }
 

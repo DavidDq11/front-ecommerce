@@ -31,8 +31,6 @@ export class LoginComponent {
       this.authService.login(userData).subscribe(
         (response) => {
           this.isLoading = false;
-          console.log('Login successful', response);
-          // Mensaje bonito con SweetAlert2
           Swal.fire({
             icon: 'success',
             title: '¡Bienvenido(a) de vuelta!',
@@ -42,13 +40,17 @@ export class LoginComponent {
           }).then(() => {
             if (response.token) {
               this.authService.setToken(response.token);
+              // Guardar los datos del usuario (ajusta según la estructura de tu respuesta)
+              this.authService.setUserData({
+                name: response.user?.name || 'Usuario', // Ajusta según los datos que devuelva tu API
+                email: response.user?.email // Opcional, si quieres guardar más datos
+              });
               this.router.navigate(['/']);
             }
           });
         },
         (error) => {
           this.isLoading = false;
-          console.error('Login failed', error);
           Swal.fire({
             icon: 'error',
             title: '¡Ups!',

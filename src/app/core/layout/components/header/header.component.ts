@@ -14,13 +14,24 @@ export class HeaderComponent implements OnInit {
   activeDropdown: string | null = null;
   cart: any[] = [];
   isHeaderTopHidden = false;
+  userName: string | null = null; // Nombre del usuario
 
   constructor(private cartService: CartService, public authService: AuthService) {}
 
   ngOnInit(): void {
     this.cart = this.cartService.getCart;
+    this.checkUserStatus(); // Verificar estado del usuario al iniciar
   }
 
+  // Verificar si hay un usuario autenticado y obtener su nombre
+  checkUserStatus() {
+    if (this.authService.isLoggedIn()) {
+      const user = this.authService.getUserData(); // Asume que tienes un método para obtener datos del usuario
+      this.userName = user?.name || 'Usuario'; // Ajusta según la estructura de tu usuario
+    } else {
+      this.userName = null;
+    }
+  }
 
   toggleMobileMenu() {
     this.mobileMenuOpen = !this.mobileMenuOpen;
@@ -48,11 +59,13 @@ export class HeaderComponent implements OnInit {
 
   logOut() {
     this.authService.logout();
+    this.userName = null; // Resetear el nombre al cerrar sesión
+    this.showAccountMenu = false; // Cerrar el menú al cerrar sesión
   }
 
   scrollCarousel(direction: 'left' | 'right') {
     const carouselEl = this.carousel.nativeElement;
-    const scrollAmount = 150; // Cantidad de píxeles a desplazar (ajusta según necesites)
+    const scrollAmount = 150;
     if (direction === 'left') {
       carouselEl.scrollLeft -= scrollAmount;
     } else {
