@@ -46,6 +46,7 @@ export class LoginComponent {
                 email: response.user?.email // Opcional, si quieres guardar más datos
               });
               this.router.navigate(['/']);
+              window.location.reload();
             }
           });
         },
