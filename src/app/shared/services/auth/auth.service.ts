@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs'; // Importa BehaviorSubject
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 
@@ -12,7 +12,17 @@ export class AuthService {
   private tokenKey = 'authToken'; // Clave para almacenar el token en localStorage
   private userKey = 'authUser';   // Clave para almacenar los datos del usuario en localStorage
 
-  constructor(private http: HttpClient, private router: Router) {}
+  // BehaviorSubject para emitir los datos del usuario
+  private userSubject = new BehaviorSubject<any>(null);
+  public user$ = this.userSubject.asObservable(); // Observable público para que los componentes se suscriban
+
+  constructor(private http: HttpClient, private router: Router) {
+    // Cargar los datos iniciales del usuario desde localStorage al iniciar el servicio
+    const storedUser = this.getUserData();
+    if (storedUser) {
+      this.userSubject.next(storedUser);
+    }
+  }
 
   // Registro de usuario
   register(userData: any): Observable<any> {
@@ -29,9 +39,10 @@ export class AuthService {
     localStorage.setItem(this.tokenKey, token);
   }
 
-  // Guardar los datos del usuario
+  // Guardar los datos del usuario y emitirlos
   setUserData(user: any): void {
     localStorage.setItem(this.userKey, JSON.stringify(user));
+    this.userSubject.next(user); // Emite los nuevos datos del usuario
   }
 
   // Obtener el token
@@ -39,7 +50,7 @@ export class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
 
-  // Obtener los datos del usuario
+  // Obtener los datos del usuario desde localStorage
   getUserData(): any {
     const user = localStorage.getItem(this.userKey);
     return user ? JSON.parse(user) : null; // Devuelve los datos del usuario o null si no hay datos
@@ -48,7 +59,8 @@ export class AuthService {
   // Eliminar el token y los datos del usuario (logout)
   logout(): void {
     localStorage.removeItem(this.tokenKey);
-    localStorage.removeItem(this.userKey); // También elimina los datos del usuario
+    localStorage.removeItem(this.userKey);
+    this.userSubject.next(null); // Emite null para indicar que no hay usuario
     this.router.navigate(['/login']); // Redirige al login
   }
 
@@ -59,7 +71,6 @@ export class AuthService {
 
   // Método para Google Sign-In (a implementar más adelante)
   googleSignIn(): Observable<any> {
-    // Implementar lógica de Google Sign-In con backend si es necesario
     throw new Error('Google Sign-In no implementado aún');
   }
 }
