@@ -1,33 +1,49 @@
 import { Component } from '@angular/core';
-import { FormGroup,FormBuilder,FormControl,Validators} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styles: [
-  ]
+  styleUrls: ['./login.component.scss'] // Usar SCSS si lo prefieres
 })
-
 export class LoginComponent {
-  isLogin=false;
-  loginForm!:FormGroup;
-  constructor(private formBuilder:FormBuilder, private authService:AuthService){
-    this.loginForm=this.formBuilder.group({
-      email:new FormControl('',[Validators.required,Validators.email]),
-      password:new FormControl('',[Validators.required,Validators.min(6),Validators.max(16)])
-    })
-  
+  isLoading = false;
+  loginForm!: FormGroup;
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    this.loginForm = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(16)]]
+    });
   }
 
-
-  onSubmit(){
-    const email=this.loginForm.value.email;
-    const password=this.loginForm.value.password;
-    if(email=='davidpaul@test.com'&&password=='david12345'){
-      this.authService.login();
-    } else alert('Invalid input');
-    this.loginForm.reset();
+  onSubmit() {
+    if (this.loginForm.valid) {
+      this.isLoading = true;
+      const userData = this.loginForm.value;
+      this.authService.login(userData).subscribe(
+        (response) => {
+          this.isLoading = false;
+          console.log('Login successful', response);
+          if (response.token) {
+            this.authService.setToken(response.token);
+            this.router.navigate(['/']);
+          }
+        },
+        (error) => {
+          this.isLoading = false;
+          console.error('Login failed', error);
+          alert('Login failed: ' + (error.error?.message || 'Unknown error'));
+        }
+      );
+    } else {
+      alert('Please fill all fields correctly');
+    }
   }
 }

@@ -1,110 +1,90 @@
-<div class="mt-5 p-3 max-w-[430px] min-w-[380px] mx-auto bg-white shadow-lg">
-  <h4 class="py-4 text-gray-700 text-xl text-center font-semibold border-b">Register</h4>
-  <div class="mt-5">
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-      <div class="flex flex-col md:flex-row">
-        <div class="mb-6 w-full md:w-1/2 md:pr-2">
-          <label for="firstName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First Name</label>
+<div class="mt-8 p-6 w-full max-w-lg mx-auto bg-white rounded-xl shadow-2xl border border-purple-200 transform hover:scale-105 transition duration-300">
+  <h4 class="py-4 text-white text-xl text-center font-semibold bg-purple-600 rounded-t-xl border-b-2 border-purple-400">
+    <i class="fas fa-paw mr-2"></i> Register with DOGMICAT
+  </h4>
+  <div class="mt-6">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <div class="flex flex-col sm:flex-col md:flex-row gap-4">
+        <div class="w-full md:w-1/2">
+          <label for="firstName" class="block text-sm font-medium text-gray-700">First Name</label>
           <input
             type="text"
             id="firstName"
             formControlName="firstName"
-            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 focus:border-2 dark:focus:border-gray-500 dark:shadow-sm-light"
-            [class.is-invalid]="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched"
+            class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
             placeholder="David"
             required
           />
-          <div *ngIf="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched" class="text-red-500 text-sm">
-            First name is required and must be at least 2 characters.
-          </div>
         </div>
-        <div class="mb-6 w-full md:w-1/2 md:pl-2">
-          <label for="lastName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last Name</label>
+        <div class="w-full md:w-1/2">
+          <label for="lastName" class="block text-sm font-medium text-gray-700">Last Name</label>
           <input
             type="text"
             id="lastName"
             formControlName="lastName"
-            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 focus:border-2 dark:focus:border-gray-500 dark:shadow-sm-light"
-            [class.is-invalid]="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched"
+            class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
             placeholder="Paul"
             required
           />
-          <div *ngIf="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched" class="text-red-500 text-sm">
-            Last name is required and must be at least 2 characters.
-          </div>
         </div>
       </div>
-      <div class="mb-6">
-        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
         <input
           type="email"
           id="email"
           formControlName="email"
-          class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 focus:border-2 dark:focus:border-gray-500 dark:shadow-sm-light"
-          [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+          class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
           placeholder="davidpaul@test.com"
           required
         />
-        <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="text-red-500 text-sm">
-          Please enter a valid email address.
-        </div>
       </div>
-      <div class="mb-6">
-        <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
         <input
           type="password"
           id="password"
           formControlName="password"
-          class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 focus:border-2 dark:focus:border-gray-500 dark:shadow-sm-light"
-          [class.is-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+          class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
           required
         />
-        <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="text-red-500 text-sm">
-          Password must be at least 6 characters long.
-        </div>
       </div>
-      <div class="mb-6">
-        <label for="confirmPassword" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Repeat Password</label>
+      <div>
+        <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Repeat Password</label>
         <input
           type="password"
           id="confirmPassword"
           formControlName="confirmPassword"
-          class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 focus:border-2 dark:focus:border-gray-500 dark:shadow-sm-light"
-          [class.is-invalid]="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched"
+          class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
           required
         />
-        <div *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" class="text-red-500 text-sm">
-          Passwords do not match.
-        </div>
       </div>
-      <div class="flex items-start mb-6">
-        <div class="flex items-center h-5">
-          <input
-            id="terms"
-            type="checkbox"
-            formControlName="terms"
-            class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-gray-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-            required
-          />
-        </div>
-        <label for="terms" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-          I agree with the <a href="#" class="text-gray-600 hover:underline dark:text-gray-500">terms and conditions</a>
+      <div class="flex items-center">
+        <input
+          id="terms"
+          type="checkbox"
+          formControlName="terms"
+          class="h-4 w-4 text-purple-600 border-gray-300 rounded"
+          required
+        />
+        <label for="terms" class="ml-2 text-sm text-gray-700">
+          I agree with the <a href="#" class="text-purple-600 hover:underline">terms and conditions</a>
         </label>
       </div>
       <button
         type="submit"
-        [disabled]="registerForm.invalid"
-        class="text-white bg-[#3c64a9] hover:bg-[#3c64a9]/90 focus:ring-4 focus:outline-none focus:ring-[#3c64a9]-300 font-medium text-sm px-5 py-3 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800 w-full"
+        [disabled]="registerForm.invalid || isLoading"
+        class="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition duration-200"
       >
-        Register
+        <span *ngIf="isLoading" class="spinner"></span>
+        <span *ngIf="!isLoading">Register</span>
       </button>
-      <p class="mt-4 text-sm text-center">
-        Already a member? <a [routerLink]="['/login']" class="text-gray-600 hover:underline dark:text-gray-500">Login</a>
+      <p class="mt-4 text-sm text-center text-gray-600">
+        Already a member? <a [routerLink]="['/login']" class="text-purple-600 hover:underline">Login</a>
       </p>
     </form>
-    <!-- Google Sign-In Button (to be implemented later) -->
     <div class="mt-4 text-center">
-      <button (click)="googleSignIn()" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+      <button (click)="googleSignIn()" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">
         Sign in with Google
       </button>
     </div>
