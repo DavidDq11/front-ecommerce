@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',
@@ -31,19 +32,38 @@ export class LoginComponent {
         (response) => {
           this.isLoading = false;
           console.log('Login successful', response);
-          if (response.token) {
-            this.authService.setToken(response.token);
-            this.router.navigate(['/']);
-          }
+          // Mensaje bonito con SweetAlert2
+          Swal.fire({
+            icon: 'success',
+            title: '¡Bienvenido(a) de vuelta!',
+            text: 'Estamos felices de verte otra vez en DOGMICAT.',
+            confirmButtonColor: '#6B46C1',
+            confirmButtonText: '¡A explorar!'
+          }).then(() => {
+            if (response.token) {
+              this.authService.setToken(response.token);
+              this.router.navigate(['/']);
+            }
+          });
         },
         (error) => {
           this.isLoading = false;
           console.error('Login failed', error);
-          alert('Login failed: ' + (error.error?.message || 'Unknown error'));
+          Swal.fire({
+            icon: 'error',
+            title: '¡Ups!',
+            text: 'No pudimos iniciar sesión: ' + (error.error?.message || 'Error desconocido'),
+            confirmButtonColor: '#6B46C1'
+          });
         }
       );
     } else {
-      alert('Please fill all fields correctly');
+      Swal.fire({
+        icon: 'warning',
+        title: '¡Faltan datos!',
+        text: 'Por favor, completa todos los campos correctamente.',
+        confirmButtonColor: '#6B46C1'
+      });
     }
   }
 }

@@ -1,10 +1,10 @@
-<div class="mt-8 p-6 max-w-[430px] min-w-[380px] mx-auto bg-white rounded-xl shadow-2xl border border-purple-200 transform hover:scale-105 transition duration-300">
-  <h4 class="py-4 text-white text-xl text-center font-semibold bg-purple-600 rounded-t-xl border-b-2 border-purple-400">
-    <i class="fas fa-paw mr-2"></i> Login to DOGMICAT
+<div class="mt-8 p-4 sm:p-6 w-full max-w-full sm:max-w-md md:max-w-lg mx-auto bg-white rounded-xl shadow-2xl border border-purple-200 transform hover:scale-105 transition duration-300">
+  <h4 class="py-4 text-white text-lg sm:text-xl text-center font-semibold bg-purple-600 rounded-t-xl border-b-2 border-purple-400">
+    <i class="fas fa-paw mr-2"></i> Ingresar a DOGMICAT
   </h4>
   <div class="mt-6">
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
-      <div class="mb-4">
+      <div>
         <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
         <input
           type="email"
@@ -16,11 +16,11 @@
           required
         />
         <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="text-red-500 text-sm mt-1">
-          Please enter a valid email address.
+          Por favor, ingrese una cuenta de email válida.
         </div>
       </div>
-      <div class="mb-4">
-        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
         <input
           type="password"
           id="password"
@@ -30,11 +30,11 @@
           required
         />
         <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-red-500 text-sm mt-1">
-          Password must be at least 6 characters long.
+          La contraseña debe tener entre 6 y 16 caracteres.
         </div>
       </div>
-      <div class="flex justify-between mb-4">
-        <a href="#" class="text-sm text-purple-600 hover:underline">Forgot password?</a>
+      <div class="flex justify-between">
+        <a href="#" class="text-sm text-purple-600 hover:underline">¿Olvidó su contraseña?</a>
       </div>
       <button
         type="submit"
@@ -43,10 +43,11 @@
         [class.opacity-50]="isLoading"
       >
         <span *ngIf="isLoading" class="spinner"></span>
-        <span *ngIf="!isLoading">Login</span>
+        <span *ngIf="!isLoading">Ingresar</span>
       </button>
       <p class="mt-4 text-sm text-center text-gray-600">
-        Not a member? <a [routerLink]="['/register']" class="text-purple-600 hover:underline">Register</a>
+        ¿No eres miembro? <a [routerLink]="['/register']" class="text-purple-600 hover:underline">Regístrate</a>
       </p>
     </form>
   </div>
+</div>

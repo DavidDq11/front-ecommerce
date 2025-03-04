@@ -2,24 +2,25 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/api'; // Base URL del backend
+  private apiUrl = environment.baseAPIURL
   private tokenKey = 'authToken'; // Clave para almacenar el token en localStorage
 
   constructor(private http: HttpClient, private router: Router) {}
 
   // Registro de usuario
   register(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, userData);
+    return this.http.post(`${this.apiUrl}register`, userData);
   }
 
   // Inicio de sesión
   login(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, userData);
+    return this.http.post(`${this.apiUrl}login`, userData);
   }
 
   // Guardar el token recibido

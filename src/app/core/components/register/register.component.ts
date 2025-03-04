@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { AuthService } from '../../../shared/services/auth/auth.service';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-register',
@@ -48,27 +49,41 @@ export class RegisterComponent implements OnInit {
         email: this.registerForm.value.email,
         password: this.registerForm.value.password
       };
-      console.log('Enviando al backend:', userData);
       this.authService.register(userData).subscribe(
         (response) => {
-          console.log('Registration successful', response);
           this.isLoading = false;
-          // Mensaje de felicitación personalizado
-          alert('¡Felicidades! Tu nueva aventura con ' + this.registerForm.value.firstName + ' y tus mascotas ha comenzado en DOGMICAT.');
-          if (response.token) {
-            this.authService.setToken(response.token);
-            this.router.navigate(['/']);
-          }
+          // Mensaje bonito con SweetAlert2
+          Swal.fire({
+            icon: 'success',
+            title: '¡Bienvenido(a), ' + this.registerForm.value.firstName + '!',
+            text: '¡Prepárate para disfrutar junto a tus mascotas con DOGMICAT!',
+            confirmButtonColor: '#6B46C1',
+            confirmButtonText: '¡Vamos allá!'
+          }).then(() => {
+            if (response.token) {
+              this.authService.setToken(response.token);
+              this.router.navigate(['/']);
+            }
+          });
         },
         (error) => {
           this.isLoading = false;
           console.error('Registration failed', error);
-          alert('Registration failed: ' + (error.error?.message || 'Unknown error'));
+          Swal.fire({
+            icon: 'error',
+            title: '¡Ups!',
+            text: 'No pudimos registrarte: ' + (error.error?.message || 'Error desconocido'),
+            confirmButtonColor: '#6B46C1'
+          });
         }
       );
     } else {
-      console.log('Formulario inválido:', this.registerForm.value);
-      alert('Please fill all fields correctly');
+      Swal.fire({
+        icon: 'warning',
+        title: '¡Faltan datos!',
+        text: 'Por favor, completa todos los campos correctamente.',
+        confirmButtonColor: '#6B46C1'
+      });
     }
   }
 
