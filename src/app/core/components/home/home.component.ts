@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Product } from 'src/app/modules/product/model';
+import { FilterService } from 'src/app/modules/product/services/filter.service';
 import { ProductService } from 'src/app/modules/product/services/product.service';
 
 @Component({
@@ -23,8 +24,35 @@ export class HomeComponent implements OnInit {
     { id: 2, name: 'Juguetes', icon: 'fa-dice', path: '/categories/Toys' },
     { id: 3, name: 'Cuidado', icon: 'fa-paw', path: '/categories/Hygiene' },
     { id: 4, name: 'Accesorios', icon: 'fa-gem', path: '/categories/Accessories' },
-    { id: 5, name: 'Snacks', icon: 'fa-cookie-bite', path: '/categories/Snacks' }
+    { id: 5, name: 'Snacks', icon: 'fa-cookie-bite', path: '/categories/Snacks' },
+    { id: 6, name: 'Hábitats', icon: 'fa-home', path: '/categories/Habitats' },
+    { id: 7, name: 'Equipos', icon: 'fa-tools', path: '/categories/Equipment' },
+    { id: 8, name: 'Suplementos', icon: 'fa-pills', path: '/categories/Supplements' }
   ];
+
+  selectedCategoryId: number | null = null;
+
+  selectCategory(categoryId: number) {
+    this.selectedCategoryId = categoryId;
+    this._filterService.setSelectedCategory(categoryId);
+    const categoryMap: Record<number, string> = {
+      1: 'Alimento',
+      2: 'Juguete',
+      3: 'Higiene',
+      4: 'Accesorio',
+      5: 'Snack',
+      6: 'Habitat',
+      7: 'Equipo',
+      8: 'Suplemento'
+    };
+    const type = categoryMap[categoryId];
+    if (type) {
+      this._filterService.getProductTypeFilter(type);
+      console.log('Selected type for categoryId', categoryId, ':', type);
+    } else {
+      console.warn('No type mapped for categoryId:', categoryId);
+    }
+  }
 
   newsItems = [
     {
@@ -44,7 +72,7 @@ export class HomeComponent implements OnInit {
     }
   ];
 
-  constructor(private _productService: ProductService) {}
+  constructor(private _productService: ProductService, private _filterService: FilterService) {}
 
   ngOnInit(): void {
     this.newArrivalProducts();
@@ -56,7 +84,6 @@ export class HomeComponent implements OnInit {
     this._productService.getProducts().subscribe(
       (data) => {
         this.isLoading = false;
-        console.log('Datos recibidos:', data);
         const startIndex = Math.floor(Math.random() * (data.length - 6));
         const lastIndex = startIndex + 6;
         this.products = data.slice(startIndex, lastIndex);

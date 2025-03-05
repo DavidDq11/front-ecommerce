@@ -20,6 +20,7 @@
         <a
           *ngFor="let category of categories"
           [routerLink]="category.path"
+          (click)="selectCategory(category.id)"
           class="category-item flex flex-col items-center text-center hover:text-purple-600 transition-all duration-300"
         >
           <div class="icon-wrapper w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-white to-gray-200 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transform hover:-translate-y-2 transition-transform duration-200">

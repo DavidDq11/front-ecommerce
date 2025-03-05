@@ -96,14 +96,14 @@
       <div class="flex items-center pl-4 rounded dark:border-gray-700">
         <input
           [checked]="category.checked"
-          id="category-checked"
+          id="category-checked-{{ category.id }}"
           type="checkbox"
-          (change)="applyFilter(category.id,'category')"
+          (change)="applyFilter(category.id, 'category')"
           name="bordered-checkbox"
           class="w-5 h-5 accent-gray-700 bg-gray-100 border-gray-300 rounded"
         />
         <label
-          for="category-checked"
+          for="category-checked-{{ category.id }}"
           class="w-full py-2 ml-2 text-sm font-semibold text-gray-900 dark:text-gray-300"
         >
           {{ category.label }}
