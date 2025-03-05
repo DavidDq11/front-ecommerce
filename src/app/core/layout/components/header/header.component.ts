@@ -1,4 +1,5 @@
 import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { CartService } from 'src/app/core/services/cart.service';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 
@@ -15,12 +16,26 @@ export class HeaderComponent implements OnInit {
   cart: any[] = [];
   isHeaderTopHidden = false;
   userName: string | null = null; // Nombre del usuario
+  private userSubscription: Subscription = new Subscription();
 
   constructor(private cartService: CartService, public authService: AuthService) {}
 
   ngOnInit(): void {
     this.cart = this.cartService.getCart;
     this.checkUserStatus(); // Verificar estado del usuario al iniciar
+
+    this.userSubscription = this.authService.user$.subscribe(user => {
+      this.userName = user?.name || null; // Actualiza userName dinámicamente
+    });
+
+    this.checkUserStatus();
+  }
+
+  ngOnDestroy(): void {
+    // Desuscribirse para evitar memory leaks
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
   }
 
   // Verificar si hay un usuario autenticado y obtener su nombre

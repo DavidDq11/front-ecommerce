@@ -7,11 +7,11 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss'] // Usar SCSS si lo prefieres
+  styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
-  isLoading = false; // Estado de carga
+  isLoading = false;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {}
 
@@ -52,7 +52,7 @@ export class RegisterComponent implements OnInit {
       this.authService.register(userData).subscribe(
         (response) => {
           this.isLoading = false;
-          // Mensaje bonito con SweetAlert2
+          console.log('Respuesta de la API al registrar:', response); // Depura la respuesta
           Swal.fire({
             icon: 'success',
             title: '¡Bienvenido(a), ' + this.registerForm.value.firstName + '!',
@@ -60,10 +60,11 @@ export class RegisterComponent implements OnInit {
             confirmButtonColor: '#6B46C1',
             confirmButtonText: '¡Vamos allá!'
           }).then(() => {
-            if (response.token) {
-              this.authService.setToken(response.token);
-              this.router.navigate(['/']);
-            }
+            this.router.navigate(['/']).then(() => {
+              console.log('Redirección a / ejecutada');
+            }).catch(err => {
+              console.error('Error en redirección:', err);
+            });
           });
         },
         (error) => {
