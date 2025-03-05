@@ -50,9 +50,11 @@ export class HeaderComponent implements OnInit {
 
   toggleMobileMenu() {
     this.mobileMenuOpen = !this.mobileMenuOpen;
+    if (this.mobileMenuOpen) {
+      this.activeDropdown = null;
+    }
     if (!this.mobileMenuOpen) {
       this.showAccountMenu = false;
-      this.activeDropdown = null;
     }
   }
 
@@ -69,6 +71,9 @@ export class HeaderComponent implements OnInit {
     } else {
       this.activeDropdown = category;
       this.showAccountMenu = false;
+      if (window.innerWidth <= 765) {
+        this.mobileMenuOpen = false;
+      }
     }
   }
 
