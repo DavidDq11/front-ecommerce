@@ -96,18 +96,16 @@
 }
 
 /* Ajustes para pantallas móviles (max-width: 768px) */
-@media (max-width: 768px) {
+@media (max-width: 765px) {
 
-  .dropdown-menu.show {
-    display: block;
+  nav {
+    position: relative;
+    z-index: 1050; /* Asegura que la navegación esté por encima de otros elementos */
   }
 
-  .dropdown-menu {
-    position: absolute; /* Cambia de fixed a absolute para probar */
-    top: 100%;
-    left: 0;
-    width: 100%;
-    max-height: none;
+  .dropdown-menu.show {
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 
   .account-menu.show {
@@ -126,8 +124,8 @@
   }
 
   nav li {
-    flex: 0 0 auto; /* Evita que los elementos se estiren o compriman */
-    padding: 0.5rem;
+    position: relative;
+    z-index: 1040;
   }
 
   nav li img {
@@ -141,7 +139,7 @@
 
   .dropdown-menu {
     position: fixed; /* Cambia a fixed para no interferir con el carrusel */
-    top: 50%;
+    top: 30.5%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 90%;
