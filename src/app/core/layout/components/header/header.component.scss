@@ -138,15 +138,17 @@
   }
 
   .dropdown-menu {
-    position: fixed; /* Cambia a fixed para no interferir con el carrusel */
-    top: 30.5%;
+    position: fixed; /* Mantiene fixed para móviles */
+    top: 241px; /* Quitamos el top fijo para calcularlo dinámicamente */
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%); /* Centrado horizontal */
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
     z-index: 2000;
     border-radius: 0.5rem;
+    /* Ajustamos la posición para que quede debajo de la línea */
+    margin-top: 4px; /* Espacio para la línea animada */
   }
 
 }
