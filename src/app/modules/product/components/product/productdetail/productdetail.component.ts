@@ -23,6 +23,9 @@ export class ProductdetailComponent implements OnInit{
   selectedImage!:number;
   discount=0;
   title:string='';
+  currentPage = 1; // Current pagination page
+  totalPages = 1; // Total number of pages
+  pageSize = 5; // Products per page
   constructor(private route:ActivatedRoute, private productService:ProductService, private cartService:CartService, private router:Router){}
 
   ngOnInit(): void {
@@ -85,14 +88,27 @@ export class ProductdetailComponent implements OnInit{
     return this.cart.some(item=>item.id==product.id);
   }
 
-  relatedProducts(){
-    this.isLoading=true;
-   this.productService.getRelated(this.product.type).subscribe(data=>{
-    this.relatedProductList=data.filter((item:Product)=>{
-    this.isLoading=false;
-     return this.product.id!==item.id
-    });
-    });
+  relatedProducts() {
+    this.isLoading = true;
+    const offset = (this.currentPage - 1) * this.pageSize;
+    this.productService.getRelated(this.product.category, this.pageSize, offset).subscribe(
+      (data) => {
+        this.isLoading = false;
+        this.relatedProductList = data.products.filter((item: Product) => item.id !== this.product.id);
+        this.totalPages = data.totalPages;
+      },
+      (error) => {
+        this.isLoading = false;
+        console.error('Error al cargar productos relacionados:', error);
+      }
+    );
+  }
+
+  changePage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.relatedProducts(); // Fetch products for the new page
+    }
   }
 
   addSize(value:string,index:string){

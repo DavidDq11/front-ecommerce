@@ -1,12 +1,12 @@
 <div class="bg-white h-full p-3 md:mr-6 overflow-auto">
   <h3 class="text-md font-semibold text-right flex justify-between md:text-left mb-3">
     <button class="static left-2 flex items-center block md:hidden" (click)="onClose()">
-      CLOSE
+      CERRAR
       <i class="fa-solid fa-xmark text-xl"></i>
     </button>
     <span>
       <i class="fa-solid fa-filter text-gray-700"></i>
-      Filters
+      Filtros
     </span>
     
   </h3>
@@ -18,7 +18,7 @@
         Clear Filter
       </button>
     </div> -->
-    <h3 class="text-sm font-semibold uppercase ml-3 py-3">Ratings</h3>
+    <h3 class="text-sm font-semibold uppercase ml-3 py-3">Recomendación</h3>
     <div class="">
       <div class="flex items-center gap-1 pl-4 text-lg rounded dark:border-gray-700 pt-2">
         <button 
@@ -91,7 +91,7 @@
   </div>
 
   <div class="border-y border-gray-300 rounded mb-5">
-    <h3 class="text-sm font-semibold uppercase ml-3 py-3">Types</h3>
+    <h3 class="text-sm font-semibold uppercase ml-3 py-3">Tipo de Producto</h3>
     <div class="" *ngFor="let category of filterCategories">
       <div class="flex items-center pl-4 rounded dark:border-gray-700">
         <input

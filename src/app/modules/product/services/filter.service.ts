@@ -22,37 +22,42 @@ export class FilterService {
   getProductTypeFilter(type: string) {
     let prodTypes: CategoryFilter[] = [];
     this.category = type;
-    this.productService.getRelated(type).subscribe(data => {
-      this.products = data as Product[];
-      this.cloneOfProducts = data as Product[];
-      const types = [...new Set(this.cloneOfProducts.map(item => item.type))];
-      const typeMap = {
-        'Alimento': 1, 'Juguete': 2, 'Higiene': 3, 'Accesorio': 4,
-        'Snack': 5, 'Habitat': 6, 'Equipo': 7, 'Suplemento': 8
-      };
-      types.forEach((typeValue) => {
-        const id = typeMap[typeValue as keyof typeof typeMap] || 1;
-        prodTypes.push({
-          label: typeValue,
-          value: typeValue,
-          checked: id === this.selectedCategoryId.getValue(), // Marcar como checked si coincide con selectedCategoryId
-          id: id
+    this.productService.getRelated(type).subscribe(
+      (data: { products: Product[]; total: number; page: number; totalPages: number }) => {
+        // Extract the products array from the response
+        this.products = data.products;
+        this.cloneOfProducts = data.products;
+        const types = [...new Set(this.cloneOfProducts.map(item => item.type))];
+        const typeMap = {
+          'Alimento': 1, 'Juguete': 2, 'Higiene': 3, 'Accesorio': 4,
+          'Snack': 5, 'Habitat': 6, 'Equipo': 7, 'Suplemento': 8
+        };
+
+        types.forEach((typeValue) => {
+          const id = typeMap[typeValue as keyof typeof typeMap] || 1;
+          prodTypes.push({
+            label: typeValue,
+            value: typeValue,
+            checked: id === this.selectedCategoryId.getValue(),
+            id: id
+          });
         });
-      });
-      this.filterList.next(prodTypes);
-  
-      // Aplicar el filtro inicial si hay una categoría seleccionada
-      const selectedId = this.selectedCategoryId.getValue();
-      if (selectedId) {
-        const checkedItems = prodTypes.map(item => ({
-          ...item,
-          checked: item.id === selectedId
-        }));
-        this.handleCatFilter(checkedItems);
-      } else {
-        this.filterProduct(this.cloneOfProducts); // Si no hay selección, mostrar todos
-      }
-    }, error => console.error('Error fetching product types:', error));
+        this.filterList.next(prodTypes);
+
+        // Aplicar el filtro inicial si hay una categoría seleccionada
+        const selectedId = this.selectedCategoryId.getValue();
+        if (selectedId) {
+          const checkedItems = prodTypes.map(item => ({
+            ...item,
+            checked: item.id === selectedId
+          }));
+          this.handleCatFilter(checkedItems);
+        } else {
+          this.filterProduct(this.cloneOfProducts); // Si no hay selección, mostrar todos
+        }
+      },
+      error => console.error('Error fetching product types:', error)
+    );
   }
 
   handlePriceFilter(min:number,max:number){

@@ -30,10 +30,15 @@ export class ProductService {
     });
   }
 
-  getRelated(type: string): Observable<Product[] | any> {
-    return this.http.get(this.url + 's', { // Añade 's' para /products con filtros
-      params: new HttpParams().set('type', type)
-    });
+  getRelated(category: string, limit: number = 6, offset: number = 0): Observable<{ products: Product[], total: number, page: number, totalPages: number }> {
+    let params = new HttpParams()
+      .set('category', category)
+      .set('limit', limit.toString())
+      .set('offset', offset.toString());
+    
+    return this.http.get<{ products: Product[], total: number, page: number, totalPages: number }>(this.url + 's', { params }).pipe(
+      catchError((error: any) => throwError(() => new Error(error.message)))
+    );
   }
 
   getProduct(id: number): Observable<Product> {
