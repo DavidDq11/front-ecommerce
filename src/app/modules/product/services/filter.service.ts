@@ -10,6 +10,7 @@ export class FilterService {
   public filteredProducts=new BehaviorSubject<Product[]>([]);
   filterList=new BehaviorSubject<CategoryFilter[]>([]);
   products!:Product[];
+  private allProducts: Product[] = [];
   category='';
   selectedCategoryId = new BehaviorSubject<number | null>(null);
   cloneOfProducts!:Product[];
@@ -17,6 +18,12 @@ export class FilterService {
 
   filterProduct(products:Product[]){
     return this.filteredProducts.next(products);
+  }
+
+  setAllProducts(products: Product[]) {
+    this.allProducts = products;
+    this.cloneOfProducts = [...products];
+    this.filteredProducts.next(products); // Initially show all products
   }
 
   getProductTypeFilter(type: string) {

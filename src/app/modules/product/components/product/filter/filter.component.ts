@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { CategoryFilter, Product } from '../../../model';
-import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { FilterService } from '../../../services/filter.service';
 
 @Component({
@@ -20,25 +20,32 @@ export class FilterComponent implements OnInit, OnDestroy {
   selectedCategory: number | null = null;
   filteredProducts: Product[] = [];
   cloneOfProducts!: Product[];
-  private subscriptions: Subscription[] = [];
+  subsFilterList!: Subscription;
+  categorySub!: Subscription;
 
   constructor(private filterService: FilterService) {}
 
   ngOnInit(): void {
-    this.subscribeToFilterData();
+    this.loadCategoryFilters();
+    this.subscribeToSelectedCategory();
     this.initFilterValues();
   }
 
-  subscribeToFilterData() {
-    const sub = combineLatest([this.filterService.filterList, this.filterService.selectedCategoryId]).subscribe(
-      ([filterList, categoryId]) => {
-        this.filterCategories = filterList.slice();
-        this.selectedCategory = categoryId;
-        this.updateCheckedCategory();
-        console.log('Sincronización - filterCategories:', this.filterCategories, 'selectedCategory:', this.selectedCategory);
+  loadCategoryFilters() {
+    this.subsFilterList = this.filterService.filterList.subscribe(data => {
+      this.filterCategories = data.slice();
+      this.updateCheckedCategory();
+    });
+  }
+
+  subscribeToSelectedCategory() {
+    this.categorySub = this.filterService.selectedCategoryId.subscribe((categoryId) => {
+      this.selectedCategory = categoryId;
+      this.updateCheckedCategory();
+      if (this.selectedCategory && this.filterCategories.length > 0) {
+        this.applyFilter(this.selectedCategory, 'category');
       }
-    );
-    this.subscriptions.push(sub);
+    });
   }
 
   updateCheckedCategory() {
@@ -46,7 +53,6 @@ export class FilterComponent implements OnInit, OnDestroy {
       this.filterCategories = this.filterCategories.map((cat) =>
         cat.id === this.selectedCategory ? { ...cat, checked: true } : { ...cat, checked: false }
       );
-      console.log('Checkbox actualizado - filterCategories:', this.filterCategories);
     }
   }
 
@@ -55,29 +61,16 @@ export class FilterComponent implements OnInit, OnDestroy {
       item.id === id ? { ...item, checked: !item.checked } : item
     );
     this.filterCategories = checkedItems;
-    const prods = this.handleFilter(checkedItems);
-    return prods;
+    return this.filterService.handleCatFilter(checkedItems);
   }
 
   handleRating(rating: number): Product[] {
-    this.ratingList = this.ratingList.map((rate, i) => rating >= i + 1 ? true : false);
-    const prods = this.filterService.handleRateFilter(rating);
-    return prods;
-  }
-
-  handleFilter(checkedItems: CategoryFilter[]): Product[] {
-    this.cloneOfProducts = [...this.products];
-    const prods = this.filterService.handleCatFilter(checkedItems);
-    return prods;
-  }
-
-  initFilterValues() {
-    this.selectedFilter.rating.subscribe(value => this.selectedRating = value);
-    this.selectedFilter.categoryId.subscribe(value => this.selectedCategory = value);
+    this.ratingList = this.ratingList.map((rate, i) => rating >= i + 1);
+    return this.filterService.handleRateFilter(rating);
   }
 
   applyFilter(value: number, type: string) {
-    let prods = this.products;
+    let prods: Product[] = [];
     if (type === 'rating') {
       this.selectedRating = value;
       prods = this.handleRating(value);
@@ -86,7 +79,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       this.selectedCategory = value;
       prods = this.handleCheckbox(value);
     }
-    this.filterService.filterProduct(prods); // Emitir los productos filtrados
+    this.filterService.filterProduct(prods);
   }
 
   onClose() {
@@ -94,6 +87,12 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
+    if (this.subsFilterList) this.subsFilterList.unsubscribe();
+    if (this.categorySub) this.categorySub.unsubscribe();
+  }
+
+  initFilterValues() {
+    this.selectedFilter.rating.subscribe(value => this.selectedRating = value);
+    this.selectedFilter.categoryId.subscribe(value => this.selectedCategory = value);
   }
 }

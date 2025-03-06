@@ -32,8 +32,17 @@ export class ProductComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.getProductsByCategory();
-    this.handleFilter();
+    this.subscribeToFilteredProducts();
+    this.route.params.subscribe((data: Params) => {
+      this.category = data['category'];
+      this.loadProducts();
+    });
+  }
+  subscribeToFilteredProducts() {
+    this.subsFilterProducts = this.filterService.filteredProducts.subscribe((data) => {
+      this.products = data;
+      console.log('Productos filtrados actualizados:', this.products);
+    });
   }
 
   getProductsByCategory(): void {
@@ -68,6 +77,23 @@ export class ProductComponent implements OnInit, OnDestroy {
         (error) => (this.error = error.message)
       );
     });
+  }
+  loadProducts() {
+    this.isLoading = true;
+    this.productService.getProducts().subscribe(
+      (data) => {
+        this.isLoading = false;
+        this.products = data;
+        this.cloneOfProducts = [...data];
+        this.filterService.setAllProducts(data); // Ensure FilterService has all products
+        this.filterService.getProductTypeFilter(this.category); // Trigger filtering
+      },
+      (error) => {
+        this.isLoading = false;
+        this.error = error.message;
+        console.error('Error loading products:', error);
+      }
+    );
   }
   
   // Método auxiliar para mapear la categoría del URL a un ID
