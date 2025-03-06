@@ -36,21 +36,12 @@ export class HomeComponent implements OnInit {
     this.selectedCategoryId = categoryId;
     this._filterService.setSelectedCategory(categoryId);
     const categoryMap: Record<number, string> = {
-      1: 'Alimento',
-      2: 'Juguete',
-      3: 'Higiene',
-      4: 'Accesorio',
-      5: 'Snack',
-      6: 'Habitat',
-      7: 'Equipo',
-      8: 'Suplemento'
+      1: 'Alimento', 2: 'Juguete', 3: 'Higiene', 4: 'Accesorio',
+      5: 'Snack', 6: 'Habitat', 7: 'Equipo', 8: 'Suplemento'
     };
     const type = categoryMap[categoryId];
     if (type) {
       this._filterService.getProductTypeFilter(type);
-      console.log('Selected type for categoryId', categoryId, ':', type);
-    } else {
-      console.warn('No type mapped for categoryId:', categoryId);
     }
   }
 

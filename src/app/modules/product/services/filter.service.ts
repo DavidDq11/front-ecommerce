@@ -21,13 +21,13 @@ export class FilterService {
 
   getProductTypeFilter(type: string) {
     let prodTypes: CategoryFilter[] = [];
-    this.category = type; // Usamos type como base para el filtrado
+    this.category = type;
     this.productService.getRelated(type).subscribe(data => {
-      this.products = data as Product[]; // Asegúrate de que data sea del tipo Product[]
+      this.products = data as Product[];
       this.cloneOfProducts = data as Product[];
       const types = [...new Set(this.cloneOfProducts.map(item => item.type))];
       const typeMap = {
-        'Alimento': 1, 'Accesorio': 4, 'Higiene': 3, 'Juguete': 2,
+        'Alimento': 1, 'Juguete': 2, 'Higiene': 3, 'Accesorio': 4,
         'Snack': 5, 'Habitat': 6, 'Equipo': 7, 'Suplemento': 8
       };
       types.forEach((typeValue) => {
@@ -35,12 +35,23 @@ export class FilterService {
         prodTypes.push({
           label: typeValue,
           value: typeValue,
-          checked: false,
+          checked: id === this.selectedCategoryId.getValue(), // Marcar como checked si coincide con selectedCategoryId
           id: id
         });
       });
       this.filterList.next(prodTypes);
-      console.log('Filtered types for type', type, ':', prodTypes); // Depuración
+  
+      // Aplicar el filtro inicial si hay una categoría seleccionada
+      const selectedId = this.selectedCategoryId.getValue();
+      if (selectedId) {
+        const checkedItems = prodTypes.map(item => ({
+          ...item,
+          checked: item.id === selectedId
+        }));
+        this.handleCatFilter(checkedItems);
+      } else {
+        this.filterProduct(this.cloneOfProducts); // Si no hay selección, mostrar todos
+      }
     }, error => console.error('Error fetching product types:', error));
   }
 
@@ -48,18 +59,22 @@ export class FilterService {
     const products=this.cloneOfProducts.filter(item=>item.price>=min&&item.price<=max);
     this.filterProduct(products);
   }
-  handleCatFilter(checkedItems:CategoryFilter[]):Product[]{
-    this.productService.getByCategory(this.category).subscribe(data=>this.products=data);
-    this.filterProduct(this.products);
-    let checked=checkedItems.filter(item=>item.checked).map(item=>item.value);
-    if(checked.length){
-      this.filteredProducts.subscribe((data:Product[])=>{
-        this.products=data.filter(item=>checked.includes(item.type));
-      })
-    } 
-    return this.products;
-
+  
+  handleCatFilter(checkedItems: CategoryFilter[]): Product[] {
+    // Usar cloneOfProducts como base, que ya está inicializado en getProductTypeFilter
+    let filteredProducts = [...this.cloneOfProducts];
+    const checkedValues = checkedItems.filter(item => item.checked).map(item => item.value);
+  
+    // Aplicar el filtro solo si hay categorías marcadas
+    if (checkedValues.length > 0) {
+      filteredProducts = filteredProducts.filter(product => checkedValues.includes(product.type));
+    }
+  
+    // Emitir los productos filtrados
+    this.filterProduct(filteredProducts);
+    return filteredProducts;
   }
+
   handleRateFilter(rating:number):Product[]{
     this.productService.getByCategory(this.category).subscribe(data=>this.products=data);
     this.filterProduct(this.products);

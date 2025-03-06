@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { CategoryFilter, Product } from '../../../model';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
 import { FilterService } from '../../../services/filter.service';
 
 @Component({
@@ -20,33 +20,25 @@ export class FilterComponent implements OnInit, OnDestroy {
   selectedCategory: number | null = null;
   filteredProducts: Product[] = [];
   cloneOfProducts!: Product[];
-  subsFilterList!: Subscription;
-  categorySub!: Subscription;
+  private subscriptions: Subscription[] = [];
 
   constructor(private filterService: FilterService) {}
 
   ngOnInit(): void {
-    this.loadCategoryFilters();
-    this.subscribeToSelectedCategory();
+    this.subscribeToFilterData();
     this.initFilterValues();
   }
 
-  loadCategoryFilters() {
-    this.subsFilterList = this.filterService.filterList.subscribe(data => {
-      this.filterCategories = data.slice();
-      this.updateCheckedCategory(); // Update checked state based on selected category
-    });
-  }
-
-  subscribeToSelectedCategory() {
-    this.categorySub = this.filterService.selectedCategoryId.subscribe((categoryId) => {
-      this.selectedCategory = categoryId;
-      this.updateCheckedCategory();
-      if (this.selectedCategory && this.filterCategories.length > 0) {
-        this.applyFilter(this.selectedCategory, 'category'); // Asegura que el filtro se aplique
-        console.log('Categoría seleccionada actualizada:', this.selectedCategory, 'Categorías de filtro:', this.filterCategories);
+  subscribeToFilterData() {
+    const sub = combineLatest([this.filterService.filterList, this.filterService.selectedCategoryId]).subscribe(
+      ([filterList, categoryId]) => {
+        this.filterCategories = filterList.slice();
+        this.selectedCategory = categoryId;
+        this.updateCheckedCategory();
+        console.log('Sincronización - filterCategories:', this.filterCategories, 'selectedCategory:', this.selectedCategory);
       }
-    });
+    );
+    this.subscriptions.push(sub);
   }
 
   updateCheckedCategory() {
@@ -54,6 +46,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       this.filterCategories = this.filterCategories.map((cat) =>
         cat.id === this.selectedCategory ? { ...cat, checked: true } : { ...cat, checked: false }
       );
+      console.log('Checkbox actualizado - filterCategories:', this.filterCategories);
     }
   }
 
@@ -93,21 +86,14 @@ export class FilterComponent implements OnInit, OnDestroy {
       this.selectedCategory = value;
       prods = this.handleCheckbox(value);
     }
-    this.filterService.filterProduct(prods); // Actualizar productos filtrados
+    this.filterService.filterProduct(prods); // Emitir los productos filtrados
   }
 
   onClose() {
     this.onFilter.emit(false);
   }
 
-  unsubscribeSubject() {
-    this.subsFilterList.unsubscribe();
-  }
-
   ngOnDestroy(): void {
-    this.unsubscribeSubject();
-    if (this.categorySub) {
-      this.categorySub.unsubscribe();
-    }
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 }
