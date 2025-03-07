@@ -29,13 +29,15 @@
 <app-skeleton *ngIf="!error && isLoading"></app-skeleton>
 
 <section class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 mb-10 bg-white mx-auto max-w-[1300px]" *ngIf="!isLoading && cloneOfProducts.length!>0">
-    <div class="flex justify-end pr-2 block md:hidden">
+    <!-- Botón de filtro móvil -->
+    <!-- <div class="flex justify-end pr-2 block md:hidden">
       <button class="bg-gray-800 text-gray-200 px-2" (click)="onFilter(true)">
       <i class="fa-solid fa-filter"></i>
       Filter
     </button>
-    </div>
+    </div> -->
 
+    <!-- Sidebar de filtros -->
     <aside 
     class="col-span-1 md:col-span-1 lg:col-span-1 mb-4
     fixed top-0 right-0 w-[350px] md:w-auto bg-[#f8f8f8] z-[98] h-full drop-shadow-lg md:drop-shadow-none md:static hidden md:block"
@@ -52,19 +54,21 @@
     </aside>
 
     <article class="col-span-1 md:col-span-2 lg:col-span-3">
+      <!-- Breadcrumb siempre visible -->
+      <app-breadcrumb></app-breadcrumb>
+      
+      <!-- Contenedor de productos -->
       <div *ngIf="products.length!==0">
-        <app-breadcrumb></app-breadcrumb>
-        
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             <app-productcard 
             *ngFor="let product of products" 
             [product]="product"
             >
             </app-productcard>
-
         </div>
       </div>
 
+      <!-- Mensaje de no productos -->
       <div class="text-gray-500 flex flex-col py-50 h-[80vh] justify-center items-center" *ngIf="products.length==0">
         <span class="">
             <svg class="svg-icon" 
@@ -75,34 +79,18 @@
         </span>
         <h4 class="text-md px-4 py-2">NO PRODUCTS</h4>
       </div>
-        <!-- <nav class="flex justify-center col-span-1 mt-12 mb-6" aria-label="products pages">
-          <ul class="inline-flex -space-x-px text-sm font-semibold">
-            <li>
-              <a href="#" class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
-            </li>
-            <li>
-              <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
-            </li>
-            <li>
-              <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
-            </li>
-            <li>
-              <a href="#" aria-current="page" class="flex items-center justify-center px-3 h-8 text-gray-200 border border-gray-700 bg-gray-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
-            </li>
-            <li>
-              <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">4</a>
-            </li>
-            <li>
-              <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">5</a>
-            </li>
-            <li>
-              <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
-            </li>
-          </ul>
-        </nav> -->
     </article>
+</section>
 
-    
+<!-- Estado de carga y error - Separado para manejar independientemente -->
+<app-skeleton *ngIf="!error && isLoading"></app-skeleton>
+
+<!-- Error message -->
+<section class="flex justify-center items-center h-[60vh]" *ngIf="error && isLoading">
+    <div class="text-red-500 flex flex-col justify-center items-center">
+      <i class="fa-solid fa-circle-exclamation text-6xl"></i>
+    <h4 class="text-md px-4 py-2">HTTP ERROR Occured</h4>
+  </div>
 </section>
 
 

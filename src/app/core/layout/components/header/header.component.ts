@@ -12,37 +12,30 @@ export class HeaderComponent implements OnInit {
   @ViewChild('carousel') carousel!: ElementRef;
   mobileMenuOpen = false;
   showAccountMenu = false;
-  activeDropdown: string | null = null;
+  activeDropdown: string | null = null; // Controla qué menú está abierto
   cart: any[] = [];
   isHeaderTopHidden = false;
-  userName: string | null = null; // Nombre del usuario
+  userName: string | null = null;
   private userSubscription: Subscription = new Subscription();
 
   constructor(private cartService: CartService, public authService: AuthService) {}
 
   ngOnInit(): void {
     this.cart = this.cartService.getCart;
-    this.checkUserStatus(); // Verificar estado del usuario al iniciar
-
-    this.userSubscription = this.authService.user$.subscribe(user => {
-      this.userName = user?.name || null; // Actualiza userName dinámicamente
-    });
-
     this.checkUserStatus();
+    this.userSubscription = this.authService.user$.subscribe(user => {
+      this.userName = user?.name || null;
+    });
   }
 
   ngOnDestroy(): void {
-    // Desuscribirse para evitar memory leaks
-    if (this.userSubscription) {
-      this.userSubscription.unsubscribe();
-    }
+    this.userSubscription.unsubscribe();
   }
 
-  // Verificar si hay un usuario autenticado y obtener su nombre
   checkUserStatus() {
     if (this.authService.isLoggedIn()) {
-      const user = this.authService.getUserData(); // Asume que tienes un método para obtener datos del usuario
-      this.userName = user?.name || 'Usuario'; // Ajusta según la estructura de tu usuario
+      const user = this.authService.getUserData();
+      this.userName = user?.name || 'Usuario';
     } else {
       this.userName = null;
     }
@@ -65,22 +58,43 @@ export class HeaderComponent implements OnInit {
     }
   }
 
+  // Alternar el menú al hacer clic
   toggleDropdown(category: string) {
     if (this.activeDropdown === category) {
-      this.activeDropdown = null;
+      this.activeDropdown = null; // Si ya está abierto, ciérralo
     } else {
-      this.activeDropdown = category;
+      this.activeDropdown = category; // Abre el menú seleccionado
       this.showAccountMenu = false;
-      if (window.innerWidth <= 765) {
+      if (window.innerWidth <= 768) {
         this.mobileMenuOpen = false;
       }
     }
   }
 
+  // Manejar hover en escritorio
+  onMouseEnter(category: string) {
+    if (window.innerWidth > 768) { // Solo en escritorio
+      if (this.activeDropdown !== null && this.activeDropdown !== category) {
+        this.activeDropdown = null; // Desactiva el menú activo por clic
+      }
+      // Opcional: Activar el nuevo menú al pasar el mouse
+      // this.activeDropdown = category;
+    }
+  }
+
+  // Cerrar dropdown si se hace clic fuera
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.group') && !target.closest('.dropdown-menu')) {
+      this.activeDropdown = null;
+    }
+  }
+
   logOut() {
     this.authService.logout();
-    this.userName = null; // Resetear el nombre al cerrar sesión
-    this.showAccountMenu = false; // Cerrar el menú al cerrar sesión
+    this.userName = null;
+    this.showAccountMenu = false;
   }
 
   scrollCarousel(direction: 'left' | 'right') {

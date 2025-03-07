@@ -96,7 +96,7 @@
 }
 
 /* Ajustes para pantallas móviles (max-width: 768px) */
-@media (max-width: 765px) {
+@media (max-width: 768px) {
 
   nav {
     position: relative;
@@ -147,12 +147,18 @@
     overflow-y: auto;
     z-index: 2000;
     border-radius: 0.5rem;
+    display: none;
+  }
+
+  .dropdown-menu.show {
+    display: block; /* Mostrar solo cuando tiene la clase .show */
   }
 
 }
 
 /* Ajustes para pantallas grandes (min-width: 769px) */
 @media (min-width: 769px) {
+
   ul {
     gap: 1.5rem;
   }
@@ -185,6 +191,16 @@
     left: 0;
     top: 100%;
     margin-top: 0.5rem;
+    display: none;
+  }
+
+  .dropdown-menu.show {
+    display: block; 
+  }
+
+  
+  .group:hover .dropdown-menu {
+    display: block;
   }
 }
 

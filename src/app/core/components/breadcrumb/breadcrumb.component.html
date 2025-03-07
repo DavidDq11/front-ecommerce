@@ -1,30 +1,56 @@
-<nav class="flex mb-4" aria-label="Breadcrumb">
-    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+<nav class="flex mb-6 px-4 py-2 bg-gradient-to-r from-purple-800 to-purple-600 text-white shadow-md rounded-lg" aria-label="Breadcrumb">
+  <ol class="inline-flex items-center space-x-2 md:space-x-4">
+    <!-- Inicio con ícono de casa -->
     <li class="inline-flex items-center">
-        <a href="#" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
-        <svg class="w-3 h-3 mr-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-            <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
+      <a href="#" class="inline-flex items-center text-sm font-medium text-yellow-300 hover:text-white transition-all duration-300 bg-white bg-opacity-10 rounded-md px-2 py-1 hover:bg-opacity-20">
+        <svg class="w-4 h-4 mr-2 md:w-5 md:h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+          <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
         </svg>
-        Home
-        </a>
+        Inicio
+      </a>
     </li>
-    <li *ngFor="let breadrumb of breadcrumbList">
-        <div class="flex items-center">
-        <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-        </svg>
-        <a [routerLink]="['/'+breadrumb.path]" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">
-            {{breadrumb.label}}
-        </a>
-        </div>
+    <!-- Elementos dinámicos del breadcrumb -->
+    <li *ngFor="let breadcrumb of breadcrumbList; let last = last" class="inline-flex items-center">
+      <!-- Ícono de separación (huella) -->
+      <i class="fa-solid fa-paw text-yellow-300 mx-2 text-xs md:text-sm"></i>
+      <a *ngIf="!last" [routerLink]="['/' + breadcrumb.path]" class="inline-flex items-center text-sm font-medium text-yellow-200 hover:text-white transition-all duration-300 bg-white bg-opacity-10 rounded-md px-2 py-1 hover:bg-opacity-20">
+        <!-- Ícono dinámico basado en la categoría -->
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('perro')" class="mr-1">
+          <i class="fa-solid fa-dog text-xs md:text-sm"></i>
+        </span>
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('gato')" class="mr-1">
+          <i class="fa-solid fa-cat text-xs md:text-sm"></i>
+        </span>
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('caballo')" class="mr-1">
+          <i class="fa-solid fa-horse text-xs md:text-sm"></i>
+        </span>
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('pajaro')" class="mr-1">
+          <i class="fa-solid fa-dove text-xs md:text-sm"></i>
+        </span>
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('vaca')" class="mr-1">
+          <i class="fa-solid fa-cow text-xs md:text-sm"></i>
+        </span>
+        {{ breadcrumb.label }}
+      </a>
+      <span *ngIf="last" class="inline-flex items-center text-sm font-semibold text-yellow-50">
+        <!-- Ícono dinámico para el último elemento -->
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('perro')" class="mr-1">
+          <i class="fa-solid fa-dog text-xs md:text-sm"></i>
+        </span>
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('gato')" class="mr-1">
+          <i class="fa-solid fa-cat text-xs md:text-sm"></i>
+        </span>
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('caballo')" class="mr-1">
+          <i class="fa-solid fa-horse text-xs md:text-sm"></i>
+        </span>
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('pajaro')" class="mr-1">
+          <i class="fa-solid fa-dove text-xs md:text-sm"></i>
+        </span>
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('vaca')" class="mr-1">
+          <i class="fa-solid fa-cow text-xs md:text-sm"></i>
+        </span>
+        {{ breadcrumb.label }}
+      </span>
     </li>
-    <!-- <li aria-current="page">
-        <div class="flex items-center">
-        <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-        </svg>
-        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">Flowbite</span>
-        </div>
-    </li> -->
-    </ol>
-  </nav>
+  </ol>
+</nav>
