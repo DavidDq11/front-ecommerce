@@ -72,11 +72,16 @@
           </p>
         </div>
 
-        <div class="flex">
-          <p class="mt-4 text-2xl font-bold">${{product.price | currency:'COP':'symbol':'1.0-0' }}</p>
-          <p class="ml-4 mt-4 text-2xl text-gray-600 line-through" *ngIf="product.prevprice!==0">${{product.prevprice | currency:'COP':'symbol':'1.0-0' }}</p>
-          <p class="ml-4 mt-5 text-xl text-red-700" *ngIf="product.prevprice!==0">-{{discount}}%</p> 
+        <div class="flex flex-wrap max-w-full items-center">
+          <p class="mt-2 text-xl font-bold">${{product.price | currency:'COP':'symbol':'1.0-0' }}</p>
+          <p class="ml-2 mt-2 text-lg text-gray-600 line-through" *ngIf="product.prevprice!==0">
+            ${{product.prevprice | currency:'COP':'symbol':'1.0-0' }}
+          </p>
+          <p class="ml-2 mt-2 text-md text-red-700 font-semibold" *ngIf="product.prevprice!==0">
+            -{{discount}}%
+          </p> 
         </div>
+        
 
         <div class="flex flex-wrap gap-2 mt-4">
           <button 
