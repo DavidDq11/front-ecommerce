@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {BehaviorSubject, Subject} from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { CategoryFilter, Product } from '../model';
 import { ProductService } from './product.service';
 
@@ -7,31 +7,34 @@ import { ProductService } from './product.service';
   providedIn: 'root'
 })
 export class FilterService {
-  public filteredProducts=new BehaviorSubject<Product[]>([]);
-  filterList=new BehaviorSubject<CategoryFilter[]>([]);
-  products!:Product[];
+  public filteredProducts = new BehaviorSubject<Product[]>([]);
+  filterList = new BehaviorSubject<CategoryFilter[]>([]);
+  products!: Product[];
   private allProducts: Product[] = [];
-  category='';
+  category = '';
   selectedCategoryId = new BehaviorSubject<number | null>(null);
-  cloneOfProducts!:Product[];
-  constructor(private productService:ProductService) { }
+  cloneOfProducts!: Product[];
 
-  filterProduct(products:Product[]){
+  constructor(private productService: ProductService) {}
+
+  // Emitir productos filtrados
+  filterProduct(products: Product[]) {
     return this.filteredProducts.next(products);
   }
 
+  // Establecer todos los productos iniciales
   setAllProducts(products: Product[]) {
     this.allProducts = products;
     this.cloneOfProducts = [...products];
-    this.filteredProducts.next(products); // Initially show all products
+    this.filteredProducts.next(products); // Mostrar todos inicialmente
   }
 
+  // Obtener productos filtrados por tipo
   getProductTypeFilter(type: string) {
     let prodTypes: CategoryFilter[] = [];
-    this.category = type;
-    this.productService.getRelated(type).subscribe(
+    this.category = type; // Podrías renombrar esta variable a 'type' para evitar confusión
+    this.productService.getByType(type).subscribe(
       (data: { products: Product[]; total: number; page: number; totalPages: number }) => {
-        // Extract the products array from the response
         this.products = data.products;
         this.cloneOfProducts = data.products;
         const types = [...new Set(this.cloneOfProducts.map(item => item.type))];
@@ -51,7 +54,6 @@ export class FilterService {
         });
         this.filterList.next(prodTypes);
 
-        // Aplicar el filtro inicial si hay una categoría seleccionada
         const selectedId = this.selectedCategoryId.getValue();
         if (selectedId) {
           const checkedItems = prodTypes.map(item => ({
@@ -60,44 +62,44 @@ export class FilterService {
           }));
           this.handleCatFilter(checkedItems);
         } else {
-          this.filterProduct(this.cloneOfProducts); // Si no hay selección, mostrar todos
+          this.filterProduct(this.cloneOfProducts);
         }
       },
       error => console.error('Error fetching product types:', error)
     );
   }
 
-  handlePriceFilter(min:number,max:number){
-    const products=this.cloneOfProducts.filter(item=>item.price>=min&&item.price<=max);
+  // Filtrar por precio
+  handlePriceFilter(min: number, max: number) {
+    const products = this.cloneOfProducts.filter(item => item.price >= min && item.price <= max);
     this.filterProduct(products);
   }
-  
+
+  // Filtrar por tipo (en el frontend)
   handleCatFilter(checkedItems: CategoryFilter[]): Product[] {
-    // Usar cloneOfProducts como base, que ya está inicializado en getProductTypeFilter
     let filteredProducts = [...this.cloneOfProducts];
     const checkedValues = checkedItems.filter(item => item.checked).map(item => item.value);
-  
-    // Aplicar el filtro solo si hay categorías marcadas
+
     if (checkedValues.length > 0) {
       filteredProducts = filteredProducts.filter(product => checkedValues.includes(product.type));
     }
-  
-    // Emitir los productos filtrados
+
     this.filterProduct(filteredProducts);
     return filteredProducts;
   }
 
-  handleRateFilter(rating:number):Product[]{
-    this.productService.getByCategory(this.category).subscribe(data=>this.products=data);
+  // Filtrar por calificación
+  handleRateFilter(rating: number): Product[] {
+    this.productService.getByCategory(this.category).subscribe(data => this.products = data); // Esto sigue usando category
     this.filterProduct(this.products);
-    this.filteredProducts.subscribe((data:Product[])=>{
-     this.products= data.filter(item=>rating<=Math.trunc(item.rating.rate));
-    })
+    this.filteredProducts.subscribe((data: Product[]) => {
+      this.products = data.filter(item => rating <= Math.trunc(item.rating.rate));
+    });
     return this.products;
   }
 
+  // Establecer categoría seleccionada
   setSelectedCategory(categoryId: number | null) {
     this.selectedCategoryId.next(categoryId);
   }
-
 }
