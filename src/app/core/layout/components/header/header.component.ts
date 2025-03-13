@@ -11,9 +11,11 @@ import { AuthService } from 'src/app/shared/services/auth/auth.service';
 export class HeaderComponent implements OnInit {
   mobileMenuOpen = false;
   showAccountMenu = false;
-  activeDropdown: string | null = null;
+  showSearch = false;
   cart: any[] = [];
   userName: string | null = null;
+  searchQuery: string = '';
+  searchSuggestions: string[] = [];
   private userSubscription: Subscription = new Subscription();
 
   constructor(private cartService: CartService, public authService: AuthService) {}
@@ -39,40 +41,65 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  toggleMobileMenu() {
+  toggleMobileMenu(event: Event) {
+    event.stopPropagation();
     this.mobileMenuOpen = !this.mobileMenuOpen;
     if (this.mobileMenuOpen) {
-      this.activeDropdown = null;
-    }
-    if (!this.mobileMenuOpen) {
       this.showAccountMenu = false;
+      this.showSearch = false;
     }
+    console.log('Mobile menu toggled:', this.mobileMenuOpen);
   }
 
-  toggleAccountMenu() {
+  toggleAccountMenu(event: Event) {
+    event.stopPropagation();
     this.showAccountMenu = !this.showAccountMenu;
-    if (this.showAccountMenu) {
-      this.activeDropdown = null;
+    if (this.mobileMenuOpen) {
     }
   }
 
-  toggleDropdown(category: string) {
-    if (this.activeDropdown === category) {
-      this.activeDropdown = null;
-    } else {
-      this.activeDropdown = category;
+  toggleSearch(event: Event) {
+    event.stopPropagation();
+    this.showSearch = !this.showSearch;
+    if (this.showSearch) {
+      this.mobileMenuOpen = false;
       this.showAccountMenu = false;
-      if (window.innerWidth <= 768) {
-        this.mobileMenuOpen = false;
-      }
     }
+    console.log('Search toggled:', this.showSearch);
+  }
+
+  onSearchInput(event: Event) {
+    const input = (event.target as HTMLInputElement).value;
+    this.searchQuery = input;
+    if (input.length > 2) {
+      this.searchSuggestions = [
+        'Lámparas únicas de diseño',
+        'Utensilios exclusivos de cocina',
+        'Organizadores innovadores',
+        'Dispositivos inteligentes únicos'
+      ].filter(suggestion => suggestion.toLowerCase().includes(input.toLowerCase()));
+    } else {
+      this.searchSuggestions = [];
+    }
+  }
+
+  trackCTAClick() {
+    console.log('CTA clicked: ¡Explora lo Único – Compra Ahora!');
+    // Aquí puedes integrar Google Analytics o cualquier herramienta de seguimiento
   }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
     const target = event.target as HTMLElement;
-    if (!target.closest('.group') && !target.closest('.dropdown-menu')) {
-      this.activeDropdown = null;
+    if (!target.closest('.account-menu-container') && !target.closest('.account-menu')) {
+      this.showAccountMenu = false;
+    }
+    if (!target.closest('.branding') && !target.closest('.mobile-menu')) {
+      this.mobileMenuOpen = false;
+    }
+    if (!target.closest('.search-bar') && !target.closest('.search-suggestions')) {
+      this.searchSuggestions = [];
+      this.showSearch = false;
     }
   }
 

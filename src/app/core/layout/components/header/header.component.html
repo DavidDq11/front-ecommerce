@@ -1,119 +1,108 @@
 <header class="bg-gradient-to-r from-blue-900 to-purple-900 text-white relative z-50 overflow-visible">
   <!-- Barra de navegación principal (fija) -->
   <div class="header-fixed sticky top-0 z-40 bg-gradient-to-r from-blue-900 to-purple-900">
-    <div class="flex flex-col sm:flex-row items-center justify-between py-3 px-4 sm:py-4 sm:px-6">
+    <div class="flex flex-col sm:flex-row items-center justify-between py-2 px-4 sm:py-4 sm:px-6 gap-2 sm:gap-4">
       <div class="flex items-center justify-between w-full sm:w-auto branding">
-        <!-- Logo con efecto -->
+        <!-- Logo con tagline y corona de exclusividad -->
         <div class="flex flex-col items-center">
           <a routerLink="/" class="flex items-center cursor-pointer relative group">
-            <div class="relative w-12 h-12 sm:w-16 sm:h-16 md:w-24 md:h-24 transition-transform duration-300 group-hover:scale-110">
+            <div class="relative w-10 h-10 sm:w-16 sm:h-16 md:w-24 md:h-24 transition-transform duration-300 group-hover:scale-110">
               <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-500 rounded-full opacity-0 group-hover:opacity-70 blur-md -z-10 animate-pulse"></div>
               <div class="w-full h-full bg-gradient-to-br from-blue-900 via-indigo-800 to-blue-900 rounded-full border-2 border-yellow-400 flex items-center justify-center overflow-hidden shadow-sm">
-                <img src="assets/images/logo.png" alt="Domux" class="w-8 h-8 sm:w-10 sm:h-10 md:w-20 md:h-20 object-contain z-10" />
+                <img src="assets/images/logo.png" alt="Domux" class="w-6 h-6 sm:w-10 sm:h-10 md:w-20 md:h-20 object-contain z-10" />
               </div>
-              <div class="absolute -bottom-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 bg-yellow-400 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <div class="absolute -bottom-1 -right-1 w-4 h-4 sm:w-6 sm:h-6 md:w-8 md:h-8 bg-yellow-400 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <i class="fa-solid fa-home text-blue-900 text-xs sm:text-sm"></i>
               </div>
-              <div class="absolute -top-1 -left-1 w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 bg-yellow-400 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity delay-100">
+              <div class="absolute -top-1 -left-1 w-4 h-4 sm:w-6 sm:h-6 md:w-8 md:h-8 bg-yellow-400 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity delay-100">
                 <i class="fa-solid fa-lightbulb text-blue-900 text-xs sm:text-sm"></i>
+              </div>
+              <div class="absolute -top-1 -right-1 w-4 h-4 sm:w-6 sm:h-6 md:w-8 md:h-8 bg-yellow-400 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity delay-200">
+                <i class="fa-solid fa-crown text-blue-900 text-xs sm:text-sm"></i>
               </div>
             </div>
           </a>
-          <!-- Prueba social -->
-          <span class="text-yellow-300 text-xs sm:text-sm font-medium mt-2">¡Envío gratis en tu primera compra!</span>
-        </div>
-
-        <!-- Categorías rápidas y CTA (visibles en tablets y escritorios) -->
-        <div class="hidden sm:flex flex-col items-center gap-3">
-          <div class="quick-categories flex gap-4">
-            <a routerLink="/categories/decoracion" class="flex flex-col items-center text-white hover:text-yellow-300 transition-colors">
-              <i class="fa-solid fa-paint-roller text-xl mb-1"></i>
-              <span class="text-sm">Decoración</span>
-            </a>
-            <a routerLink="/categories/cocina" class="flex flex-col items-center text-white hover:text-yellow-300 transition-colors">
-              <i class="fa-solid fa-blender text-xl mb-1"></i>
-              <span class="text-sm">Cocina</span>
-            </a>
-            <a routerLink="/categories/organizacion" class="flex flex-col items-center text-white hover:text-yellow-300 transition-colors">
-              <i class="fa-solid fa-boxes-stacked text-xl mb-1"></i>
-              <span class="text-sm">Organización</span>
-            </a>
-            <a routerLink="/categories/hogar-inteligente" class="flex flex-col items-center text-white hover:text-yellow-300 transition-colors">
-              <i class="fa-solid fa-lightbulb text-xl mb-1"></i>
-              <span class="text-sm">Hogar Inteligente</span>
-            </a>
-          </div>
-          <a routerLink="/shop" class="cta-button">¡Compra Ahora!</a>
+          <span class="text-xs sm:text-sm text-yellow-300 mt-1 font-semibold">Descubre Productos Únicos y Llamativos</span>
         </div>
 
         <!-- Botón de menú hamburguesa para móviles -->
-        <button class="sm:hidden text-yellow-300 focus:outline-none p-2 rounded-full bg-blue-700 bg-opacity-80 hover:bg-yellow-400 hover:text-blue-900 transition-colors" (click)="toggleMobileMenu()">
-          <i class="fa-solid fa-bars text-xl"></i>
-        </button>
-      </div>
-
-      <!-- Menú móvil -->
-      <div class="sm:hidden w-full" [ngClass]="{'hidden': !mobileMenuOpen}">
-        <div class="flex flex-col items-center gap-4 py-4 bg-blue-800">
-          <div class="relative w-11/12">
-            <div class="flex w-full border-2 border-yellow-400 bg-white rounded-full overflow-hidden shadow-sm">
-              <span class="flex items-center px-3 text-blue-900">
-                <i class="fa-solid fa-search text-lg"></i>
-              </span>
-              <input type="search" placeholder="¿Qué necesitas para tu hogar?" class="w-full py-3 px-2 text-blue-900 outline-none text-sm" />
-            </div>
-          </div>
-          <div class="flex flex-col items-center gap-4 w-full">
-            <div class="relative flex items-center cursor-pointer group hover:text-yellow-300" (click)="toggleAccountMenu()">
-              <span class="flex items-center gap-2">
-                <span class="text-sm">{{ userName ? userName : 'Ingresar' }}</span>
-              </span>
-              <i class="fa-solid fa-chevron-down ml-2 text-xs"></i>
-              <div class="account-menu" [ngClass]="{'show': showAccountMenu}">
-                <ul class="py-2 bg-white rounded-md shadow-sm w-11/12">
-                  <ng-container *ngIf="!userName; else userMenu">
-                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                      <a routerLink="/register" class="text-blue-900 hover:text-blue-600 text-sm">Registrarse</a>
-                    </li>
-                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                      <a routerLink="/login" class="text-blue-900 hover:text-blue-600 text-sm">Iniciar sesión</a>
-                    </li>
-                  </ng-container>
-                  <ng-template #userMenu>
-                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                      <a routerLink="/profile" class="text-blue-900 hover:text-blue-600 text-sm">Mi perfil</a>
-                    </li>
-                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                      <a (click)="logOut()" class="text-blue-900 hover:text-blue-600 text-sm">Cerrar sesión</a>
-                    </li>
-                  </ng-template>
-                </ul>
-              </div>
-            </div>
-            <div class="relative">
-              <a class="p-3 bg-gradient-to-br from-blue-700 to-blue-900 rounded-full shadow-sm hover:shadow-yellow-400/30 transition-all" [routerLink]="['/shopping-cart']">
-                <i class="fa-solid fa-shopping-bag text-yellow-300 text-lg"></i>
-              </a>
-              <span *ngIf="cart && cart.length > 0" class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-blue-900 bg-yellow-400 rounded-full -top-1 -right-1">
-                {{cart.length}}
-              </span>
-            </div>
-          </div>
+        <div class="flex items-center gap-3 sm:hidden">
+          <!-- Ícono de búsqueda colapsado -->
+          <button class="text-yellow-300 focus:outline-none p-2 rounded-full bg-blue-700 bg-opacity-80 hover:bg-yellow-400 hover:text-blue-900 transition-colors" (click)="toggleSearch($event)">
+            <i class="fa-solid fa-search text-lg"></i>
+          </button>
+          <!-- Ícono de menú hamburguesa -->
+          <button class="text-yellow-300 focus:outline-none p-2 rounded-full bg-blue-700 bg-opacity-80 hover:bg-yellow-400 hover:text-blue-900 transition-colors" (click)="toggleMobileMenu($event)">
+            <i class="fa-solid fa-bars text-lg"></i>
+          </button>
         </div>
       </div>
 
       <!-- Navegación para escritorio y tablets -->
       <div class="hidden sm:flex items-center gap-4">
-        <div class="relative w-64">
+        <!-- Barra de búsqueda con estrella -->
+        <div class="relative w-64 search-bar">
           <div class="flex w-full border-2 border-yellow-400 bg-white rounded-full overflow-hidden shadow-md">
             <span class="flex items-center px-3 text-blue-900">
               <i class="fa-solid fa-search text-lg"></i>
+              <i class="fa-solid fa-star text-yellow-400 text-sm ml-1"></i>
             </span>
-            <input type="search" placeholder="¿Qué necesitas para tu hogar?" class="w-full py-2 px-2 text-blue-900 outline-none text-sm" />
+            <input type="search" placeholder="Busca los más únicos para tu hogar" class="w-full py-2 px-2 text-blue-900 outline-none text-sm" (input)="onSearchInput($event)" />
+          </div>
+          <div *ngIf="searchSuggestions.length > 0" class="absolute z-50 w-full bg-white border border-yellow-400 rounded-md mt-1 shadow-lg search-suggestions">
+            <ul class="py-1">
+              <li *ngFor="let suggestion of searchSuggestions" class="px-4 py-2 text-sm text-blue-900 hover:bg-gray-100 cursor-pointer">
+                {{suggestion}}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Categorías rápidas con exclusividad -->
+        <div class="quick-categories flex gap-4">
+          <a routerLink="/categories/decoracion" class="flex flex-col items-center text-white hover:text-yellow-300 transition-colors">
+            <i class="fa-solid fa-paint-roller text-xl mb-1"></i>
+            <span class="text-sm">Transforma tu Espacio</span>
+            <span class="text-xs text-yellow-300">Exclusivo</span>
+          </a>
+          <a routerLink="/categories/cocina" class="flex flex-col items-center text-white hover:text-yellow-300 transition-colors">
+            <i class="fa-solid fa-blender text-xl mb-1"></i>
+            <span class="text-sm">Cocina como Chef</span>
+            <span class="text-xs text-yellow-300">Exclusivo</span>
+          </a>
+          <a routerLink="/categories/organizacion" class="flex flex-col items-center text-white hover:text-yellow-300 transition-colors">
+            <i class="fa-solid fa-boxes-stacked text-xl mb-1"></i>
+            <span class="text-sm">Organiza Fácil</span>
+            <span class="text-xs text-yellow-300">Exclusivo</span>
+          </a>
+          <a routerLink="/categories/hogar-inteligente" class="flex flex-col items-center text-white hover:text-yellow-300 transition-colors">
+            <i class="fa-solid fa-lightbulb text-xl mb-1"></i>
+            <span class="text-sm">Vive más Cómodo</span>
+            <span class="text-xs text-yellow-300">Exclusivo</span>
+          </a>
+          <a routerLink="/categories/limpieza" class="flex flex-col items-center text-white hover:text-yellow-300 transition-colors">
+            <i class="fa-solid fa-broom text-xl mb-1"></i>
+            <span class="text-sm">Limpieza Rápida</span>
+            <span class="text-xs text-yellow-300">Exclusivo</span>
+          </a>
+        </div>
+        <!-- CTA mejorado -->
+        <a routerLink="/shop" class="cta-button" (click)="trackCTAClick()">¡Explora lo Único – Compra Ahora!</a>
+      </div>
+
+      <!-- Botones de confianza y cuenta -->
+      <div class="hidden sm:flex items-center gap-4">
+        <div class="flex flex-col sm:flex-row items-center gap-2">
+          <div class="flex items-center px-2 py-1 sm:px-3 sm:py-1.5 rounded-full bg-green-600 shadow-sm">
+            <i class="fa-solid fa-lock mr-1 sm:mr-2 text-yellow-300 text-xs sm:text-sm"></i>
+            <span class="text-white text-xs sm:text-sm font-medium">Pago Seguro</span>
+          </div>
+          <div class="flex items-center px-2 py-1 sm:px-3 sm:py-1.5 rounded-full bg-yellow-500 shadow-sm">
+            <i class="fa-solid fa-truck mr-1 sm:mr-2 text-blue-900 text-xs sm:text-sm"></i>
+            <span class="text-blue-900 text-xs sm:text-sm font-medium">Entrega Rápida</span>
           </div>
         </div>
         <div class="flex items-center gap-4">
-          <div class="relative flex items-center cursor-pointer group hover:text-yellow-300 transition-colors" (click)="toggleAccountMenu()">
+          <div class="relative flex items-center cursor-pointer group hover:text-yellow-300 transition-colors" (click)="toggleAccountMenu($event)">
             <span class="flex items-center gap-2 bg-yellow-400 bg-opacity-20 rounded-full px-3 py-1.5">
               <span class="text-sm font-medium">{{ userName ? userName : 'Ingresar' }}</span>
             </span>
@@ -143,116 +132,110 @@
             <a class="bg-gradient-to-br from-blue-700 to-blue-900 p-3 rounded-full shadow-md hover:shadow-yellow-400/30 transition-all" [routerLink]="['/shopping-cart']">
               <i class="fa-solid fa-shopping-bag text-yellow-300 text-lg"></i>
             </a>
-            <span *ngIf="cart && cart.length > 0" class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-blue-900 bg-yellow-400 rounded-full -top-1 -right-1">
-              {{cart.length}}
+            <span class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-blue-900 bg-yellow-400 rounded-full -top-1 -right-1">
+              {{cart.length > 0 ? cart.length : 0}}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Barra de búsqueda colapsada para móvil -->
+      <div *ngIf="showSearch" class="sm:hidden w-full mt-2 search-bar">
+        <div class="relative w-full">
+          <div class="flex w-full border-2 border-yellow-400 bg-white rounded-full overflow-hidden shadow-sm">
+            <span class="flex items-center px-3 text-blue-900">
+              <i class="fa-solid fa-search text-lg"></i>
+              <i class="fa-solid fa-star text-yellow-400 text-sm ml-1"></i>
+            </span>
+            <input type="search" placeholder="Busca los más únicos para tu hogar" class="w-full py-2 px-2 text-blue-900 outline-none text-sm" (input)="onSearchInput($event)" />
+          </div>
+          <div *ngIf="searchSuggestions.length > 0" class="absolute z-50 w-full bg-white border border-yellow-400 rounded-md mt-1 shadow-lg search-suggestions">
+            <ul class="py-1">
+              <li *ngFor="let suggestion of searchSuggestions" class="px-4 py-2 text-sm text-blue-900 hover:bg-gray-100 cursor-pointer">
+                {{suggestion}}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Menú móvil -->
+      <div class="sm:hidden w-full mobile-menu" [ngClass]="{'hidden': !mobileMenuOpen}">
+        <div class="flex flex-col items-center gap-3 py-3 bg-blue-800">
+          <div class="quick-categories grid grid-cols-2 gap-2 w-full px-4">
+            <a routerLink="/categories/decoracion" class="flex items-center justify-center text-white hover:text-yellow-300 transition-colors bg-blue-700 bg-opacity-50 rounded-md py-2">
+              <i class="fa-solid fa-paint-roller text-lg mr-2"></i>
+              <span class="text-sm">Transforma tu Espacio</span>
+              <span class="text-xs text-yellow-300 ml-1">Exclusivo</span>
+            </a>
+            <a routerLink="/categories/cocina" class="flex items-center justify-center text-white hover:text-yellow-300 transition-colors bg-blue-700 bg-opacity-50 rounded-md py-2">
+              <i class="fa-solid fa-blender text-lg mr-2"></i>
+              <span class="text-sm">Cocina como Chef</span>
+              <span class="text-xs text-yellow-300 ml-1">Exclusivo</span>
+            </a>
+            <a routerLink="/categories/organizacion" class="flex items-center justify-center text-white hover:text-yellow-300 transition-colors bg-blue-700 bg-opacity-50 rounded-md py-2">
+              <i class="fa-solid fa-boxes-stacked text-lg mr-2"></i>
+              <span class="text-sm">Organiza Fácil</span>
+              <span class="text-xs text-yellow-300 ml-1">Exclusivo</span>
+            </a>
+            <a routerLink="/categories/hogar-inteligente" class="flex items-center justify-center text-white hover:text-yellow-300 transition-colors bg-blue-700 bg-opacity-50 rounded-md py-2">
+              <i class="fa-solid fa-lightbulb text-lg mr-2"></i>
+              <span class="text-sm">Vive más Cómodo</span>
+              <span class="text-xs text-yellow-300 ml-1">Exclusivo</span>
+            </a>
+            <a routerLink="/categories/limpieza" class="flex items-center justify-center text-white hover:text-yellow-300 transition-colors bg-blue-700 bg-opacity-50 rounded-md py-2">
+              <i class="fa-solid fa-broom text-lg mr-2"></i>
+              <span class="text-sm">Limpieza Rápida</span>
+              <span class="text-xs text-yellow-300 ml-1">Exclusivo</span>
+            </a>
+          </div>
+          <a routerLink="/shop" class="cta-button w-11/12 text-center py-3 text-lg" (click)="trackCTAClick()">¡Explora lo Único – Compra Ahora!</a>
+          <div class="flex items-center gap-2">
+            <div class="flex items-center px-2 py-1 rounded-full bg-green-600 shadow-sm">
+              <i class="fa-solid fa-lock mr-1 text-yellow-300 text-xs"></i>
+              <span class="text-white text-xs font-medium">Pago Seguro</span>
+            </div>
+            <div class="flex items-center px-2 py-1 rounded-full bg-yellow-500 shadow-sm">
+              <i class="fa-solid fa-truck mr-1 text-blue-900 text-xs"></i>
+              <span class="text-blue-900 text-xs font-medium">Entrega Rápida</span>
+            </div>
+          </div>
+          <div class="relative flex items-center cursor-pointer group hover:text-yellow-300 account-menu-trigger" (click)="toggleAccountMenu($event)">
+            <span class="flex items-center gap-2">
+              <span class="text-sm">{{ userName ? userName : 'Ingresar' }}</span>
+            </span>
+            <i class="fa-solid fa-chevron-down ml-2 text-xs"></i>
+            <div class="account-menu absolute top-full left-0 w-11/12 bg-white shadow-md rounded-md z-50" [ngClass]="{'show': showAccountMenu}">
+              <ul class="py-2">
+                <ng-container *ngIf="!userName; else userMenu">
+                  <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                    <a routerLink="/register" class="text-blue-900 hover:text-blue-600 text-sm">Registrarse</a>
+                  </li>
+                  <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                    <a routerLink="/login" class="text-blue-900 hover:text-blue-600 text-sm">Iniciar sesión</a>
+                  </li>
+                </ng-container>
+                <ng-template #userMenu>
+                  <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                    <a routerLink="/profile" class="text-blue-900 hover:text-blue-600 text-sm">Mi perfil</a>
+                  </li>
+                  <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                    <a (click)="logOut()" class="text-blue-900 hover:text-blue-600 text-sm">Cerrar sesión</a>
+                  </li>
+                </ng-template>
+              </ul>
+            </div>
+          </div>
+          <div class="relative">
+            <a class="p-3 bg-gradient-to-br from-blue-700 to-blue-900 rounded-full shadow-sm hover:shadow-yellow-400/30 transition-all" [routerLink]="['/shopping-cart']">
+              <i class="fa-solid fa-shopping-bag text-yellow-300 text-lg"></i>
+            </a>
+            <span class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-blue-900 bg-yellow-400 rounded-full -top-1 -right-1">
+              {{cart.length > 0 ? cart.length : 0}}
             </span>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Navegación de categorías -->
-    <nav class="bg-white text-blue-900 py-3 px-4 shadow-md">
-      <ul class="flex flex-row justify-start sm:justify-center items-center gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible whitespace-nowrap">
-        <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('decoracion')" [ngClass]="{'bg-indigo-100 font-bold': activeDropdown === 'decoracion'}">
-          <i class="fa-solid fa-paint-roller text-blue-900 w-6 h-6 mr-2"></i>
-          <a class="group-hover:text-blue-600 transition-colors cursor-pointer flex items-center gap-1 text-sm">
-            Decoración
-            <i class="fa-solid fa-chevron-down ml-1 text-xs transform transition-transform duration-300 group-hover:rotate-180"></i>
-          </a>
-          <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'decoracion'}">
-            <div class="dropdown-content">
-              <ul class="py-2">
-                <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  <a routerLink="/categories/decoracion/muebles" class="text-blue-900 hover:text-blue-600 text-sm">Muebles</a>
-                </li>
-                <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  <a routerLink="/categories/decoracion/textiles" class="text-blue-900 hover:text-blue-600 text-sm">Textiles</a>
-                </li>
-                <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  <a routerLink="/categories/decoracion/accesorios" class="text-blue-900 hover:text-blue-600 text-sm">Accesorios</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </li>
-        <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('cocina')" [ngClass]="{'bg-indigo-100 font-bold': activeDropdown === 'cocina'}">
-          <i class="fa-solid fa-blender text-blue-900 w-6 h-6 mr-2"></i>
-          <a class="group-hover:text-blue-600 transition-colors cursor-pointer flex items-center gap-1 text-sm">
-            Cocina
-            <i class="fa-solid fa-chevron-down ml-1 text-xs transform transition-transform duration-300 group-hover:rotate-180"></i>
-          </a>
-          <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'cocina'}">
-            <div class="dropdown-content">
-              <ul class="py-2">
-                <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  <a routerLink="/categories/cocina/utensilios" class="text-blue-900 hover:text-blue-600 text-sm">Utensilios</a>
-                </li>
-                <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  <a routerLink="/categories/cocina/electrodomesticos" class="text-blue-900 hover:text-blue-600 text-sm">Electrodomésticos</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </li>
-        <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('organizacion')" [ngClass]="{'bg-indigo-100 font-bold': activeDropdown === 'organizacion'}">
-          <i class="fa-solid fa-boxes-stacked text-blue-900 w-6 h-6 mr-2"></i>
-          <a class="group-hover:text-blue-600 transition-colors cursor-pointer flex items-center gap-1 text-sm">
-            Organización
-            <i class="fa-solid fa-chevron-down ml-1 text-xs transform transition-transform duration-300 group-hover:rotate-180"></i>
-          </a>
-          <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'organizacion'}">
-            <div class="dropdown-content">
-              <ul class="py-2">
-                <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  <a routerLink="/categories/organizacion/almacenamiento" class="text-blue-900 hover:text-blue-600 text-sm">Almacenamiento</a>
-                </li>
-                <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  <a routerLink="/categories/organizacion/cajas" class="text-blue-900 hover:text-blue-600 text-sm">Cajas</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </li>
-        <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('hogar-inteligente')" [ngClass]="{'bg-indigo-100 font-bold': activeDropdown === 'hogar-inteligente'}">
-          <i class="fa-solid fa-lightbulb text-blue-900 w-6 h-6 mr-2"></i>
-          <a class="group-hover:text-blue-600 transition-colors cursor-pointer flex items-center gap-1 text-sm">
-            Hogar Inteligente
-            <i class="fa-solid fa-chevron-down ml-1 text-xs transform transition-transform duration-300 group-hover:rotate-180"></i>
-          </a>
-          <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'hogar-inteligente'}">
-            <div class="dropdown-content">
-              <ul class="py-2">
-                <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  <a routerLink="/categories/hogar-inteligente/iluminacion" class="text-blue-900 hover:text-blue-600 text-sm">Iluminación</a>
-                </li>
-                <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  <a routerLink="/categories/hogar-inteligente/dispositivos" class="text-blue-900 hover:text-blue-600 text-sm">Dispositivos</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </li>
-        <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('limpieza')" [ngClass]="{'bg-indigo-100 font-bold': activeDropdown === 'limpieza'}">
-          <i class="fa-solid fa-broom text-blue-900 w-6 h-6 mr-2"></i>
-          <a class="group-hover:text-blue-600 transition-colors cursor-pointer flex items-center gap-1 text-sm">
-            Limpieza
-            <i class="fa-solid fa-chevron-down ml-1 text-xs transform transition-transform duration-300 group-hover:rotate-180"></i>
-          </a>
-          <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'limpieza'}">
-            <div class="dropdown-content">
-              <ul class="py-2">
-                <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  <a routerLink="/categories/limpieza/productos" class="text-blue-900 hover:text-blue-600 text-sm">Productos</a>
-                </li>
-                <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  <a routerLink="/categories/limpieza/herramientas" class="text-blue-900 hover:text-blue-600 text-sm">Herramientas</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </li>
-      </ul>
-    </nav>
   </div>
 </header>
