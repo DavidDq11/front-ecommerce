@@ -1,4 +1,4 @@
-<nav class="flex mb-6 px-4 py-2 bg-gradient-to-r from-purple-800 to-purple-600 text-white shadow-md rounded-lg" aria-label="Breadcrumb">
+<nav class="flex mb-6 px-4 py-2 bg-gradient-to-r from-blue-800 to-blue-600 text-white shadow-md rounded-lg" aria-label="Breadcrumb">
   <ol class="inline-flex items-center space-x-2 md:space-x-4">
     <!-- Inicio con ícono de casa -->
     <li class="inline-flex items-center">
@@ -9,45 +9,48 @@
         Inicio
       </a>
     </li>
+
     <!-- Elementos dinámicos del breadcrumb -->
     <li *ngFor="let breadcrumb of breadcrumbList; let last = last" class="inline-flex items-center">
-      <!-- Ícono de separación (huella) -->
-      <i class="fa-solid fa-paw text-yellow-300 mx-2 text-xs md:text-sm"></i>
+      <!-- Separador -->
+      <i class="fa-solid fa-arrow-right text-yellow-300 mx-2 text-xs md:text-sm"></i>
+      
       <a *ngIf="!last" [routerLink]="['/' + breadcrumb.path]" class="inline-flex items-center text-sm font-medium text-yellow-200 hover:text-white transition-all duration-300 bg-white bg-opacity-10 rounded-md px-2 py-1 hover:bg-opacity-20">
-        <!-- Ícono dinámico basado en la categoría -->
-        <span *ngIf="breadcrumb.label.toLowerCase().includes('perro')" class="mr-1">
-          <i class="fa-solid fa-dog text-xs md:text-sm"></i>
+        <!-- Ícono según la categoría -->
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('decoracion')" class="mr-1">
+          <i class="fa-solid fa-paint-roller text-xs md:text-sm"></i>
         </span>
-        <span *ngIf="breadcrumb.label.toLowerCase().includes('gato')" class="mr-1">
-          <i class="fa-solid fa-cat text-xs md:text-sm"></i>
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('cocina')" class="mr-1">
+          <i class="fa-solid fa-blender text-xs md:text-sm"></i>
         </span>
-        <span *ngIf="breadcrumb.label.toLowerCase().includes('caballo')" class="mr-1">
-          <i class="fa-solid fa-horse text-xs md:text-sm"></i>
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('organizacion')" class="mr-1">
+          <i class="fa-solid fa-boxes-stacked text-xs md:text-sm"></i>
         </span>
-        <span *ngIf="breadcrumb.label.toLowerCase().includes('pajaro')" class="mr-1">
-          <i class="fa-solid fa-dove text-xs md:text-sm"></i>
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('hogar inteligente')" class="mr-1">
+          <i class="fa-solid fa-lightbulb text-xs md:text-sm"></i>
         </span>
-        <span *ngIf="breadcrumb.label.toLowerCase().includes('vaca')" class="mr-1">
-          <i class="fa-solid fa-cow text-xs md:text-sm"></i>
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('limpieza')" class="mr-1">
+          <i class="fa-solid fa-broom text-xs md:text-sm"></i>
         </span>
         {{ breadcrumb.label }}
       </a>
+
+      <!-- Último elemento (sin enlace) -->
       <span *ngIf="last" class="inline-flex items-center text-sm font-semibold text-yellow-50">
-        <!-- Ícono dinámico para el último elemento -->
-        <span *ngIf="breadcrumb.label.toLowerCase().includes('perro')" class="mr-1">
-          <i class="fa-solid fa-dog text-xs md:text-sm"></i>
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('decoracion')" class="mr-1">
+          <i class="fa-solid fa-paint-roller text-xs md:text-sm"></i>
         </span>
-        <span *ngIf="breadcrumb.label.toLowerCase().includes('gato')" class="mr-1">
-          <i class="fa-solid fa-cat text-xs md:text-sm"></i>
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('cocina')" class="mr-1">
+          <i class="fa-solid fa-blender text-xs md:text-sm"></i>
         </span>
-        <span *ngIf="breadcrumb.label.toLowerCase().includes('caballo')" class="mr-1">
-          <i class="fa-solid fa-horse text-xs md:text-sm"></i>
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('organizacion')" class="mr-1">
+          <i class="fa-solid fa-boxes-stacked text-xs md:text-sm"></i>
         </span>
-        <span *ngIf="breadcrumb.label.toLowerCase().includes('pajaro')" class="mr-1">
-          <i class="fa-solid fa-dove text-xs md:text-sm"></i>
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('hogar inteligente')" class="mr-1">
+          <i class="fa-solid fa-lightbulb text-xs md:text-sm"></i>
         </span>
-        <span *ngIf="breadcrumb.label.toLowerCase().includes('vaca')" class="mr-1">
-          <i class="fa-solid fa-cow text-xs md:text-sm"></i>
+        <span *ngIf="breadcrumb.label.toLowerCase().includes('limpieza')" class="mr-1">
+          <i class="fa-solid fa-broom text-xs md:text-sm"></i>
         </span>
         {{ breadcrumb.label }}
       </span>
