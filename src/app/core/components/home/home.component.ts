@@ -20,45 +20,32 @@ export class HomeComponent implements OnInit {
   ];
 
   categories = [
-    { id: 1, name: 'Alimentos', icon: 'fa-bone', path: '/categories/Food' },
-    { id: 2, name: 'Juguetes', icon: 'fa-dice', path: '/categories/Toys' },
-    { id: 3, name: 'Cuidado', icon: 'fa-paw', path: '/categories/Hygiene' },
-    { id: 4, name: 'Accesorios', icon: 'fa-gem', path: '/categories/Accessories' },
-    { id: 5, name: 'Snacks', icon: 'fa-cookie-bite', path: '/categories/Snacks' },
-    { id: 6, name: 'Hábitats', icon: 'fa-home', path: '/categories/Habitats' },
-    { id: 7, name: 'Equipos', icon: 'fa-tools', path: '/categories/Equipment' },
-    { id: 8, name: 'Suplementos', icon: 'fa-pills', path: '/categories/Supplements' }
+    { id: 1, name: 'Decoración', icon: 'fa-paint-roller', path: '/categories/decoracion' },
+    { id: 2, name: 'Cocina', icon: 'fa-blender', path: '/categories/cocina' },
+    { id: 3, name: 'Organización', icon: 'fa-boxes-stacked', path: '/categories/organizacion' },
+    { id: 4, name: 'Hogar Inteligente', icon: 'fa-lightbulb', path: '/categories/hogar-inteligente' },
+    { id: 5, name: 'Limpieza', icon: 'fa-broom', path: '/categories/limpieza' },
+    { id: 6, name: 'Muebles', icon: 'fa-couch', path: '/categories/muebles' },
+    { id: 7, name: 'Jardín', icon: 'fa-leaf', path: '/categories/jardin' },
+    { id: 8, name: 'Iluminación', icon: 'fa-lamp', path: '/categories/iluminacion' }
   ];
 
   selectedCategoryId: number | null = null;
 
-  selectCategory(categoryId: number) {
-    this.selectedCategoryId = categoryId;
-    this._filterService.setSelectedCategory(categoryId);
-    const categoryMap: Record<number, string> = {
-      1: 'Alimento', 2: 'Juguete', 3: 'Higiene', 4: 'Accesorio',
-      5: 'Snack', 6: 'Habitat', 7: 'Equipo', 8: 'Suplemento'
-    };
-    const type = categoryMap[categoryId];
-    if (type) {
-      this._filterService.getProductTypeFilter(type);
-    }
-  }
-
   newsItems = [
     {
-      title: 'Descubren nueva dieta para perros con alta energía',
-      summary: 'Expertos en nutrición animal han desarrollado una dieta especial que mejora la vitalidad de los perros activos. ¡Ideal para combinar con nuestros nuevos snacks!',
+      title: 'Nuevas tendencias en decoración minimalista',
+      summary: 'Descubre cómo transformar tu hogar con nuestras nuevas piezas de decoración exclusivas.',
       link: '#'
     },
     {
-      title: 'Tips de cuidado para el invierno de tus mascotas',
-      summary: 'Aprende cómo proteger a tu mascota del frío con accesorios y cuidados esenciales que ofrecemos en nuestra tienda.',
+      title: 'Guía para un hogar inteligente este 2025',
+      summary: 'Aprovecha nuestros productos de hogar inteligente para modernizar tu espacio.',
       link: '#'
     },
     {
-      title: 'Evento de adopción de mascotas este fin de semana',
-      summary: 'Únete a nosotros en un evento local para encontrar a tu nuevo mejor amigo. ¡Trae a tu mascota para una sesión gratis de cuidado!',
+      title: 'Lanzamiento de herramientas de limpieza ecológicas',
+      summary: 'Conoce nuestra nueva línea de productos sostenibles para mantener tu casa impecable.',
       link: '#'
     }
   ];
@@ -68,6 +55,19 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.newArrivalProducts();
     this.validateImages();
+  }
+
+  selectCategory(categoryId: number) {
+    this.selectedCategoryId = categoryId;
+    this._filterService.setSelectedCategory(categoryId);
+    const categoryMap: Record<number, string> = {
+      1: 'Decoracion', 2: 'Cocina', 3: 'Organizacion', 4: 'HogarInteligente',
+      5: 'Limpieza', 6: 'Muebles', 7: 'Jardin', 8: 'Iluminacion'
+    };
+    const type = categoryMap[categoryId];
+    if (type) {
+      this._filterService.getProductTypeFilter(type);
+    }
   }
 
   newArrivalProducts() {
