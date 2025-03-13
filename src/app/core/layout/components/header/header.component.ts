@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CartService } from 'src/app/core/services/cart.service';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
@@ -9,12 +9,10 @@ import { AuthService } from 'src/app/shared/services/auth/auth.service';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
-  @ViewChild('carousel') carousel!: ElementRef;
   mobileMenuOpen = false;
   showAccountMenu = false;
   activeDropdown: string | null = null;
   cart: any[] = [];
-  isHeaderTopHidden = false;
   userName: string | null = null;
   private userSubscription: Subscription = new Subscription();
 
@@ -70,14 +68,6 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  onMouseEnter(category: string) {
-    if (window.innerWidth > 768) {
-      if (this.activeDropdown !== null && this.activeDropdown !== category) {
-        this.activeDropdown = null;
-      }
-    }
-  }
-
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
     const target = event.target as HTMLElement;
@@ -90,15 +80,5 @@ export class HeaderComponent implements OnInit {
     this.authService.logout();
     this.userName = null;
     this.showAccountMenu = false;
-  }
-
-  scrollCarousel(direction: 'left' | 'right') {
-    const carouselEl = this.carousel.nativeElement;
-    const scrollAmount = 150;
-    if (direction === 'left') {
-      carouselEl.scrollLeft -= scrollAmount;
-    } else {
-      carouselEl.scrollLeft += scrollAmount;
-    }
   }
 }
