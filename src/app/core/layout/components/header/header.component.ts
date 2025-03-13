@@ -12,7 +12,7 @@ export class HeaderComponent implements OnInit {
   @ViewChild('carousel') carousel!: ElementRef;
   mobileMenuOpen = false;
   showAccountMenu = false;
-  activeDropdown: string | null = null; // Controla qué menú está abierto
+  activeDropdown: string | null = null;
   cart: any[] = [];
   isHeaderTopHidden = false;
   userName: string | null = null;
@@ -58,12 +58,11 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  // Alternar el menú al hacer clic
   toggleDropdown(category: string) {
     if (this.activeDropdown === category) {
-      this.activeDropdown = null; // Si ya está abierto, ciérralo
+      this.activeDropdown = null;
     } else {
-      this.activeDropdown = category; // Abre el menú seleccionado
+      this.activeDropdown = category;
       this.showAccountMenu = false;
       if (window.innerWidth <= 768) {
         this.mobileMenuOpen = false;
@@ -71,18 +70,14 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  // Manejar hover en escritorio
   onMouseEnter(category: string) {
-    if (window.innerWidth > 768) { // Solo en escritorio
+    if (window.innerWidth > 768) {
       if (this.activeDropdown !== null && this.activeDropdown !== category) {
-        this.activeDropdown = null; // Desactiva el menú activo por clic
+        this.activeDropdown = null;
       }
-      // Opcional: Activar el nuevo menú al pasar el mouse
-      // this.activeDropdown = category;
     }
   }
 
-  // Cerrar dropdown si se hace clic fuera
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
     const target = event.target as HTMLElement;

@@ -53,6 +53,12 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Animación para el banner de promoción */
+@keyframes slideIn {
+  from { transform: translateX(-20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
 /* Estilo base del menú de cuenta */
 .account-menu {
   position: absolute;
@@ -95,11 +101,72 @@
   border-radius: 0.375rem;
 }
 
+/* Estilo para los íconos de categorías rápidas */
+.quick-categories {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.quick-categories a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #ffffff;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.quick-categories a:hover {
+  color: #facc15;
+  transform: scale(1.1);
+}
+
+.quick-categories i {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.quick-categories span {
+  font-size: 0.75rem;
+  font-weight: medium;
+}
+
+/* Estilo para el banner de promoción */
+.promo-banner {
+  background: linear-gradient(to right, #facc15, #f97316);
+  color: #1e3a8a;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: bold;
+  animation: slideIn 0.5s ease-in-out;
+}
+
 /* Ajustes para pantallas móviles (max-width: 768px) */
 @media (max-width: 768px) {
   nav {
     position: relative;
     z-index: 1050;
+  }
+
+  .header-fixed .branding {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .slogan {
+    font-size: 0.75rem;
+    text-align: center;
+  }
+
+  .quick-categories {
+    display: none; /* Ocultar categorías rápidas en móviles */
+  }
+
+  .promo-banner {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
   }
 
   .dropdown-menu.show {
@@ -135,7 +202,7 @@
 
   .dropdown-menu {
     position: fixed;
-    top: 200px; /* Ajusta según la altura del header */
+    top: 220px; /* Ajusta según la altura del header */
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
@@ -157,6 +224,22 @@
     gap: 2rem;
     flex-wrap: wrap;
     justify-content: center;
+  }
+
+  .header-fixed .branding {
+    gap: 2rem;
+  }
+
+  .slogan {
+    font-size: 1rem;
+  }
+
+  .quick-categories i {
+    font-size: 1.75rem;
+  }
+
+  .quick-categories span {
+    font-size: 0.875rem;
   }
 
   nav li i {

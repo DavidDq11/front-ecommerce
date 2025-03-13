@@ -43,28 +43,56 @@
   <!-- Main navigation bar with logo and hamburger (permanece fijo) -->
   <div class="header-fixed">
     <div class="flex flex-col md:flex-row items-center justify-between py-3 px-4 md:py-4 md:px-6">
-      <div class="flex items-center justify-between w-full md:w-auto">
-        <a routerLink="/" class="flex items-center cursor-pointer relative group">
-          <div class="relative w-12 h-12 md:w-24 md:h-24 transition-all duration-300 group-hover:scale-110">
-            <div
-              class="absolute inset-0 bg-gradient-to-r from-blue-500 via-blue-500 to-blue-500 rounded-full opacity-0 group-hover:opacity-70 blur-md -z-10 animate-pulse">
+      <div class="flex items-center justify-between w-full md:w-auto branding">
+        <!-- Logo -->
+        <div class="flex flex-col items-center">
+          <a routerLink="/" class="flex items-center cursor-pointer relative group">
+            <div class="relative w-12 h-12 md:w-24 md:h-24 transition-all duration-300 group-hover:scale-110">
+              <div
+                class="absolute inset-0 bg-gradient-to-r from-blue-500 via-blue-500 to-blue-500 rounded-full opacity-0 group-hover:opacity-70 blur-md -z-10 animate-pulse">
+              </div>
+              <div
+                class="w-full h-full bg-gradient-to-br from-blue-900 via-indigo-800 to-blue-900 rounded-full border-2 border-yellow-400 flex items-center justify-center overflow-hidden shadow-sm">
+                <img src="assets/images/logo.png" alt="Domux" class="w-8 h-8 md:w-20 md:h-20 object-contain z-10" />
+              </div>
+              <div
+                class="absolute -bottom-1 -right-1 w-5 h-5 md:w-8 md:h-8 bg-yellow-400 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <i class="fa-solid fa-home text-blue-900 text-sm"></i>
+              </div>
+              <div
+                class="absolute -top-1 -left-1 w-5 h-5 md:w-8 md:h-8 bg-yellow-400 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity delay-100">
+                <i class="fa-solid fa-lightbulb text-blue-900 text-sm"></i>
+              </div>
             </div>
-            <div
-              class="w-full h-full bg-gradient-to-br from-blue-900 via-indigo-800 to-blue-900 rounded-full border-2 border-yellow-400 flex items-center justify-center overflow-hidden shadow-sm">
-              <img src="assets/images/logo.png" alt="Domux" class="w-8 h-8 md:w-20 md:h-20 object-contain z-10" />
-            </div>
-            <div
-              class="absolute -bottom-1 -right-1 w-5 h-5 md:w-8 md:h-8 bg-yellow-400 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <i class="fa-solid fa-home text-blue-900 text-sm"></i>
-            </div>
-            <div
-              class="absolute -top-1 -left-1 w-5 h-5 md:w-8 md:h-8 bg-yellow-400 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity delay-100">
-              <i class="fa-solid fa-lightbulb text-blue-900 text-sm"></i>
-            </div>
+          </a>
+          <!-- Eslogan -->
+          <span class="slogan text-yellow-300 text-sm md:text-base font-medium mt-2">Todo para tu hogar en un clic</span>
+        </div>
+
+        <!-- Categorías rápidas y promoción (solo en escritorio) -->
+        <div class="hidden md:flex flex-col items-center gap-4">
+          <div class="quick-categories">
+            <a routerLink="/categories/decoracion">
+              <i class="fa-solid fa-paint-roller"></i>
+              <span>Decoración</span>
+            </a>
+            <a routerLink="/categories/cocina">
+              <i class="fa-solid fa-blender"></i>
+              <span>Cocina</span>
+            </a>
+            <a routerLink="/categories/hogar-inteligente">
+              <i class="fa-solid fa-lightbulb"></i>
+              <span>Hogar Inteligente</span>
+            </a>
           </div>
-        </a>
+          <div class="promo-banner">
+            ¡Envío gratis en tu primera compra!
+          </div>
+        </div>
+
+        <!-- Botón de menú hamburguesa para móviles -->
         <button
-          class="md:hidden text-yellow-300 y-300 focus:outline-none p-2 rounded-full bg-blue-700 bg-opacity-80 hover:bg-yellow-400 hover:text-blue-900 transition-colors"
+          class="md:hidden text-yellow-300 focus:outline-none p-2 rounded-full bg-blue-700 bg-opacity-80 hover:bg-yellow-400 hover:text-blue-900 transition-colors"
           (click)="toggleMobileMenu()">
           <i class="fa-solid fa-bars text-xl"></i>
         </button>
