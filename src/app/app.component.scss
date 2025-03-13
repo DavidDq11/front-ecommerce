@@ -1,29 +1,52 @@
-
 main {
-    min-height: 100vh;
+  min-height: 100vh;
+}
+
+.whatsapp-button {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  font-size: 50px;
+  color: #25D366;
+  z-index: 999;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.1);
+    color: #20b356;
+  }
+}
+
+@media (max-width: 640px) {
+  .whatsapp-button {
+    font-size: 40px;
+    right: 10px;
+    bottom: 10px;
+  }
 }
 
 app-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000; /* Asegura que quede por encima de otros elementos */
-    background-color: white; /* Ajusta según tu diseño */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Opcional: agrega sombra */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; /* Asegura que quede por encima de otros elementos */
+  background-color: white; /* Ajusta según tu diseño */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Opcional: agrega sombra */
+}
+
+.app-container {
+  padding-top: 180px; /* Valor base más razonable para escritorio */
+
+  @media (max-width: 1024px) {
+    padding-top: 70px; /* Ligeramente menos para tablets */
   }
-  .app-container {
-    padding-top: 200px; /* Tamaño base para pantallas normales */
-  
-    @media (max-width: 1024px) {
-      padding-top: 200px; /* Ajuste para tablets */
-    }
-  
-    @media (max-width: 768px) {
-      padding-top: 240px; /* Ajuste para móviles */
-    }
-  
-    @media (max-width: 480px) {
-      padding-top: 250px; /* Ajuste para pantallas más pequeñas */
-    }
+
+  @media (max-width: 768px) {
+    padding-top: 280px; /* Reducido para móviles */
   }
+
+  @media (max-width: 480px) {
+    padding-top: 160px; /* Aún más reducido para pantallas pequeñas */
+  }
+}
