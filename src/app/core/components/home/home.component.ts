@@ -50,7 +50,7 @@ export class HomeComponent implements OnInit {
     }
   ];
 
-  constructor(private _productService: ProductService, private _filterService: FilterService) {}
+  constructor(private _productService: ProductService, private _filterService: FilterService) { }
 
   ngOnInit(): void {
     this.newArrivalProducts();
@@ -70,15 +70,21 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  // En HomeComponent
   newArrivalProducts() {
     this.isLoading = true;
-    this._productService.getProducts().subscribe(
+    this._productService.getRocketfyProducts().subscribe(
       (data) => {
         this.isLoading = false;
-        const startIndex = Math.floor(Math.random() * (data.length - 6));
-        const lastIndex = startIndex + 6;
-        this.products = data.slice(startIndex, lastIndex);
-        console.log('Productos seleccionados:', this.products);
+        // Si hay menos de 6 productos, mostrar todos; si no, tomar 6 aleatorios
+        if (data.length <= 6) {
+          this.products = data;
+        } else {
+          const startIndex = Math.floor(Math.random() * (data.length - 6));
+          const lastIndex = startIndex + 6;
+          this.products = data.slice(startIndex, lastIndex);
+        }
+        console.log('Productos de Rocketfy seleccionados:', this.products);
       },
       (error) => {
         this.isLoading = false;

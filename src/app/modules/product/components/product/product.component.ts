@@ -80,18 +80,19 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
   loadProducts() {
     this.isLoading = true;
-    this.productService.getProducts().subscribe(
+    this.productService.getRocketfyProducts().subscribe(
       (data) => {
         this.isLoading = false;
-        this.products = data;
+        this.products = [...data];
         this.cloneOfProducts = [...data];
-        this.filterService.setAllProducts(data); // Ensure FilterService has all products
-        this.filterService.getProductTypeFilter(this.category); // Trigger filtering
+        this.filterService.setAllProducts(data);
+        this.filterService.getProductTypeFilter(this.category);
+        console.log('Productos de Rocketfy cargados:', this.products);
       },
       (error) => {
         this.isLoading = false;
         this.error = error.message;
-        console.error('Error loading products:', error);
+        console.error('Error loading Rocketfy products:', error);
       }
     );
   }

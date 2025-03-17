@@ -31,8 +31,7 @@ export class FilterService {
 
   // Obtener productos filtrados por tipo
   getProductTypeFilter(type: string) {
-    let prodTypes: CategoryFilter[] = [];
-    this.category = type; // Podrías renombrar esta variable a 'type' para evitar confusión
+    this.category = type;
     this.productService.getByType(type).subscribe(
       (data: { products: Product[]; total: number; page: number; totalPages: number }) => {
         this.products = data.products;
@@ -40,20 +39,21 @@ export class FilterService {
         const types = [...new Set(this.cloneOfProducts.map(item => item.type))];
         const typeMap = {
           'Alimento': 1, 'Juguete': 2, 'Higiene': 3, 'Accesorio': 4,
-          'Snack': 5, 'Habitat': 6, 'Equipo': 7, 'Suplemento': 8
+          'Snack': 5, 'Habitat': 6, 'Equipo': 7, 'Suplemento': 8,
+          'Producto Simple': 9, 'Producto Variable': 10 // Add Rocketfy types
         };
-
-        types.forEach((typeValue) => {
+  
+        let prodTypes: CategoryFilter[] = types.map(typeValue => {
           const id = typeMap[typeValue as keyof typeof typeMap] || 1;
-          prodTypes.push({
+          return {
             label: typeValue,
             value: typeValue,
             checked: id === this.selectedCategoryId.getValue(),
             id: id
-          });
+          };
         });
         this.filterList.next(prodTypes);
-
+  
         const selectedId = this.selectedCategoryId.getValue();
         if (selectedId) {
           const checkedItems = prodTypes.map(item => ({
