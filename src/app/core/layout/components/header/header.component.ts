@@ -12,11 +12,14 @@ export class HeaderComponent implements OnInit {
   @ViewChild('carousel') carousel!: ElementRef;
   mobileMenuOpen = false;
   showAccountMenu = false;
-  activeDropdown: string | null = null; // Controla qué menú está abierto
+  activeDropdown: string | null = null;
   cart: any[] = [];
   isHeaderTopHidden = false;
+  isHeaderFixedHidden = false;
   userName: string | null = null;
   private userSubscription: Subscription = new Subscription();
+  private lastScrollTop = 0;
+  private scrollThreshold = 50;
 
   constructor(private cartService: CartService, public authService: AuthService) {}
 
@@ -58,12 +61,11 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  // Alternar el menú al hacer clic
   toggleDropdown(category: string) {
     if (this.activeDropdown === category) {
-      this.activeDropdown = null; // Si ya está abierto, ciérralo
+      this.activeDropdown = null;
     } else {
-      this.activeDropdown = category; // Abre el menú seleccionado
+      this.activeDropdown = category;
       this.showAccountMenu = false;
       if (window.innerWidth <= 768) {
         this.mobileMenuOpen = false;
@@ -71,23 +73,39 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  // Manejar hover en escritorio
   onMouseEnter(category: string) {
-    if (window.innerWidth > 768) { // Solo en escritorio
+    if (window.innerWidth > 768) {
       if (this.activeDropdown !== null && this.activeDropdown !== category) {
-        this.activeDropdown = null; // Desactiva el menú activo por clic
+        this.activeDropdown = null;
       }
-      // Opcional: Activar el nuevo menú al pasar el mouse
-      // this.activeDropdown = category;
     }
   }
 
-  // Cerrar dropdown si se hace clic fuera
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
     const target = event.target as HTMLElement;
     if (!target.closest('.group') && !target.closest('.dropdown-menu')) {
       this.activeDropdown = null;
+    }
+  }
+
+  @HostListener('window:scroll', ['$event'])
+  onWindowScroll() {
+    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollDifference = Math.abs(currentScrollTop - this.lastScrollTop);
+
+    if (scrollDifference >= this.scrollThreshold) {
+      if (currentScrollTop <= 0) {
+        this.isHeaderTopHidden = false;
+        this.isHeaderFixedHidden = false;
+      } else if (currentScrollTop > this.lastScrollTop) {
+        this.isHeaderTopHidden = true;
+        this.isHeaderFixedHidden = true;
+      } else {
+        this.isHeaderTopHidden = false;
+        this.isHeaderFixedHidden = false;
+      }
+      this.lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
     }
   }
 
