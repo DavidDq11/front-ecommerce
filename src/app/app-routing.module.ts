@@ -8,51 +8,59 @@ import { Page404Component } from './core/components/page404/page404.component';
 import { CheckoutComponent } from './modules/product/components/checkout/checkout.component';
 import { canActivate } from './shared/services/auth/authguard.service';
 import { SearchresultComponent } from './core/components/searchresult/searchresult.component';
+import { TermsComponent } from './core/components/terms/terms.component';
+import { PrivacyComponent } from './core/components/privacy/privacy.component';
 
 const routes: Routes = [
   {
-    path:'',
-    component:HomeComponent
+    path: '',
+    component: HomeComponent
   },
   {
-    path:'login',
-    component:LoginComponent,
-    // canActivate:[canActivate]
-
+    path: 'login',
+    component: LoginComponent,
+    // canActivate: [canActivate]
   },
   {
-    path:'register',
-    component:RegisterComponent,
-    // canActivate:[canActivate]
-
+    path: 'register',
+    component: RegisterComponent,
+    // canActivate: [canActivate]
   },
   {
-    path:'products',
-    component:SearchresultComponent
+    path: 'products',
+    component: SearchresultComponent
   },
   {
-    path:'categories',
-    loadChildren:()=>import('./modules/product/product.module').then(m=>m.ProductModule)
+    path: 'categories',
+    loadChildren: () => import('./modules/product/product.module').then(m => m.ProductModule)
   },
   {
-    path:'shopping-cart',
-    component:CartComponent
+    path: 'shopping-cart',
+    component: CartComponent
   },
   {
-    path:'checkout',
-    component:CheckoutComponent,
-    canActivate:[canActivate],
+    path: 'checkout',
+    component: CheckoutComponent,
+    canActivate: [canActivate],
+  },
+  // Nuevas rutas para Términos y Privacidad
+  {
+    path: 'terms',
+    component: TermsComponent
   },
   {
-    path:'**',
-    component:Page404Component,
-    data:{message:'Oops... This is a Bad request'}
+    path: 'privacy',
+    component: PrivacyComponent
   },
-
+  {
+    path: '**',
+    component: Page404Component,
+    data: { message: 'Oops... This is a Bad request' }
+  }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes,{preloadingStrategy:PreloadAllModules})],
+  imports: [RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

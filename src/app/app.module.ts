@@ -17,6 +17,8 @@ import { SearchresultComponent } from './core/components/searchresult/searchresu
 import { SearchComponent } from './core/layout/components/header/search/search.component';
 import { AuthinterceptorService } from './shared/services/auth/authinterceptor.service';
 import { SharedModule } from './shared/shared.module';
+import { TermsComponent } from './core/components/terms/terms.component'; // Nuevo
+import { PrivacyComponent } from './core/components/privacy/privacy.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,7 +32,9 @@ import { SharedModule } from './shared/shared.module';
     CartitemComponent,
     Page404Component,
     SearchresultComponent,
-    SearchComponent
+    SearchComponent,
+    TermsComponent,
+    PrivacyComponent
   ],
   imports: [
     BrowserModule,
