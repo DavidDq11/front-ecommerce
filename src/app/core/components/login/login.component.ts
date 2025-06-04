@@ -42,7 +42,7 @@ export class LoginComponent {
                 Swal.fire({
                     icon: 'success',
                     title: '¡Bienvenido(a) de vuelta!',
-                    text: 'Estamos felices de verte otra vez en DOGMICAT.',
+                    text: 'Estamos felices de verte otra vez en DOMIPETS.',
                     confirmButtonColor: '#6B46C1',
                     confirmButtonText: '¡A explorar!'
                 }).then(() => {

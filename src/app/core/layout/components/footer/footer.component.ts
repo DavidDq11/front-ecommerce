@@ -8,5 +8,5 @@ import { Component } from '@angular/core';
 export class FooterComponent {
   brandlogo = '';
   year = new Date().getFullYear();
-  brand = 'DOGMICAT';
+  brand = 'DOMIPETS';
 }

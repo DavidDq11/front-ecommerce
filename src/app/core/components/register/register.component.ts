@@ -56,7 +56,7 @@ export class RegisterComponent implements OnInit {
           Swal.fire({
             icon: 'success',
             title: '¡Bienvenido(a), ' + this.registerForm.value.firstName + '!',
-            text: '¡Prepárate para disfrutar junto a tus mascotas con DOGMICAT!',
+            text: '¡Prepárate para disfrutar junto a tus mascotas con DOMIPETS!',
             confirmButtonColor: '#6B46C1',
             confirmButtonText: '¡Vamos allá!'
           }).then(() => {
