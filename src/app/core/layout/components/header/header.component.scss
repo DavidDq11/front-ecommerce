@@ -2,6 +2,8 @@
 header {
   position: relative;
   overflow: visible;
+  padding: 0; // Remove header padding
+  margin: 0;
 }
 
 /* Parte superior que se oculta */
@@ -20,9 +22,9 @@ header {
 
 /* Parte que contiene el título y el buscador */
 .header-fixed {
-  background-color: #003087;
-  width: 100%;
-  transition: all 0.5s ease-in-out;
+  padding: 0 !important; // Remove all padding
+  margin: 0 !important;
+  height: auto; // Allow height to adjust to content
 }
 
 .header-fixed.hidden {
@@ -32,6 +34,36 @@ header {
   padding: 0;
   margin: 0;
   overflow: hidden;
+}
+
+.logo-container {
+  height: 180px; // Set to your preferred size for desktop
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  background: transparent;
+  padding: 0; // Remove padding to eliminate extra space
+  margin: 0; // Remove margins to eliminate extra space
+  margin-left: 30px;
+}
+
+.logo-image {
+  height: 180px; // Match the container height
+  width: auto;
+  object-fit: contain;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  margin: 0; // Ensure no extra space
+}
+
+.flex.items-center.justify-between.w-full.md\:w-auto {
+  gap: 1rem; // Adds spacing between logo and hamburger
+  padding: 0; // Remove padding from the flex container
+  margin: 0; // Remove margins from the flex container
+  height: 60px; // Match logo height to reduce extra space
+  align-items: center; // Ensure vertical centering
 }
 
 /* Navegación de categorías */
@@ -154,6 +186,16 @@ nav {
     position: sticky;
     top: 0;
     z-index: 1050;
+  }
+
+  .logo-container {
+    height: 120px; // Smaller size for mobile
+  }
+  .logo-image {
+    height: 120px; // Match mobile height
+  }
+  .flex.items-center.justify-between.w-full.md\:w-auto {
+    height: 70px; // Match mobile logo height
   }
 
   .dropdown-menu.show {
