@@ -8,15 +8,14 @@ import { Product } from '../model';
   providedIn: 'root'
 })
 export class ProductService {
-  private url = environment.baseAPIURL + 'product'; // Base URL: /product
+  private url = environment.baseAPIURL + 'product';
   products = new BehaviorSubject<Product[]>([]);
   ratingList: boolean[] = [];
 
   constructor(private http: HttpClient) {}
 
-  // Obtener todos los productos sin filtros
   getProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>(this.url + 's').pipe( // /products
+    return this.http.get<Product[]>(this.url + 's').pipe(
       map((data: Product[]) => {
         this.products.next(data);
         return data;
@@ -25,55 +24,62 @@ export class ProductService {
     );
   }
 
-  // Filtrar productos por categoría
-  getByCategory(category: string): Observable<Product[] | any> {
-    return this.http.get(this.url + 's', { // /products?category={category}
-      params: new HttpParams().set('category', category)
-    });
-  }
-
-  // Filtrar productos por tipo (nuevo método)
-  getByType(type: string, limit: number = 1000, offset: number = 0): Observable<{ products: Product[], total: number, page: number, totalPages: number }> {
-    let params = new HttpParams()
-      .set('type', type)
-      .set('limit', limit.toString())
-      .set('offset', offset.toString());
-    
-    return this.http.get<{ products: Product[], total: number, page: number, totalPages: number }>(this.url + 's', { params }).pipe(
-      catchError((error: any) => throwError(() => new Error(error.message)))
+  getByCategory(category: string): Observable<Product[]> {
+    const categoryMap = {
+      'DryFood': 'Pet Food',
+      'WetFood': 'Wet Food',
+      'Snacks': 'Pet Treats',
+      'Litter': 'Litter'
+    };
+    const backendCategory = categoryMap[category as keyof typeof categoryMap] || category;
+    return this.http.get<{ products: Product[], total: number, page: number, totalPages: number }>(`${environment.baseAPIURL}/products?category=${encodeURIComponent(backendCategory)}`).pipe(
+      map(response => response.products) // Extrae solo el array de productos
     );
   }
 
-  // Obtener productos relacionados por categoría (con paginación)
   getRelated(category: string, limit: number = 6, offset: number = 0): Observable<{ products: Product[], total: number, page: number, totalPages: number }> {
+    const backendCategory = this.mapCategory(category);
     let params = new HttpParams()
-      .set('category', category)
+      .set('category', backendCategory)
       .set('limit', limit.toString())
       .set('offset', offset.toString());
     
-    return this.http.get<{ products: Product[], total: number, page: number, totalPages: number }>(this.url + 's', { params }).pipe(
+    return this.http.get<{ products: Product[], total: number }>(this.url + 's', { params }).pipe(
+      map(response => ({
+        products: response.products,
+        total: response.total,
+        page: Math.floor(offset / limit) + 1,
+        totalPages: Math.ceil(response.total / limit)
+      })),
       catchError((error: any) => throwError(() => new Error(error.message)))
     );
   }
 
-  // Obtener un producto por ID
   getProduct(id: number): Observable<Product> {
-    return this.http.get<Product>(`${this.url}/${id}`); // /product/{id}
+    return this.http.get<Product>(`${this.url}/${id}`);
   }
 
-  // Búsqueda de productos (sin implementación en el backend aún)
   search(query: string): Observable<Product[]> {
-    return this.http.get<Product[]>(this.url + 's', { // /products?q={query}
+    return this.http.get<Product[]>(this.url + 's', {
       params: new HttpParams().set('q', query)
     });
   }
 
-  // Generar lista de estrellas para la calificación
   getRatingStar(product: Product) {
     this.ratingList = [];
     [...Array(5)].map((_, index) => {
       return index + 1 <= Math.trunc(product?.rating.rate) ? this.ratingList.push(true) : this.ratingList.push(false);
     });
     return this.ratingList;
+  }
+
+  private mapCategory(category: string): string {
+    const categoryMap = {
+      'DryFood': 'Pet Food',
+      'WetFood': 'Wet Food',
+      'Snacks': 'Pet Treats',
+      'Litter': 'Litter'
+    };
+    return categoryMap[category as keyof typeof categoryMap] || category;
   }
 }

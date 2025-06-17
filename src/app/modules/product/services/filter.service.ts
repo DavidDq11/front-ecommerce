@@ -9,50 +9,38 @@ import { ProductService } from './product.service';
 export class FilterService {
   public filteredProducts = new BehaviorSubject<Product[]>([]);
   filterList = new BehaviorSubject<CategoryFilter[]>([]);
-  products!: Product[];
   private allProducts: Product[] = [];
-  category = '';
   selectedCategoryId = new BehaviorSubject<number | null>(null);
-  cloneOfProducts!: Product[];
 
   constructor(private productService: ProductService) {}
 
-  // Emitir productos filtrados
   filterProduct(products: Product[]) {
-    return this.filteredProducts.next(products);
+    this.filteredProducts.next(products);
   }
 
-  // Establecer todos los productos iniciales
   setAllProducts(products: Product[]) {
     this.allProducts = products;
-    this.cloneOfProducts = [...products];
-    this.filteredProducts.next(products); // Mostrar todos inicialmente
+    this.filteredProducts.next(products);
   }
 
-  // Obtener productos filtrados por tipo
-  getProductTypeFilter(type: string) {
-    let prodTypes: CategoryFilter[] = [];
-    this.category = type; // Podrías renombrar esta variable a 'type' para evitar confusión
-    this.productService.getByType(type).subscribe(
-      (data: { products: Product[]; total: number; page: number; totalPages: number }) => {
-        this.products = data.products;
-        this.cloneOfProducts = data.products;
-        const types = [...new Set(this.cloneOfProducts.map(item => item.type))];
-        const typeMap = {
-          'Alimento': 1, 'Juguete': 2, 'Higiene': 3, 'Accesorio': 4,
-          'Snack': 5, 'Habitat': 6, 'Equipo': 7, 'Suplemento': 8
-        };
+  getProductTypeFilter(category: string) {
+    const categoryMap = {
+      'DryFood': 'Pet Food',
+      'WetFood': 'Wet Food',
+      'Snacks': 'Pet Treats',
+      'Litter': 'Litter'
+    };
+    const backendCategory = categoryMap[category as keyof typeof categoryMap] || category;
 
-        types.forEach((typeValue) => {
-          const id = typeMap[typeValue as keyof typeof typeMap] || 1;
-          prodTypes.push({
-            label: typeValue,
-            value: typeValue,
-            checked: id === this.selectedCategoryId.getValue(),
-            id: id
-          });
-        });
-        this.filterList.next(prodTypes);
+    this.productService.getByCategory(backendCategory).subscribe(
+      (data: Product[]) => {
+        this.setAllProducts(data);
+        const prodTypes: CategoryFilter[] = [
+          { id: 1, label: 'Alimentos Secos', value: 'Pet Food', checked: false },
+          { id: 2, label: 'Alimentos Húmedos', value: 'Wet Food', checked: false },
+          { id: 3, label: 'Snacks', value: 'Pet Treats', checked: false },
+          { id: 4, label: 'Arena para Gatos', value: 'Litter', checked: false }
+        ];
 
         const selectedId = this.selectedCategoryId.getValue();
         if (selectedId) {
@@ -60,45 +48,40 @@ export class FilterService {
             ...item,
             checked: item.id === selectedId
           }));
+          this.filterList.next(checkedItems);
           this.handleCatFilter(checkedItems);
         } else {
-          this.filterProduct(this.cloneOfProducts);
+          this.filterList.next(prodTypes);
+          this.filterProduct(data);
         }
       },
-      error => console.error('Error fetching product types:', error)
+      error => console.error('Error fetching products:', error)
     );
   }
 
-  // Filtrar por precio
   handlePriceFilter(min: number, max: number) {
-    const products = this.cloneOfProducts.filter(item => item.price >= min && item.price <= max);
+    const products = this.allProducts.filter(item => item.price >= min && item.price <= max);
     this.filterProduct(products);
   }
 
-  // Filtrar por tipo (en el frontend)
   handleCatFilter(checkedItems: CategoryFilter[]): Product[] {
-    let filteredProducts = [...this.cloneOfProducts];
+    let filteredProducts = [...this.allProducts];
     const checkedValues = checkedItems.filter(item => item.checked).map(item => item.value);
 
     if (checkedValues.length > 0) {
-      filteredProducts = filteredProducts.filter(product => checkedValues.includes(product.type));
+      filteredProducts = filteredProducts.filter(product => checkedValues.includes(product.category));
     }
 
     this.filterProduct(filteredProducts);
     return filteredProducts;
   }
 
-  // Filtrar por calificación
   handleRateFilter(rating: number): Product[] {
-    this.productService.getByCategory(this.category).subscribe(data => this.products = data); // Esto sigue usando category
-    this.filterProduct(this.products);
-    this.filteredProducts.subscribe((data: Product[]) => {
-      this.products = data.filter(item => rating <= Math.trunc(item.rating.rate));
-    });
-    return this.products;
+    const filteredProducts = this.allProducts.filter(item => Math.trunc(item.rating.rate) >= rating);
+    this.filterProduct(filteredProducts);
+    return filteredProducts;
   }
 
-  // Establecer categoría seleccionada
   setSelectedCategory(categoryId: number | null) {
     this.selectedCategoryId.next(categoryId);
   }

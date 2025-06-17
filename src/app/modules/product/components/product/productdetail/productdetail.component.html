@@ -1,141 +1,124 @@
-
 <section *ngIf="isLoading">
-
   <article class="py-4">
     <div role="status" class="grid grid-cols-1 md:grid-cols-2 space-y-8 animate-pulse md:space-y-0 md:space-x-8 md:flex md:items-center">
-      <div class="flex flex-col items-center justify-center col-span-2 md:col-span-1  w-full h-[60vh] bg-gray-300 rounded dark:bg-gray-700">
-          
-      </div>
+      <div class="flex flex-col items-center justify-center col-span-2 md:col-span-1 w-full h-[60vh] bg-gray-300 rounded dark:bg-gray-700"></div>
       <div class="col-span-1 md:col-span-1 md:px-6 lg:px-10 py-4 h-[60vh] w-full">
-          <div class="h-3 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
-          <div class="h-4 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[480px] mb-10"></div>
-
-          <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
-          <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
-          <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-          <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[440px] mb-2.5"></div>
-          <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[460px] mb-2.5"></div>
-          <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+        <div class="h-3 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+        <div class="h-4 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[480px] mb-10"></div>
+        <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+        <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
+        <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+        <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[440px] mb-2.5"></div>
+        <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[460px] mb-2.5"></div>
+        <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
       </div>
       <span class="sr-only">Loading...</span>
     </div>
   </article>
 
-  <article class="mt-25 mb-10 bg-white pt-5">
+  <article class="mt-10 mb-10 bg-white pt-5">
     <h3 class="text-2xl font-semibold mb-5">PRODUCTOS RELACIONADOS</h3>
     <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 bg-white">
-        <app-cardskeleton></app-cardskeleton>
-        <app-cardskeleton></app-cardskeleton>
-        <app-cardskeleton></app-cardskeleton>
-        <app-cardskeleton></app-cardskeleton>
-        <app-cardskeleton></app-cardskeleton>
-
+      <app-cardskeleton *ngFor="let i of [1,2,3,4,5]"></app-cardskeleton>
     </div>
   </article>
-
 </section>
 
 <section class="py-4 bg-white" *ngIf="!isLoading">
   <app-breadcrumb></app-breadcrumb>
   <article class="grid grid-cols-1 md:grid-cols-2">
     <div class="flex flex-col md:flex-row col-span-2 md:col-span-1 mx-auto md:mx-0">
-        <div class="flex flex-wrap flex-row md:flex-col gap-2 order-2 md:order-1">
-            <div 
-            [ngClass]="selectedImage==i?'w-28 cursor-pointer border border-gray-400':'w-28 cursor-pointer'" 
-            *ngFor="let image of images; index as i">
-                <img class="object-center" [src]="image" [alt]="title" (click)="onImage(image,i)">
-            </div>
+      <div class="flex flex-wrap flex-row md:flex-col gap-2 order-2 md:order-1">
+        <div
+          [ngClass]="selectedImage === i ? 'w-28 cursor-pointer border border-gray-400' : 'w-28 cursor-pointer'"
+          *ngFor="let image of images; let i = index"
+        >
+          <img class="object-center" [src]="image.image_url" [alt]="title" (click)="onImage(image, i)" (error)="onImageError($event)">
         </div>
+      </div>
 
-        <div class="mx-auto order-1 md:order-2">
-            <img class="w-full object-cover object-center" [src]="imageSrc" [alt]="title">
-        </div>
+      <div class="mx-auto order-1 md:order-2">
+        <img class="w-full object-cover object-center" [src]="imageSrc?.image_url || 'assets/placeholder.jpg'" [alt]="title" (error)="onImageError($event)">
+      </div>
     </div>
     <div class="col-span-1 md:col-span-1 md:px-6 lg:px-10 py-4">
-        <h3 class="font-bold text-2xl">{{title}}</h3>
-        <p class="text-sm text-gray-600">{{product.type}}</p>
+      <h3 class="font-bold text-2xl">{{ title }}</h3>
+      <p class="text-sm text-gray-600">{{ product.type }}</p>
 
-        <div class="flex items-center my-3">
-          <span class="text-md mr-2">{{product.rating.rate}}</span>
-          <span *ngFor="let ratestar of ratingList">
-            <i class="fa-solid fa-star text-orange-400" *ngIf="ratestar"></i>
-          </span>
-          <span *ngFor="let ratestar of ratingList">
-            <i class="fa-regular fa-star text-orange-400" *ngIf="!ratestar" ></i>
-          </span>
-          <span class="ml-2 text-md">{{product.rating.count}} Reviews</span>
+      <div class="flex items-center my-3">
+        <span class="text-md mr-2">{{ product.rating.rate }}</span>
+        <span *ngFor="let ratestar of ratingList">
+          <i class="fa-solid fa-star text-orange-400" *ngIf="ratestar"></i>
+          <i class="fa-regular fa-star text-orange-400" *ngIf="!ratestar"></i>
+        </span>
+        <span class="ml-2 text-md">{{ product.rating.count }} Reviews</span>
+      </div>
+
+      <div>
+        <p class="leading-relaxed text-gray-700">{{ product.description }}.</p>
+      </div>
+
+      <div class="flex flex-wrap max-w-full items-center">
+        <p class="mt-2 text-xl font-bold">{{ product.price | currency:'COP':'symbol':'1.0-0' }}</p>
+        <p class="ml-2 mt-2 text-lg text-gray-600 line-through" *ngIf="product.prevprice">
+          {{ product.prevprice | currency:'COP':'symbol':'1.0-0' }}
+        </p>
+        <p class="ml-2 mt-2 text-md text-red-700 font-semibold" *ngIf="discount">
+          -{{ discount }}%
+        </p>
+      </div>
+
+      <div class="flex flex-wrap gap-2 mt-4" *ngIf="product.sizes && product.sizes.length > 0">
+        <button
+          *ngFor="let size of product.sizes"
+          [ngClass]="selectedSize === size.size ? 'h-10 py-2 w-1/4 border-2 border-[#3c64a9] bg-[#3c64a9] text-white transition-all duration-150' :
+                     'h-10 py-2 w-1/4 border-2 border-[#3c64a9] hover:bg-[#3c64a9] hover:text-white transition-all duration-150'"
+          (click)="addSize(size)"
+        >
+          <span>{{ size.size }}</span>
+        </button>
+      </div>
+
+      <div class="w-full flex flex-col lg:flex-row gap-4 mt-6">
+        <div *ngIf="product.stock === 'Out of stock'" class="py-4 px-10 text-center font-semibold text-yellow-600 bg-yellow-100">
+          No disponible
         </div>
-
-        <div>
-          <p class="leading-relaxed text-gray-700">
-            {{product.description}}.
-          </p>
-        </div>
-
-        <div class="flex flex-wrap max-w-full items-center">
-          <p class="mt-2 text-xl font-bold">${{product.price | currency:'COP':'symbol':'1.0-0' }}</p>
-          <p class="ml-2 mt-2 text-lg text-gray-600 line-through" *ngIf="product.prevprice!==0">
-            ${{product.prevprice | currency:'COP':'symbol':'1.0-0' }}
-          </p>
-          <p class="ml-2 mt-2 text-md text-red-700 font-semibold" *ngIf="product.prevprice!==0">
-            -{{discount}}%
-          </p> 
-        </div>
-        
-
-        <div class="flex flex-wrap gap-2 mt-4">
-          <button 
-          *ngFor="let size of product.sizes; let i"
-          [ngClass]="selectedSize == i ? 'h-23 w-23 py-2 w-1/4 border-2 border-[#3c64a9] bg-[#3c64a9] text-white transitiion-all duration-150':
-          'h-23 w-23 py-2 w-1/4 border-2 border-[#3c64a9] hover:bg-[#3c64a9] hover:text-white transitiion-all duration-150'" 
-          (click)="addSize(size,i)">
-            <span>
-              {{size}}
-            </span>
-          </button>
-        </div>
-
-        <div class="w-full flex flex-col lg:flex-row gap-4 mt-6">
-            <div *ngIf="product.stock=='Out of stock'" class="py-4 px-10 text-center font-semibold text-yellow-600 text-white">
-                No disponible
-          </div>
-          <ng-template #addtocart>
-            <button 
-            *ngIf="product.stock=='In stock'"
+        <ng-template #addtocart>
+          <button
+            *ngIf="product.stock === 'In stock'"
             class="py-4 px-10 bg-gray-800 text-white"
-            (click)="addToCart(product)">
-              <i title="Shopping Cart" class="fa-solid fa-bag-shopping mr-2"></i>
-              Agregar al Carro
-            </button>
-          </ng-template>
-          <button 
-          class="py-4 px-16 bg-red-800 text-white"
+            (click)="addToCart(product)"
+          >
+            <i title="Shopping Cart" class="fa-solid fa-bag-shopping mr-2"></i>
+            Agregar al Carro
+          </button>
+        </ng-template>
+        <button
+          class="py-4 px-16 bg-red-700 text-white"
           (click)="removeFromCart(product)"
-          *ngIf="isProductInCart(product); else addtocart">
-            <i class="fa-solid fa-trash mr-2"></i>
-            Eliminar
-          </button>
+          *ngIf="isProductInCart(product); else addtocart"
+        >
+          <i class="fa-solid fa-trash mr-2"></i>
+          Eliminar
+        </button>
 
-          <button class="">
-            <i title="Shopping Cart" class="fa-regular fa-heart mr-2"></i>
-            Adicionar a la lista
-          </button>
-        </div>
+        <button class="py-4 px-4 bg-gray-200 text-gray-700">
+          <i title="Wishlist" class="fa-regular fa-heart mr-2"></i>
+          Adicionar a la lista
+        </button>
+      </div>
 
-        <div class="mt-10">
-          <h3 class="text-xl font-bold">Detalles del Producto</h3>
-          <div>
-            <h5 class="text-lg font-semibold text-gray-600">INFORMACIÓN GENERAL</h5>
-            <p>
-            </p>
-          </div>
+      <div class="mt-10">
+        <h3 class="text-xl font-bold">Detalles del Producto</h3>
+        <div>
+          <h5 class="text-lg font-semibold text-gray-600">INFORMACIÓN GENERAL</h5>
+          <p></p>
         </div>
+      </div>
     </div>
-    
   </article>
 
-
-  <article class="mt-25 mb-10 bg-white pt-5" *ngIf="relatedProductList.length !== 0">
+  <article class="mt-10 mb-10 bg-white pt-5" *ngIf="relatedProductList.length !== 0">
     <h3 class="text-2xl font-semibold mb-5">PRODUCTOS RELACIONADOS</h3>
     <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 bg-white">
       <app-productcard
@@ -143,8 +126,7 @@
         [product]="relatedProduct"
       ></app-productcard>
     </div>
-  
-    <!-- Pagination -->
+
     <nav class="flex justify-center mt-6" aria-label="related products pagination">
       <ul class="inline-flex -space-x-px text-sm font-semibold">
         <li>
@@ -178,15 +160,14 @@
     </nav>
   </article>
 
-<article class="text-gray-500 flex flex-col py-50 h-[300px] justify-center items-center" *ngIf="!isLoading && relatedProductList.length==0">
-  <span class="">
-      <svg class="svg-icon" 
-      style="height:4rem;width:4rem;vertical-align: middle;fill: currentColor;overflow: hidden;" 
-      viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
-      <path d="M504.1 452.5c-18.3 0-36.5-4.1-50.7-10.1l-280.1-138c-18.3-10.1-30.4-24.4-30.4-40.6 0-16.2 10.2-32.5 30.4-42.6L455.4 77.1c16.2-8.1 34.5-12.2 54.8-12.2 18.3 0 36.5 4.1 50.7 10.1L841 213c18.3 10.1 30.4 24.4 30.4 40.6 0 16.2-10.1 32.5-30.4 42.6L558.9 440.3c-16.3 8.1-34.5 12.2-54.8 12.2zM193.6 261.7l280.1 138c8.1 4.1 18.3 6.1 30.4 6.1 12.2 0 24.4-2 32.5-6.1l284.1-144.1-280.1-138c-8.1-4.1-18.3-6.1-30.4-6.1-12.2 0-24.4 2-32.5 6.1L193.6 261.7z m253.6 696.1c-10.1 0-20.3-2-30.4-8.1L165.1 817.8c-30.4-14.2-52.8-46.7-52.8-73.1V391.6c0-24.4 18.3-42.6 44.6-42.6 10.1 0 20.3 2 30.4 8.1L437.1 489c30.4 14.2 52.8 46.7 52.8 73.1v353.1c0 24.4-18.3 42.6-42.7 42.6z m-10.1-48.7c2 2 4.1 2 6.1 2v-349c0-8.1-10.1-24.4-26.4-32.5L165.1 397.7c-2-2-4.1-2-6.1-2v349.1c0 8.1 10.2 24.4 26.4 32.5l251.7 131.8z m144.1 48.7c-24.4 0-42.6-18.3-42.6-42.6V562.1c0-26.4 22.3-58.9 52.8-73.1L841 357.1c10.1-4.1 20.3-8.1 30.4-8.1 24.4 0 42.6 18.3 42.6 42.6v353.1c0 26.4-22.3 58.9-52.8 73.1L611.6 949.7c-12.2 6.1-20.3 8.1-30.4 8.1z m280-560.1L611.6 529.6c-16.2 8.1-26.4 24.4-26.4 32.5v349.1c2 0 4.1-2 6.1-2l249.6-131.9c16.2-8.1 26.4-24.4 26.4-32.5V395.7c-2 0-4 2-6.1 2z m0 0"  />
+  <article class="text-gray-500 flex flex-col py-40 h-[60vh] justify-center items-center" *ngIf="!isLoading && relatedProductList.length === 0">
+    <span>
+      <svg class="svg-icon"
+           style="height:4rem;width:4rem;vertical-align: middle;fill: currentColor;overflow: hidden;"
+           viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <path d="M504.1 452.5c-18.3 0-36.5-4.1-50.7-10.1l-280.1-138c-18.3-10.1-30.4-24.4-30.4-40.6 0-16.2 10.2-32.5 30.4-42.6L455.4 77.1c16.2-8.1 34.5-12.2 54.8-12.2 18.3 0 36.5 4.1 50.7 10.1L841 213c18.3 10.1 30.4 24.4 30.4 40.6 0 16.2-10.1 32.5-30.4 42.6L558.9 440.3c-16.3 8.1-34.5 12.2-54.8 12.2zM193.6 261.7l280.1 138c8.1 4.1 18.3 6.1 30.4 6.1c12.2 0 24.4-2 32.5-6.1l284.1-144.1-280.1-138c-8.1-4.1-18.3-6.1-30.4-6.1-12.2 0-24.4 2-32.5 6.1L193.6 261.7z m253.6 696.1c-10.1 0-20.3-2-30.4-8.1L165.1 817.8c-30.4-14.2-52.8-46.7-52.8-73.1V391.6c0-24.4 18.3-42.6 44.6-42.6 10.1 0 20.3 2 30.4 8.1L437.1 489c30.4 14.2 52.8 46.7 52.8 73.1v353.1c0 24.4-18.3 42.6-42.7 42.6z m-10.1-48.7c2 2 4.1 2 6.1 2v-349c0-8.1-10.1-24.4-26.4-32.5L165.1 397.6c-2-2-4.1-2-6.1-2v349.1c0 8.1 10.2 24.4 26.4 32.5l251.7 131.8z m144.1 48.7c-24.4 0-42.6-18.3-42.6-42.6V562.1c0-24.4 18.3-42.6 42.6-42.6 8.1 0 16.2 2 22.3 6.1L841.9 357.1c24.4-12.2 52.6-7.1 44.6 10.1V744.6c0 18.3-10.1 36.5-8.1 10.1L611.6 942.6c-8.1 4-18.2 6.1-30.4 6.1z m280.1-16.2L611.7 529.6c-16.2-8.1-26.4-24.4-26.4-32.5V122.7c2 0 4.1-2 6.1-2l249.6 7.1c16.2 0 26.4 8.1 26.4 24.3v15.2c-2 0-4-2-6.1-2z" />
       </svg>
-  </span>
-  <h4 class="text-md px-4 py-2">PRODUCTOS NO RELACIONADOS</h4>
-</article>
-
+    </span>
+    <h4 class="text-md px-4 py-2">PRODUCTOS NO RELACIONADOS</h4>
+  </article>
 </section>

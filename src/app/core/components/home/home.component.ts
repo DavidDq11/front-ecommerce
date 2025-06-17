@@ -20,48 +20,19 @@ export class HomeComponent implements OnInit {
   ];
 
   categories = [
-    { id: 1, name: 'Alimentos', icon: 'fa-bone', path: '/categories/Food' },
-    { id: 2, name: 'Juguetes', icon: 'fa-dice', path: '/categories/Toys' },
-    { id: 3, name: 'Cuidado', icon: 'fa-paw', path: '/categories/Hygiene' },
-    { id: 4, name: 'Accesorios', icon: 'fa-gem', path: '/categories/Accessories' },
-    { id: 5, name: 'Snacks', icon: 'fa-cookie-bite', path: '/categories/Snacks' },
-    { id: 6, name: 'Hábitats', icon: 'fa-home', path: '/categories/Habitats' },
-    { id: 7, name: 'Equipos', icon: 'fa-tools', path: '/categories/Equipment' },
-    { id: 8, name: 'Suplementos', icon: 'fa-pills', path: '/categories/Supplements' }
+    { id: 1, name: 'Alimentos Secos', icon: 'fa-bone', path: '/categories/DryFood' },
+    { id: 2, name: 'Alimentos Húmedos', icon: 'fa-fish', path: '/categories/WetFood' },
+    { id: 3, name: 'Snacks', icon: 'fa-cookie-bite', path: '/categories/Snacks' },
+    { id: 4, name: 'Arena para Gatos', icon: 'fa-paw', path: '/categories/Litter' }
+  ];
+
+  newsItems = [
+    { title: 'Nueva línea de alimentos orgánicos', summary: 'Descubre nuestra nueva gama de productos naturales para tus mascotas.', link: '#' },
+    { title: 'Evento de adopción este fin de semana', summary: 'Únete a nosotros para encontrar un nuevo amigo peludo.', link: '#' },
+    { title: 'Consejos para el cuidado de gatos', summary: 'Aprende cómo mantener a tu gato feliz y saludable.', link: '#' }
   ];
 
   selectedCategoryId: number | null = null;
-
-  selectCategory(categoryId: number) {
-    this.selectedCategoryId = categoryId;
-    this._filterService.setSelectedCategory(categoryId);
-    const categoryMap: Record<number, string> = {
-      1: 'Alimento', 2: 'Juguete', 3: 'Higiene', 4: 'Accesorio',
-      5: 'Snack', 6: 'Habitat', 7: 'Equipo', 8: 'Suplemento'
-    };
-    const type = categoryMap[categoryId];
-    if (type) {
-      this._filterService.getProductTypeFilter(type);
-    }
-  }
-
-  newsItems = [
-    {
-      title: 'Descubren nueva dieta para perros con alta energía',
-      summary: 'Expertos en nutrición animal han desarrollado una dieta especial que mejora la vitalidad de los perros activos. ¡Ideal para combinar con nuestros nuevos snacks!',
-      link: '#'
-    },
-    {
-      title: 'Tips de cuidado para el invierno de tus mascotas',
-      summary: 'Aprende cómo proteger a tu mascota del frío con accesorios y cuidados esenciales que ofrecemos en nuestra tienda.',
-      link: '#'
-    },
-    {
-      title: 'Evento de adopción de mascotas este fin de semana',
-      summary: 'Únete a nosotros en un evento local para encontrar a tu nuevo mejor amigo. ¡Trae a tu mascota para una sesión gratis de cuidado!',
-      link: '#'
-    }
-  ];
 
   constructor(private _productService: ProductService, private _filterService: FilterService) {}
 
@@ -70,14 +41,18 @@ export class HomeComponent implements OnInit {
     this.validateImages();
   }
 
-  newArrivalProducts() {
+ newArrivalProducts() {
     this.isLoading = true;
-    this._productService.getProducts().subscribe(
+    this._productService.getByCategory('DryFood').subscribe(
       (data) => {
         this.isLoading = false;
+        console.log('Datos recibidos del backend:', data); // Debería ser un array
+        if (data.length === 0) {
+          console.warn('No products returned for DryFood');
+        }
         const startIndex = Math.floor(Math.random() * (data.length - 6));
         const lastIndex = startIndex + 6;
-        this.products = data.slice(startIndex, lastIndex);
+        this.products = data.slice(startIndex, lastIndex >= 0 ? lastIndex : data.length);
         console.log('Productos seleccionados:', this.products);
       },
       (error) => {
@@ -86,6 +61,21 @@ export class HomeComponent implements OnInit {
         console.error('HTTP Error:', error);
       }
     );
+  }
+
+  selectCategory(categoryId: number) {
+    this.selectedCategoryId = categoryId;
+    this._filterService.setSelectedCategory(categoryId);
+    const categoryMap: Record<number, string> = {
+      1: 'DryFood',
+      2: 'WetFood',
+      3: 'Snacks',
+      4: 'Litter'
+    };
+    const category = categoryMap[categoryId];
+    if (category) {
+      this._filterService.getProductTypeFilter(category);
+    }
   }
 
   validateImages() {

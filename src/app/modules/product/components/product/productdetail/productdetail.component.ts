@@ -1,4 +1,4 @@
-import { Component,OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ProductService } from '../../../services/product.service';
 import { Product } from '../../../model';
@@ -7,85 +7,109 @@ import { CartService } from 'src/app/core/services/cart.service';
 @Component({
   selector: 'app-productdetail',
   templateUrl: './productdetail.component.html',
-  styles: [
-  ]
+  styles: []
 })
-export class ProductdetailComponent implements OnInit{
-  isLoading=false;
-  selectedSize!:string;
-  category!:string;
-  cart:Product[]=[];
-  relatedProductList:Product[]=[];
-  ratingList:boolean[]=[];
-  images!:string[];
-  product!:Product;
-  imageSrc!:string;
-  selectedImage!:number;
-  discount=0;
-  title:string='';
-  currentPage = 1; // Current pagination page
-  totalPages = 1; // Total number of pages
-  pageSize = 5; // Products per page
-  constructor(private route:ActivatedRoute, private productService:ProductService, private cartService:CartService, private router:Router){}
+export class ProductdetailComponent implements OnInit {
+  isLoading = false;
+  selectedSize?: string;
+  category!: string;
+  cart: Product[] = [];
+  relatedProductList: Product[] = [];
+  ratingList: boolean[] = [];
+  images: { image_id: number; image_url: string }[] = [];
+  imageSrc?: { image_id: number; image_url: string };
+  selectedImage?: number;
+  discount?: number;
+  title: string = '';
+  currentPage = 1;
+  totalPages = 1;
+  pageSize = 5;
+
+  constructor(
+    private route: ActivatedRoute,
+    private productService: ProductService,
+    private cartService: CartService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.getProduct();
-    this.cart=this.cartService.getCart;
-    this.route.params.subscribe(()=>{
+    this.cart = this.cartService.getCart;
+    this.route.params.subscribe(() => {
       this.getProduct();
       this.scrollToTop();
-    })
+    });
   }
 
   getProduct() {
     this.isLoading = true;
     const id = this.route.snapshot.params['id'];
-    console.log('ID recibido:', id); // Verifica que el ID sea correcto
     this.productService.getProduct(id).subscribe(
       (data: Product) => {
         this.isLoading = false;
         if (!data) {
-          console.warn('No se recibió ningún producto para el ID:', id);
+          console.warn('No product received for ID:', id);
           return;
         }
         this.product = data;
-        console.log('Producto cargado:', data); // Verifica los datos
-        const { images } = this.product;
-        this.images = images;
-        this.imageSrc = images[0];
+        // Transform images if backend returns string[]
+        this.images = this.transformImages(data.images || []);
+        this.imageSrc = this.images.length > 0 ? this.images[0] : undefined;
+        this.selectedSize = data.sizes && data.sizes.length > 0 ? data.sizes[0].size : undefined;
         this.category = data.category;
         this.title = data.title;
-        this.discount = this.product && Math.round(100 - (this.product.price / this.product.prevprice) * 100);
+        this.calculateDiscount();
         this.getRatingStar();
         this.relatedProducts();
       },
       (error) => {
         this.isLoading = false;
-        console.error('Error al cargar el producto:', error); // Verifica errores
+        console.error('Error loading product:', error);
       }
     );
   }
-  
-  scrollToTop(){
+
+  // Transform string[] to { image_id: number; image_url: string }[]
+  private transformImages(images: any[]): { image_id: number; image_url: string }[] {
+    if (images.length === 0) return [];
+    if (typeof images[0] === 'string') {
+      return images.map((url, index) => ({
+        image_id: index + 1,
+        image_url: url as string
+      }));
+    }
+    return images as { image_id: number; image_url: string }[];
+  }
+
+  calculateDiscount() {
+    if (this.product && this.product.prevprice && this.product.prevprice > 0) {
+      this.discount = Math.round(100 - (this.product.price / this.product.prevprice) * 100);
+    } else {
+      this.discount = undefined;
+    }
+  }
+
+  scrollToTop() {
     this.router.events.subscribe((event) => {
-      if (!(event instanceof NavigationEnd)) {
-          return;
+      if (event instanceof NavigationEnd) {
+        window.scrollTo(0, 0);
       }
-      window.scrollTo(0, 0)
     });
   }
 
-  getRatingStar(){
-    this.ratingList=this.productService.getRatingStar(this.product);
+  getRatingStar() {
+    this.ratingList = this.productService.getRatingStar(this.product);
   }
-  addToCart(product:Product){
+
+  addToCart(product: Product) {
     this.cartService.add(product);
   }
-  removeFromCart(product:Product){
-    this.cartService.remove(product);    
+
+  removeFromCart(product: Product) {
+    this.cartService.remove(product);
   }
-  isProductInCart(product:Product){
-    return this.cart.some(item=>item.id==product.id);
+
+  isProductInCart(product: Product) {
+    return this.cart.some(item => item.id === product.id);
   }
 
   relatedProducts() {
@@ -99,7 +123,7 @@ export class ProductdetailComponent implements OnInit{
       },
       (error) => {
         this.isLoading = false;
-        console.error('Error al cargar productos relacionados:', error);
+        console.error('Error loading related products:', error);
       }
     );
   }
@@ -107,17 +131,23 @@ export class ProductdetailComponent implements OnInit{
   changePage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
-      this.relatedProducts(); // Fetch products for the new page
+      this.relatedProducts();
     }
   }
 
-  addSize(value:string,index:string){
-    this.selectedSize=index;
-    this.product.size=value;
+  addSize(size: { size_id: number; size: string; price: number; stock_quantity: number; image_url?: string }) {
+    this.selectedSize = size.size;
+    this.product.size = size.size;
   }
-  onImage(value:string,index:number){
-    this.imageSrc=value;
-    this.selectedImage=index;
+
+  onImage(image: { image_id: number; image_url: string }, index: number) {
+    this.imageSrc = image;
+    this.selectedImage = index;
   }
-  
+
+  onImageError(event: Event) {
+    (event.target as HTMLImageElement).src = 'assets/placeholder.jpg';
+  }
+
+  product!: Product;
 }

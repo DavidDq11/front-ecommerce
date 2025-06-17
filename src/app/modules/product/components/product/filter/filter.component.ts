@@ -15,11 +15,14 @@ export class FilterComponent implements OnInit, OnDestroy {
   @Input() ratingList!: boolean[];
   @Input() selectedFilter!: { rating: BehaviorSubject<number | null>, categoryId: BehaviorSubject<number | null> };
 
-  filterCategories: CategoryFilter[] = [];
+  filterCategories: CategoryFilter[] = [
+    { id: 1, label: 'Alimentos Secos', value: 'Pet Food', checked: false },
+    { id: 2, label: 'Alimentos Húmedos', value: 'Wet Food', checked: false },
+    { id: 3, label: 'Snacks', value: 'Pet Treats', checked: false },
+    { id: 4, label: 'Arena para Gatos', value: 'Litter', checked: false }
+  ];
   selectedRating: number | null = null;
   selectedCategory: number | null = null;
-  filteredProducts: Product[] = [];
-  cloneOfProducts!: Product[];
   subsFilterList!: Subscription;
   categorySub!: Subscription;
 
@@ -33,7 +36,7 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   loadCategoryFilters() {
     this.subsFilterList = this.filterService.filterList.subscribe(data => {
-      this.filterCategories = data.slice();
+      this.filterCategories = data.length ? data : this.filterCategories;
       this.updateCheckedCategory();
     });
   }
@@ -42,14 +45,14 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.categorySub = this.filterService.selectedCategoryId.subscribe((categoryId) => {
       this.selectedCategory = categoryId;
       this.updateCheckedCategory();
-      if (this.selectedCategory && this.filterCategories.length > 0) {
+      if (this.selectedCategory) {
         this.applyFilter(this.selectedCategory, 'category');
       }
     });
   }
 
   updateCheckedCategory() {
-    if (this.selectedCategory && this.filterCategories.length > 0) {
+    if (this.selectedCategory) {
       this.filterCategories = this.filterCategories.map((cat) =>
         cat.id === this.selectedCategory ? { ...cat, checked: true } : { ...cat, checked: false }
       );
@@ -58,7 +61,7 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   handleCheckbox(id: number): Product[] {
     const checkedItems = this.filterCategories.map(item =>
-      item.id === id ? { ...item, checked: !item.checked } : item
+      item.id === id ? { ...item, checked: !item.checked } : { ...item, checked: false }
     );
     this.filterCategories = checkedItems;
     return this.filterService.handleCatFilter(checkedItems);
