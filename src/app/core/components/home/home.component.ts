@@ -41,18 +41,22 @@ export class HomeComponent implements OnInit {
     this.validateImages();
   }
 
- newArrivalProducts() {
+  newArrivalProducts() {
     this.isLoading = true;
     this._productService.getByCategory('DryFood').subscribe(
-      (data) => {
+      (response: { products: Product[], total: number }) => {
         this.isLoading = false;
-        console.log('Datos recibidos del backend:', data); // Debería ser un array
+        console.log('Datos recibidos del backend:', response);
+        const data = response.products;
         if (data.length === 0) {
           console.warn('No products returned for DryFood');
+          this.products = [];
+          return;
         }
-        const startIndex = Math.floor(Math.random() * (data.length - 6));
+        const maxStartIndex = Math.max(0, data.length - 6);
+        const startIndex = Math.floor(Math.random() * maxStartIndex);
         const lastIndex = startIndex + 6;
-        this.products = data.slice(startIndex, lastIndex >= 0 ? lastIndex : data.length);
+        this.products = data.slice(startIndex, lastIndex);
         console.log('Productos seleccionados:', this.products);
       },
       (error) => {

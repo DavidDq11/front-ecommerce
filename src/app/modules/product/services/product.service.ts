@@ -24,7 +24,7 @@ export class ProductService {
     );
   }
 
-  getByCategory(category: string): Observable<Product[]> {
+  getByCategory(category: string, limit: number = 25, offset: number = 0): Observable<{ products: Product[]; total: number; totalPages: number }> {
     const categoryMap = {
       'DryFood': 'Pet Food',
       'WetFood': 'Wet Food',
@@ -32,19 +32,21 @@ export class ProductService {
       'Litter': 'Litter'
     };
     const backendCategory = categoryMap[category as keyof typeof categoryMap] || category;
-    return this.http.get<{ products: Product[], total: number, page: number, totalPages: number }>(`${environment.baseAPIURL}/products?category=${encodeURIComponent(backendCategory)}`).pipe(
-      map(response => response.products) // Extrae solo el array de productos
-    );
+    let params = new HttpParams()
+      .set('category', backendCategory)
+      .set('limit', limit.toString())
+      .set('offset', offset.toString());
+    return this.http.get<{ products: Product[]; total: number; totalPages: number }>(`${environment.baseAPIURL}/products`, { params });
   }
 
-  getRelated(category: string, limit: number = 6, offset: number = 0): Observable<{ products: Product[], total: number, page: number, totalPages: number }> {
+  getRelated(category: string, limit: number = 6, offset: number = 0): Observable<{ products: Product[]; total: number; page: number; totalPages: number }> {
     const backendCategory = this.mapCategory(category);
     let params = new HttpParams()
       .set('category', backendCategory)
       .set('limit', limit.toString())
       .set('offset', offset.toString());
     
-    return this.http.get<{ products: Product[], total: number }>(this.url + 's', { params }).pipe(
+    return this.http.get<{ products: Product[]; total: number }>(this.url + 's', { params }).pipe(
       map(response => ({
         products: response.products,
         total: response.total,

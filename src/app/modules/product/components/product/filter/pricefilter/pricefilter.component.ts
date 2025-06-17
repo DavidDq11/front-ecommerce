@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnInit, Input } from '@angular/core';
 import { FilterService } from 'src/app/modules/product/services/filter.service';
 import { Renderer2 } from '@angular/core';
 
@@ -28,6 +28,7 @@ import { Renderer2 } from '@angular/core';
   `]
 })
 export class PricefilterComponent implements OnInit {
+  @Input() products: any[] = []; // Input to receive products for min/max calculation
   minVal = 100;
   maxVal = 100000;
   min = 0;
@@ -39,15 +40,32 @@ export class PricefilterComponent implements OnInit {
   constructor(private renderer: Renderer2, private filterService: FilterService) {}
 
   ngOnInit() {
+    this.updatePriceRange();
+    this.setProgress();
+  }
+
+  // Update min and max based on available products
+  updatePriceRange() {
+    if (this.products.length > 0) {
+      const prices = this.products.map(p => p.price).filter(p => p !== null && p !== undefined);
+      if (prices.length > 0) {
+        this.min = Math.min(...prices);
+        this.max = Math.max(...prices);
+        this.minVal = this.min;
+        this.maxVal = this.max;
+      }
+    }
     this.setProgress();
   }
 
   setProgress() {
     const progress = this.progress.nativeElement;
-    const minPercent = (this.minVal / this.max) * 100;
-    const maxPercent = (this.maxVal / this.max) * 100;
-    this.renderer.setStyle(progress, 'left', `${minPercent}%`);
-    this.renderer.setStyle(progress, 'width', `${maxPercent - minPercent}%`);
+    if (progress) {
+      const minPercent = (this.minVal / this.max) * 100;
+      const maxPercent = (this.maxVal / this.max) * 100;
+      this.renderer.setStyle(progress, 'left', `${minPercent}%`);
+      this.renderer.setStyle(progress, 'width', `${maxPercent - minPercent}%`);
+    }
   }
 
   handleMaxRange(event: Event) {

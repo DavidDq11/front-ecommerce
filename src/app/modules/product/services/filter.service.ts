@@ -33,8 +33,8 @@ export class FilterService {
     const backendCategory = categoryMap[category as keyof typeof categoryMap] || category;
 
     this.productService.getByCategory(backendCategory).subscribe(
-      (data: Product[]) => {
-        this.setAllProducts(data);
+      (response: { products: Product[], total: number }) => {
+        this.setAllProducts(response.products);
         const prodTypes: CategoryFilter[] = [
           { id: 1, label: 'Alimentos Secos', value: 'Pet Food', checked: false },
           { id: 2, label: 'Alimentos Húmedos', value: 'Wet Food', checked: false },
@@ -52,7 +52,7 @@ export class FilterService {
           this.handleCatFilter(checkedItems);
         } else {
           this.filterList.next(prodTypes);
-          this.filterProduct(data);
+          this.filterProduct(response.products);
         }
       },
       error => console.error('Error fetching products:', error)
