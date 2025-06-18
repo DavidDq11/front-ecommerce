@@ -46,14 +46,13 @@ export class ProductdetailComponent implements OnInit {
     this.productService.getProduct(id).subscribe(
       (data: Product) => {
         this.isLoading = false;
-        if (!data) {
+        if (!data || Object.keys(data).length === 0) {
           console.warn('No product received for ID:', id);
           return;
         }
         this.product = data;
-        // Transform images if backend returns string[]
         this.images = this.transformImages(data.images || []);
-        this.imageSrc = this.images.length > 0 ? this.images[0] : undefined;
+        this.imageSrc = this.images.length > 0 ? this.images[0] : { image_id: 1, image_url: 'assets/placeholder.jpg' };
         this.selectedSize = data.sizes && data.sizes.length > 0 ? data.sizes[0].size : undefined;
         this.category = data.category;
         this.title = data.title;
@@ -118,8 +117,11 @@ export class ProductdetailComponent implements OnInit {
     this.productService.getRelated(this.product.category, this.pageSize, offset).subscribe(
       (data) => {
         this.isLoading = false;
-        this.relatedProductList = data.products.filter((item: Product) => item.id !== this.product.id);
-        this.totalPages = data.totalPages;
+        // Filter by animal_category in addition to category
+        this.relatedProductList = data.products.filter((item: Product) => 
+          (item.category === this.product.category) && item.id !== this.product.id
+        );
+        this.totalPages = Math.ceil(this.relatedProductList.length / this.pageSize) || 1; // Recalculate total pages
       },
       (error) => {
         this.isLoading = false;
