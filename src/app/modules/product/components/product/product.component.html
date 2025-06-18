@@ -1,68 +1,117 @@
-<section class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 mb-10 bg-white mx-auto max-w-[1300px]" *ngIf="!isLoading">
-  <!-- Sidebar de filtros -->
-  <aside 
-    class="col-span-1 md:col-span-1 lg:col-span-1 mb-4
-    fixed md:static top-0 right-0 w-full md:w-auto bg-[#f8f8f8] z-[98] h-full md:h-auto drop-shadow-lg md:drop-shadow-none hidden md:block"
-    [ngStyle]="{'display': isFilter ? 'block' : ''}"
-  >
-  <app-filter 
-    [products]="cloneOfProducts" 
-    [category]="category"
-    [ratingList]="ratingList"
-    [selectedFilter]="selectedFilter"
-    (onFilter)="onFilter(false)"
-  ></app-filter>   
-</aside>
+<section class="bg-white mx-auto max-w-[1300px]" *ngIf="!isLoading">
+  <!-- Contenedor principal con cuadrícula -->
+  <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
+    <!-- Sidebar de filtros -->
+    <aside 
+      class="col-span-1 md:col-span-1 lg:col-span-1 mb-4
+      fixed md:static top-0 right-0 w-full md:w-auto bg-[#f8f8f8] z-[98] h-full md:h-auto drop-shadow-lg md:drop-shadow-none hidden md:block"
+      [ngStyle]="{'display': isFilter ? 'block' : ''}"
+    >
+      <app-filter 
+        [category]="category"
+        [ratingList]="ratingList"
+        [selectedFilter]="selectedFilter"
+        (onFilter)="onFilter(false)"
+      ></app-filter>   
+    </aside>
 
-  <article class="col-span-1 md:col-span-2 lg:col-span-3">
-    <!-- Breadcrumb siempre visible -->
-    <app-breadcrumb></app-breadcrumb>
-    
-    <!-- Contenedor de productos -->
-    <div *ngIf="pagedProducts.length > 0">
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-        <app-productcard 
-          *ngFor="let product of pagedProducts" 
-          [product]="product"
-        ></app-productcard>
+    <!-- Contenido principal (artículo) -->
+    <article class="col-span-1 md:col-span-2 lg:col-span-3">
+      <!-- Breadcrumb siempre visible -->
+      <app-breadcrumb></app-breadcrumb>
+      
+      <!-- Contenedor de productos -->
+      <div *ngIf="pagedProducts.length > 0">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <app-productcard 
+            *ngFor="let product of pagedProducts" 
+            [product]="product"
+          ></app-productcard>
+        </div>
       </div>
-    </div>
 
-    <!-- Mensaje de no productos -->
-    <div class="text-gray-500 flex flex-col py-20 md:py-50 min-h-[50vh] md:h-[80vh] justify-center items-center" *ngIf="pagedProducts.length === 0 && !error">
-      <span class="">
-        <svg class="svg-icon" 
-          style="height:4rem;width:4rem;vertical-align: middle;fill: currentColor;overflow: hidden;" 
-          viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
-          <path d="M504.1 452.5c-18.3 0-36.5-4.1-50.7-10.1l-280.1-138c-18.3-10.1-30.4-24.4-30.4-40.6 0-16.2 10.2-32.5 30.4-42.6L455.4 77.1c16.2-8.1 34.5-12.2 54.8-12.2 18.3 0 36.5 4.1 50.7 10.1L841 213c18.3 10.1 30.4 24.4 30.4 40.6 0 16.2-10.1 32.5-30.4 42.6L558.9 440.3c-16.3 8.1-34.5 12.2-54.8 12.2zM193.6 261.7l280.1 138c8.1 4.1 18.3 6.1 30.4 6.1 12.2 0 24.4-2 32.5-6.1l284.1-144.1-280.1-138c-8.1-4.1-18.3-6.1-30.4-6.1-12.2 0-24.4 2-32.5 6.1L193.6 261.7z m253.6 696.1c-10.1 0-20.3-2-30.4-8.1L165.1 817.8c-30.4-14.2-52.8-46.7-52.8-73.1V391.6c0-24.4 18.3-42.6 44.6-42.6 10.1 0 20.3 2 30.4 8.1L437.1 489c30.4 14.2 52.8 46.7 52.8 73.1v353.1c0 24.4-18.3 42.6-42.7 42.6z m-10.1-48.7c2 2 4.1 2 6.1 2v-349c0-8.1-10.1-24.4-26.4-32.5L165.1 397.7c-2-2-4.1-2-6.1-2v349.1c0 8.1 10.2 24.4 26.4 32.5l251.7 131.8z m144.1 48.7c-24.4 0-42.6-18.3-42.6-42.6V562.1c0-26.4 22.3-58.9 52.8-73.1L841 357.1c10.1-4.1 20.3-8.1 30.4-8.1 24.4 0 42.6 18.3 42.6 42.6v353.1c0 26.4-22.3 58.9-52.8 73.1L611.6 949.7c-12.2 6.1-20.3 8.1-30.4 8.1z m280-560.1L611.6 529.6c-16.2 8.1-26.4 24.4-26.4 32.5v349.1c2 0 4.1-2 6.1-2l249.6-131.9c16.2-8.1 26.4-24.4 26.4-32.5V395.7c-2 0-4 2-6.1 2z m0 0" />
-        </svg>
-      </span>
-      <h4 class="text-md px-4 py-2">NO PRODUCTS</h4>
-    </div>
+      <!-- Mensaje de no productos -->
+      <div class="text-gray-500 flex flex-col py-20 md:py-50 min-h-[50vh] md:h-[80vh] justify-center items-center" *ngIf="pagedProducts.length === 0 && !error">
+        <span class="">
+          <svg class="svg-icon" 
+            style="height:4rem;width:4rem;vertical-align: middle;fill: currentColor;overflow: hidden;" 
+            viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+            <path d="M504.1 452.5c-18.3 0-36.5-4.1-50.7-10.1l-280.1-138c-18.3-10.1-30.4-24.4-30.4-40.6 0-16.2 10.2-32.5 30.4-42.6L455.4 77.1c16.2-8.1 34.5-12.2 54.8-12.2 18.3 0 36.5 4.1 50.7 10.1L841 213c18.3 10.1 30.4 24.4 30.4 40.6 0 16.2-10.1 32.5-30.4 42.6L558.9 440.3c-16.3 8.1-34.5 12.2-54.8 12.2zM193.6 261.7l280.1 138c8.1 4.1 18.3 6.1 30.4 6.1 12.2 0 24.4-2 32.5-6.1l284.1-144.1-280.1-138c-8.1-4.1-18.3-6.1-30.4-6.1-12.2 0-24.4 2-32.5 6.1L193.6 261.7z m253.6 696.1c-10.1 0-20.3-2-30.4-8.1L165.1 817.8c-30.4-14.2-52.8-46.7-52.8-73.1V391.6c0-24.4 18.3-42.6 44.6-42.6 10.1 0 20.3 2 30.4 8.1L437.1 489c30.4 14.2 52.8 46.7 52.8 73.1v353.1c0 24.4-18.3 42.6-42.7 42.6z m-10.1-48.7c2 2 4.1 2 6.1 2v-349c0-8.1-10.1-24.4-26.4-32.5L165.1 397.7c-2-2-4.1-2-6.1-2v349.1c0 8.1 10.2 24.4 26.4 32.5l251.7 131.8z m144.1 48.7c-24.4 0-42.6-18.3-42.6-42.6V562.1c0-26.4 22.3-58.9 52.8-73.1L841 357.1c10.1-4.1 20.3-8.1 30.4-8.1 24.4 0 42.6 18.3 42.6 42.6v353.1c0 26.4-22.3 58.9-52.8 73.1L611.6 949.7c-12.2 6.1-20.3 8.1-30.4 8.1z m280-560.1L611.6 529.6c-16.2 8.1-26.4 24.4-26.4 32.5v349.1c2 0 4.1-2 6.1-2l249.6-131.9c16.2-8.1 26.4-24.4 26.4-32.5V395.7c-2 0-4 2-6.1 2z m0 0" />
+          </svg>
+        </span>
+        <h4 class="text-md px-4 py-2">NO PRODUCTS</h4>
+      </div>
 
-    <!-- Error message -->
-    <div class="text-red-500 flex flex-col py-20 md:py-50 min-h-[50vh] md:h-[80vh] justify-center items-center" *ngIf="error">
-      <i class="fa-solid fa-circle-exclamation text-6xl"></i>
-      <h4 class="text-md px-4 py-2">{{ error }}</h4>
-    </div>
-  </article>
+      <!-- Error message -->
+      <div class="text-red-500 flex flex-col py-20 md:py-50 min-h-[50vh] md:h-[80vh] justify-center items-center" *ngIf="error">
+        <i class="fa-solid fa-circle-exclamation text-6xl"></i>
+        <h4 class="text-md px-4 py-2">{{ error }}</h4>
+      </div>
+    </article>
+  </div>
 
-  <!-- Controles de paginación -->
-  <div class="flex justify-center mt-4" *ngIf="totalPages > 1">
+  <!-- Controles de paginación (fuera de la cuadrícula, centrado globalmente) -->
+  <div class="flex justify-center items-center mt-8 mb-6 space-x-2 w-full" *ngIf="totalPages > 1">
+    <!-- Botón Inicio (doble flecha izquierda) -->
+    <button
+      (click)="goToFirstPage()"
+      [disabled]="currentPage === 1"
+      class="px-3 py-2 bg-blue-600 text-white rounded-l-full shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 disabled:bg-gray-400 disabled:cursor-not-allowed transition duration-300 transform hover:scale-105"
+      [attr.aria-label]="'Go to first page'"
+    >
+      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+      </svg>
+    </button>
+
+    <!-- Botón Anterior (flecha izquierda) -->
     <button
       (click)="previousPage()"
       [disabled]="currentPage === 1"
-      class="px-4 py-2 bg-gray-200 text-gray-700 rounded-l disabled:opacity-50"
+      class="px-4 py-2 bg-blue-600 text-white shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 disabled:bg-gray-400 disabled:cursor-not-allowed transition duration-300 transform hover:scale-105"
+      [attr.aria-label]="'Previous page'"
     >
-      Anterior
+      <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+      </svg>
     </button>
-    <span class="px-4 py-2 bg-gray-100">{{currentPage}} de {{totalPages}}</span>
+
+    <!-- Lista de páginas -->
+    <div class="flex items-center space-x-2">
+      <ng-container *ngFor="let page of getPageNumbers()">
+        <button
+          *ngIf="page"
+          (click)="goToPage(page)"
+          [class]="currentPage === page ? 'px-4 py-2 bg-blue-700 text-white rounded-full shadow-md' : 'px-4 py-2 bg-gray-200 text-gray-700 rounded-full shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 transition duration-200'"
+          [attr.aria-label]="'Go to page ' + page"
+        >
+          {{ page }}
+        </button>
+      </ng-container>
+    </div>
+
+    <!-- Botón Siguiente (flecha derecha) -->
     <button
       (click)="nextPage()"
       [disabled]="currentPage === totalPages"
-      class="px-4 py-2 bg-gray-200 text-gray-700 rounded-r disabled:opacity-50"
+      class="px-4 py-2 bg-blue-600 text-white shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 disabled:bg-gray-400 disabled:cursor-not-allowed transition duration-300 transform hover:scale-105"
+      [attr.aria-label]="'Next page'"
     >
-      Siguiente
+      <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+      </svg>
+    </button>
+
+    <!-- Botón Fin (doble flecha derecha) -->
+    <button
+      (click)="goToLastPage()"
+      [disabled]="currentPage === totalPages"
+      class="px-3 py-2 bg-blue-600 text-white rounded-r-full shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 disabled:bg-gray-400 disabled:cursor-not-allowed transition duration-300 transform hover:scale-105"
+      [attr.aria-label]="'Go to last page'"
+    >
+      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414zm6 0a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L14.586 10l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+      </svg>
     </button>
   </div>
 </section>

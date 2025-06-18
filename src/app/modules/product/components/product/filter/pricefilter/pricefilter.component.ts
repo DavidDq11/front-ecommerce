@@ -28,7 +28,7 @@ import { Renderer2 } from '@angular/core';
   `]
 })
 export class PricefilterComponent implements OnInit {
-  @Input() products: any[] = []; // Input to receive products for min/max calculation
+  @Input() products: any[] = [];
   minVal = 100;
   maxVal = 100000;
   min = 0;
@@ -41,10 +41,8 @@ export class PricefilterComponent implements OnInit {
 
   ngOnInit() {
     this.updatePriceRange();
-    this.setProgress();
   }
 
-  // Update min and max based on available products
   updatePriceRange() {
     if (this.products.length > 0) {
       const prices = this.products.map(p => p.price).filter(p => p !== null && p !== undefined);
@@ -59,12 +57,11 @@ export class PricefilterComponent implements OnInit {
   }
 
   setProgress() {
-    const progress = this.progress.nativeElement;
-    if (progress) {
+    if (this.progress && this.progress.nativeElement) {
       const minPercent = (this.minVal / this.max) * 100;
       const maxPercent = (this.maxVal / this.max) * 100;
-      this.renderer.setStyle(progress, 'left', `${minPercent}%`);
-      this.renderer.setStyle(progress, 'width', `${maxPercent - minPercent}%`);
+      this.renderer.setStyle(this.progress.nativeElement, 'left', `${minPercent}%`);
+      this.renderer.setStyle(this.progress.nativeElement, 'width', `${maxPercent - minPercent}%`);
     }
   }
 

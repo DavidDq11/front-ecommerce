@@ -36,6 +36,7 @@ export class ProductService {
       .set('category', backendCategory)
       .set('limit', limit.toString())
       .set('offset', offset.toString());
+    console.log('Requesting category:', backendCategory, 'with limit:', limit, 'offset:', offset); // Debug log
     return this.http.get<{ products: Product[]; total: number; totalPages: number }>(`${environment.baseAPIURL}/products`, { params });
   }
 
