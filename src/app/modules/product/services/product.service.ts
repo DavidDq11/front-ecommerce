@@ -37,7 +37,7 @@ export class ProductService {
       .set('limit', limit.toString())
       .set('offset', offset.toString());
     console.log('Requesting category:', backendCategory, 'with limit:', limit, 'offset:', offset); // Debug log
-    return this.http.get<{ products: Product[]; total: number; totalPages: number }>(`${environment.baseAPIURL}/products`, { params });
+    return this.http.get<{ products: Product[]; total: number; totalPages: number }>(`${environment.baseAPIURL}products`, { params });
   }
 
   getRelated(category: string, limit: number = 6, offset: number = 0): Observable<{ products: Product[]; total: number; page: number; totalPages: number }> {
