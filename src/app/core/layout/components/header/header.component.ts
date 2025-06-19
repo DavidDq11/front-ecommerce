@@ -15,13 +15,11 @@ export class HeaderComponent implements OnInit {
   showAccountMenu = false;
   activeDropdown: string | null = null;
   cart: Product[] = [];
-  isHeaderTopHidden = false;
-  isHeaderFixedHidden = false;
+  isHeaderTopHidden = false; // Always false to keep header visible
+  isHeaderFixedHidden = false; // Always false to keep header visible
   userName: string | null = null;
   isCartModalOpen = false;
   private userSubscription: Subscription = new Subscription();
-  private lastScrollTop = 0;
-  private scrollThreshold = 50;
 
   constructor(private cartService: CartService, public authService: AuthService) {}
 
@@ -92,26 +90,6 @@ export class HeaderComponent implements OnInit {
     const target = event.target as HTMLElement;
     if (!target.closest('.group') && !target.closest('.dropdown-menu')) {
       this.activeDropdown = null;
-    }
-  }
-
-  @HostListener('window:scroll', ['$event'])
-  onWindowScroll() {
-    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const scrollDifference = Math.abs(currentScrollTop - this.lastScrollTop);
-
-    if (scrollDifference >= this.scrollThreshold) {
-      if (currentScrollTop <= 0) {
-        this.isHeaderTopHidden = false;
-        this.isHeaderFixedHidden = false;
-      } else if (currentScrollTop > this.lastScrollTop) {
-        this.isHeaderTopHidden = true;
-        this.isHeaderFixedHidden = true;
-      } else {
-        this.isHeaderTopHidden = false;
-        this.isHeaderFixedHidden = false;
-      }
-      this.lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
     }
   }
 
