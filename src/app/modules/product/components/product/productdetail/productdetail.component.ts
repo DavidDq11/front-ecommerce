@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ProductService } from '../../../services/product.service';
 import { Product } from '../../../model';
 import { CartService } from 'src/app/core/services/cart.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-productdetail',
   templateUrl: './productdetail.component.html',
   styles: []
 })
-export class ProductdetailComponent implements OnInit {
+export class ProductdetailComponent implements OnInit, OnDestroy {
   isLoading = false;
   selectedSize?: string;
   category!: string;
@@ -24,6 +25,8 @@ export class ProductdetailComponent implements OnInit {
   currentPage = 1;
   totalPages = 1;
   pageSize = 5;
+  product!: Product;
+  private subscriptions: Subscription = new Subscription();
 
   constructor(
     private route: ActivatedRoute,
@@ -33,11 +36,21 @@ export class ProductdetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.cart = this.cartService.getCart;
+    // Suscribirse al carrito
+    this.subscriptions.add(
+      this.cartService.cartUpdated.subscribe(cart => {
+        this.cart = cart;
+        console.log('Carrito actualizado en Productdetail:', cart);
+      })
+    );
     this.route.params.subscribe(() => {
       this.getProduct();
       this.scrollToTop();
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   getProduct() {
@@ -67,7 +80,6 @@ export class ProductdetailComponent implements OnInit {
     );
   }
 
-  // Transform string[] to { image_id: number; image_url: string }[]
   private transformImages(images: any[]): { image_id: number; image_url: string }[] {
     if (images.length === 0) return [];
     if (typeof images[0] === 'string') {
@@ -100,15 +112,19 @@ export class ProductdetailComponent implements OnInit {
   }
 
   addToCart(product: Product) {
+    console.log('Agregando producto desde Productdetail:', product);
     this.cartService.add(product);
   }
 
   removeFromCart(product: Product) {
+    console.log('Eliminando producto desde Productdetail:', product);
     this.cartService.remove(product);
   }
 
   isProductInCart(product: Product) {
-    return this.cart.some(item => item.id === product.id);
+    const inCart = this.cart.some(item => item.id === product.id);
+    console.log(`¿Producto ${product.id} en carrito?`, inCart);
+    return inCart;
   }
 
   relatedProducts() {
@@ -117,11 +133,10 @@ export class ProductdetailComponent implements OnInit {
     this.productService.getRelated(this.product.category, this.pageSize, offset).subscribe(
       (data) => {
         this.isLoading = false;
-        // Filter by animal_category in addition to category
         this.relatedProductList = data.products.filter((item: Product) => 
           (item.category === this.product.category) && item.id !== this.product.id
         );
-        this.totalPages = Math.ceil(this.relatedProductList.length / this.pageSize) || 1; // Recalculate total pages
+        this.totalPages = Math.ceil(this.relatedProductList.length / this.pageSize) || 1;
       },
       (error) => {
         this.isLoading = false;
@@ -150,6 +165,4 @@ export class ProductdetailComponent implements OnInit {
   onImageError(event: Event) {
     (event.target as HTMLImageElement).src = 'assets/placeholder.jpg';
   }
-
-  product!: Product;
 }

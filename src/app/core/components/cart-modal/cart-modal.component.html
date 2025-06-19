@@ -1,0 +1,38 @@
+<div class="cart-modal-overlay" (click)="closeModal($event)" *ngIf="isOpen">
+  <div class="cart-modal-content">
+    <div class="cart-header">
+      <h3 class="cart-title">Mi Carrito ({{ cart.length }} ítems)</h3>
+      <button class="close-btn" (click)="closeModal($event)">
+        <i class="fa-solid fa-times"></i>
+      </button>
+    </div>
+    <div class="cart-items" *ngIf="cart.length > 0; else emptyCart">
+      <div class="cart-item" *ngFor="let item of cart">
+        <img [src]="item.images[0].image_url" [alt]="item.title" class="cart-item-image">
+        <div class="cart-item-details">
+          <p class="item-title">{{ item.title }}</p>
+          <p class="item-price">${{ item.price | currency:'COP':'symbol':'1.0-0' }} <span class="original-price" *ngIf="item.prevprice && item.prevprice > item.price">${{ item.prevprice | currency:'COP':'symbol':'1.0-0' }}</span></p>
+          <div class="quantity-controls">
+            <button (click)="lessQty(item)" class="quantity-btn">-</button>
+            <span class="quantity">{{ item.qty }}</span>
+            <button (click)="addQty(item)" class="quantity-btn">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="cart-footer">
+        <div class="cart-summary">
+          <p>Subtotal: ${{ total | currency:'COP':'symbol':'1.0-0' }}</p>
+          <p>Impuestos (19%): ${{ gstAmount | currency:'COP':'symbol':'1.0-0' }}</p>
+          <p>Total: ${{ estimatedTotal | currency:'COP':'symbol':'1.0-0' }}</p>
+        </div>
+        <button class="checkout-btn" (click)="goToCheckout()">Continuar al Checkout ${{ estimatedTotal | currency:'COP':'symbol':'1.0-0' }}</button>
+      </div>
+    </div>
+    <ng-template #emptyCart>
+      <div class="empty-cart">
+        <p>No hay productos seleccionados.</p>
+        <button class="continue-shopping-btn" (click)="closeModal($event)">Seguir Comprando</button>
+      </div>
+    </ng-template>
+  </div>
+</div>

@@ -1,3 +1,4 @@
+// src/app/header.component.ts
 import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CartService } from 'src/app/core/services/cart.service';
@@ -17,6 +18,7 @@ export class HeaderComponent implements OnInit {
   isHeaderTopHidden = false;
   isHeaderFixedHidden = false;
   userName: string | null = null;
+  isCartModalOpen = false;
   private userSubscription: Subscription = new Subscription();
   private lastScrollTop = 0;
   private scrollThreshold = 50;
@@ -28,6 +30,9 @@ export class HeaderComponent implements OnInit {
     this.checkUserStatus();
     this.userSubscription = this.authService.user$.subscribe(user => {
       this.userName = user?.name || null;
+    });
+    this.cartService.cartUpdated.subscribe(() => {
+      this.cart = this.cartService.getCart;
     });
   }
 
@@ -123,5 +128,14 @@ export class HeaderComponent implements OnInit {
     } else {
       carouselEl.scrollLeft += scrollAmount;
     }
+  }
+
+  // Methods for cart modal
+  openCartModal() {
+    this.isCartModalOpen = true;
+  }
+
+  closeCartModal() {
+    this.isCartModalOpen = false;
   }
 }

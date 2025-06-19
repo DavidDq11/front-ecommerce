@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Product } from 'src/app/modules/product/model';
 import { FilterService } from 'src/app/modules/product/services/filter.service';
 import { ProductService } from 'src/app/modules/product/services/product.service';
+import { CartService } from 'src/app/core/services/cart.service';
 
 @Component({
   selector: 'app-home',
@@ -34,7 +35,11 @@ export class HomeComponent implements OnInit {
 
   selectedCategoryId: number | null = null;
 
-  constructor(private _productService: ProductService, private _filterService: FilterService) {}
+  constructor(
+    private _productService: ProductService,
+    private _filterService: FilterService,
+    private cartService: CartService
+  ) {}
 
   ngOnInit(): void {
     this.newArrivalProducts();
@@ -46,7 +51,7 @@ export class HomeComponent implements OnInit {
     this._productService.getByCategory('DryFood').subscribe(
       (response: { products: Product[], total: number }) => {
         this.isLoading = false;
-        console.log('Datos recibidos del backend:', response);
+        console.log('Datos recibidos del backend:', JSON.stringify(response.products, null, 2));
         const data = response.products;
         if (data.length === 0) {
           console.warn('No products returned for DryFood');
@@ -57,7 +62,7 @@ export class HomeComponent implements OnInit {
         const startIndex = Math.floor(Math.random() * maxStartIndex);
         const lastIndex = startIndex + 6;
         this.products = data.slice(startIndex, lastIndex);
-        console.log('Productos seleccionados:', this.products);
+        console.log('Productos seleccionados:', this.products.map(p => ({ id: p.id, title: p.title, stock: p.stock, images: p.images })));
       },
       (error) => {
         this.isLoading = false;
@@ -89,5 +94,21 @@ export class HomeComponent implements OnInit {
   onImageError(event: Event) {
     (event.target as HTMLImageElement).src = 'assets/placeholder.jpg';
     console.log('Error cargando imagen:', (event.target as HTMLImageElement).src);
+  }
+
+  addToCart(product: Product) {
+    console.log('Agregando producto desde Home:', JSON.stringify(product, null, 2));
+    this.cartService.add(product);
+  }
+
+  removeFromCart(product: Product) {
+    console.log('Eliminando producto desde Home:', product);
+    this.cartService.remove(product);
+  }
+
+  isProductInCart(product: Product) {
+    const inCart = this.cartService.getCart.some((item: Product) => item.id === product.id);
+    console.log(`¿Producto ${product.id} en carrito?`, inCart);
+    return inCart;
   }
 }

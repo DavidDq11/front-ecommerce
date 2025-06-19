@@ -19,6 +19,7 @@ import { AuthinterceptorService } from './shared/services/auth/authinterceptor.s
 import { SharedModule } from './shared/shared.module';
 import { TermsComponent } from './core/components/terms/terms.component'; // Nuevo
 import { PrivacyComponent } from './core/components/privacy/privacy.component';
+import { CartModalComponent } from './core/components/cart-modal/cart-modal.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -34,7 +35,8 @@ import { PrivacyComponent } from './core/components/privacy/privacy.component';
     SearchresultComponent,
     SearchComponent,
     TermsComponent,
-    PrivacyComponent
+    PrivacyComponent,
+    CartModalComponent
   ],
   imports: [
     BrowserModule,
