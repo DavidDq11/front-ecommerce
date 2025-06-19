@@ -1,4 +1,3 @@
-// src/app/core/components/cart/cart.component.ts
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Product } from 'src/app/modules/product/model';
 import { CartService } from '../../services/cart.service';
@@ -10,65 +9,63 @@ import { Subscription } from 'rxjs';
   templateUrl: './cart.component.html',
   styles: [
     `
-    /* hide scrollbar */
-    ::-webkit-scrollbar {
-      width: 0px;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(136, 136, 136, 0.281);
-    }
-    /* Handle on hover */
-    ::-webkit-scrollbar-thumb:hover {
-      background: #555;
-    }
+      ::-webkit-scrollbar {
+        width: 0px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(136, 136, 136, 0.281);
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
     `
   ]
 })
 export class CartComponent implements OnInit, OnDestroy {
-  cart: Product[] | any = [];
+  cart: Product[] = [];
   total!: number;
   gstAmount!: number;
   estimatedTotal!: number;
   gstRate = 0.19;
   shippingCost = 0;
-  private subsTotal!: Subscription;
-  private subsGST!: Subscription;
-  private subsEstimatedTotal!: Subscription;
-  private cartSubscription!: Subscription;
+  subsTotal!: Subscription;
+  subsGST!: Subscription;
+  subsEstimatedTotal!: Subscription;
+  subsCart!: Subscription;
 
   constructor(private cartService: CartService, private router: Router) {}
 
   ngOnInit(): void {
-    // Subscribe to cart updates to refresh the cart and totals
-    this.cartSubscription = this.cartService.cartUpdated.subscribe(() => {
+    this.getCart();
+    this.getTotal();
+    this.subsCart = this.cartService.cartUpdated.subscribe(() => {
       this.cart = this.cartService.getCart;
-      this.subsTotal = this.cartService.totalAmount.subscribe((data: number) => {
-        this.total = parseInt(data.toFixed(2));
-      });
-      this.subsGST = this.cartService.gstAmount.subscribe((data: number) => {
-        this.gstAmount = parseInt(data.toFixed(2));
-      });
-      this.subsEstimatedTotal = this.cartService.estimatedTotal.subscribe((data: number) => {
-        this.estimatedTotal = parseInt(data.toFixed(2));
-      });
     });
+  }
 
-    // Initial load
+  getCart() {
     this.cart = this.cartService.getCart;
+  }
+
+  getTotal() {
+    this.total = this.cartService.getTotal();
+    this.subsTotal = this.cartService.getTotalAmount().subscribe(data => this.total = parseInt(data.toFixed(2)));
+    this.subsGST = this.cartService.getGstAmount().subscribe(data => this.gstAmount = parseInt(data.toFixed(2)));
+    this.subsEstimatedTotal = this.cartService.getEstimatedTotal().subscribe(data => this.estimatedTotal = parseInt(data.toFixed(2)));
   }
 
   goToCheckout() {
     this.router.navigate(['/checkout']);
   }
 
-  private unsubscribeSubjects() {
-    this.subsTotal?.unsubscribe();
-    this.subsGST?.unsubscribe();
-    this.subsEstimatedTotal?.unsubscribe();
-    this.cartSubscription?.unsubscribe();
+  unsubscribeSubject() {
+    this.subsTotal.unsubscribe();
+    this.subsGST.unsubscribe();
+    this.subsEstimatedTotal.unsubscribe();
+    this.subsCart?.unsubscribe();
   }
 
   ngOnDestroy(): void {
-    this.unsubscribeSubjects();
+    this.unsubscribeSubject();
   }
 }

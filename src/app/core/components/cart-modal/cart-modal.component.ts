@@ -23,7 +23,6 @@ export class CartModalComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     console.log('Inicializando CartModalComponent');
-    // Suscribirse al carrito
     this.subscriptions.add(
       this.cartService.cartUpdated.subscribe(cart => {
         this.cart = cart;
@@ -31,23 +30,22 @@ export class CartModalComponent implements OnInit, OnDestroy {
       })
     );
 
-    // Suscribirse a los totales
     this.subscriptions.add(
-      this.cartService.totalAmount.subscribe(total => {
+      this.cartService.getTotalAmount().subscribe(total => {
         this.total = Number(total.toFixed(2));
         console.log('Total actualizado:', this.total);
       })
     );
 
     this.subscriptions.add(
-      this.cartService.gstAmount.subscribe(gst => {
+      this.cartService.getGstAmount().subscribe(gst => {
         this.gstAmount = Number(gst.toFixed(2));
         console.log('GST actualizado:', this.gstAmount);
       })
     );
 
     this.subscriptions.add(
-      this.cartService.estimatedTotal.subscribe(estimated => {
+      this.cartService.getEstimatedTotal().subscribe(estimated => {
         this.estimatedTotal = Number(estimated.toFixed(2));
         console.log('Estimated Total actualizado:', this.estimatedTotal);
       })
@@ -66,11 +64,17 @@ export class CartModalComponent implements OnInit, OnDestroy {
   }
 
   addQty(product: Product) {
-    this.cartService.addQty(product);
+    const currentQty = product.qty ?? 1;
+    this.cartService.updateQuantity(product, currentQty + 1);
   }
 
   lessQty(product: Product) {
-    this.cartService.lessQty(product);
+    const currentQty = product.qty ?? 1;
+    if (currentQty > 1) {
+      this.cartService.updateQuantity(product, currentQty - 1);
+    } else {
+      this.cartService.remove(product);
+    }
   }
 
   removeFromCart(product: Product) {

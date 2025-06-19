@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Product } from 'src/app/modules/product/model';
 
 @Injectable({
@@ -7,25 +7,24 @@ import { Product } from 'src/app/modules/product/model';
 })
 export class CartService {
   private cartSubject = new BehaviorSubject<Product[]>([]);
-  public cartUpdated = this.cartSubject.asObservable();
-  private totalAmountSubject = new BehaviorSubject<number>(0);
-  public totalAmount = this.totalAmountSubject.asObservable();
-  private gstAmountSubject = new BehaviorSubject<number>(0);
-  public gstAmount = this.gstAmountSubject.asObservable();
-  private estimatedTotalSubject = new BehaviorSubject<number>(0);
-  public estimatedTotal = this.estimatedTotalSubject.asObservable();
+  private totalAmount = new BehaviorSubject<number>(0);
+  private gstAmount = new BehaviorSubject<number>(0);
+  private estimatedTotal = new BehaviorSubject<number>(0);
+  private gstRate: number = 0.19;
+  cartUpdated: Observable<Product[]> = this.cartSubject.asObservable();
+  totalAmount$: Observable<number> = this.totalAmount.asObservable();
+  gstAmount$: Observable<number> = this.gstAmount.asObservable();
+  estimatedTotal$: Observable<number> = this.estimatedTotal.asObservable();
 
   constructor() {
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      try {
-        const cart = JSON.parse(savedCart);
-        this.cartSubject.next(cart);
-        this.updateTotals();
-        console.log('Carrito cargado desde localStorage:', cart);
-      } catch (error) {
-        console.error('Error al cargar carrito desde localStorage:', error);
-      }
+    this.loadCart();
+  }
+
+  private loadCart() {
+    const cart = localStorage.getItem('cart');
+    if (cart) {
+      this.cartSubject.next(JSON.parse(cart));
+      this.updateTotals();
     }
   }
 
@@ -33,7 +32,20 @@ export class CartService {
     return this.cartSubject.getValue();
   }
 
+  getTotalAmount(): Observable<number> {
+    return this.totalAmount$;
+  }
+
+  getGstAmount(): Observable<number> {
+    return this.gstAmount$;
+  }
+
+  getEstimatedTotal(): Observable<number> {
+    return this.estimatedTotal$;
+  }
+
   add(product: Product) {
+    console.log('Ejecutando método add en CartService');
     console.log('Intentando agregar producto:', JSON.stringify(product, null, 2));
     const currentCart = this.cartSubject.getValue();
     const existingProduct = currentCart.find(item => item.id === product.id);
@@ -49,61 +61,47 @@ export class CartService {
     }
     this.cartSubject.next([...currentCart]);
     localStorage.setItem('cart', JSON.stringify(currentCart));
+    console.log('Carrito guardado en localStorage:', localStorage.getItem('cart'));
     this.updateTotals();
     console.log('Carrito actualizado:', currentCart);
   }
 
   remove(product: Product) {
-    console.log('Intentando eliminar producto:', product);
-    const currentCart = this.cartSubject.getValue().filter(item => item.id !== product.id);
+    let currentCart = this.cartSubject.getValue();
+    currentCart = currentCart.filter(item => item.id !== product.id);
     this.cartSubject.next([...currentCart]);
     localStorage.setItem('cart', JSON.stringify(currentCart));
     this.updateTotals();
-    console.log('Carrito actualizado tras eliminación:', currentCart);
   }
 
-  addQty(product: Product) {
-    console.log('Aumentando cantidad de:', product);
+  updateQuantity(product: Product, quantity: number) {
     const currentCart = this.cartSubject.getValue();
     const existingProduct = currentCart.find(item => item.id === product.id);
     if (existingProduct) {
-      existingProduct.qty = (existingProduct.qty ?? 0) + 1;
-      existingProduct.totalprice = existingProduct.price * existingProduct.qty;
+      existingProduct.qty = quantity;
+      existingProduct.totalprice = existingProduct.price * quantity;
       this.cartSubject.next([...currentCart]);
       localStorage.setItem('cart', JSON.stringify(currentCart));
       this.updateTotals();
-      console.log('Carrito actualizado tras aumentar cantidad:', currentCart);
     }
   }
 
-  lessQty(product: Product) {
-    console.log('Reduciendo cantidad de:', product);
-    const currentCart = this.cartSubject.getValue();
-    const existingProduct = currentCart.find(item => item.id === product.id);
-    if (existingProduct && (existingProduct.qty ?? 0) > 1) {
-      existingProduct.qty = (existingProduct.qty ?? 0) - 1;
-      existingProduct.totalprice = existingProduct.price * existingProduct.qty;
-      this.cartSubject.next([...currentCart]);
-      localStorage.setItem('cart', JSON.stringify(currentCart));
-      this.updateTotals();
-      console.log('Carrito actualizado tras reducir cantidad:', currentCart);
-    } else if (existingProduct && (existingProduct.qty ?? 0) === 1) {
-      this.remove(product);
-    }
-  }
-
-  private updateTotals() {
-    const subtotal = this.cartSubject.getValue().reduce((sum, item) => sum + (item.totalprice ?? item.price * (item.qty ?? 0)), 0);
-    const gst = subtotal * 0.19;
-    const estimatedTotal = subtotal + gst;
-
-    this.totalAmountSubject.next(subtotal);
-    this.gstAmountSubject.next(gst);
-    this.estimatedTotalSubject.next(estimatedTotal);
-    console.log('Totales actualizados:', { subtotal, gst, estimatedTotal });
+  clearCart() {
+    this.cartSubject.next([]);
+    localStorage.removeItem('cart');
+    this.updateTotals();
   }
 
   getTotal(): number {
-    return this.cartSubject.getValue().reduce((sum, item) => sum + (item.totalprice ?? item.price * (item.qty ?? 0)), 0);
+    return this.totalAmount.getValue();
+  }
+
+  private updateTotals() {
+    const currentCart = this.cartSubject.getValue();
+    const subtotal = currentCart.reduce((sum, item) => sum + (item.totalprice ?? 0), 0);
+    const gst = subtotal * this.gstRate;
+    this.totalAmount.next(subtotal);
+    this.gstAmount.next(gst);
+    this.estimatedTotal.next(subtotal + gst);
   }
 }

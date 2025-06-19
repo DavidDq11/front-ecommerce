@@ -1,5 +1,5 @@
 <header class="bg-blue-900 text-white relative z-200 overflow-visible">
-  <!-- Top bar (minimized, consider moving to footer or banner) -->
+  <!-- Top bar -->
   <div
     class="header-top flex flex-col md:flex-row justify-between items-center py-1 px-2 md:py-1 md:px-4 border-b border-blue-800 space-y-1 md:space-y-0"
     [ngClass]="{'hidden': isHeaderTopHidden}">
@@ -102,7 +102,7 @@
               </div>
             </div>
             <div class="relative">
-              <button (click)="openCartModal()" class="p-2 bg-blue-800 rounded-full shadow-sm hover:shadow-yellow-300/30 transition-all">
+              <button (click)="openCartModal($event)" class="p-2 bg-blue-800 rounded-full shadow-sm hover:shadow-yellow-300/30 transition-all">
                 <i class="fa-solid fa-shopping-bag text-yellow-300 text-lg"></i>
               </button>
               <span *ngIf="cart && cart.length > 0"
@@ -165,7 +165,7 @@
             </div>
           </div>
           <div class="relative">
-            <button (click)="openCartModal()" class="bg-blue-800 p-3 rounded-full shadow-md hover:shadow-yellow-300/30 transition-all duration-300">
+            <button (click)="openCartModal($event)" class="bg-blue-800 p-3 rounded-full shadow-md hover:shadow-yellow-300/30 transition-all duration-300">
               <i class="fa-solid fa-shopping-bag text-yellow-300"></i>
             </button>
             <span *ngIf="cart && cart.length > 0"
@@ -179,7 +179,7 @@
     </div>
   </div>
 
-  <!-- Category navigation (moved outside header-fixed to remain visible) -->
+  <!-- Category navigation -->
   <nav class="bg-white text-blue-900 py-3 px-4 shadow-md sticky top-0 z-1000">
     <ul
       class="flex flex-row justify-center items-center gap-4 md:gap-6 overflow-x-auto md:overflow-visible whitespace-nowrap">

@@ -1,16 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ProductService } from '../../../services/product.service';
 import { Product } from '../../../model';
 import { CartService } from 'src/app/core/services/cart.service';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-productdetail',
   templateUrl: './productdetail.component.html',
   styles: []
 })
-export class ProductdetailComponent implements OnInit, OnDestroy {
+export class ProductdetailComponent implements OnInit {
   isLoading = false;
   selectedSize?: string;
   category!: string;
@@ -26,7 +25,6 @@ export class ProductdetailComponent implements OnInit, OnDestroy {
   totalPages = 1;
   pageSize = 5;
   product!: Product;
-  private subscriptions: Subscription = new Subscription();
 
   constructor(
     private route: ActivatedRoute,
@@ -36,21 +34,11 @@ export class ProductdetailComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Suscribirse al carrito
-    this.subscriptions.add(
-      this.cartService.cartUpdated.subscribe(cart => {
-        this.cart = cart;
-        console.log('Carrito actualizado en Productdetail:', cart);
-      })
-    );
+    this.cart = this.cartService.getCart;
     this.route.params.subscribe(() => {
       this.getProduct();
       this.scrollToTop();
     });
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
   }
 
   getProduct() {
@@ -59,6 +47,7 @@ export class ProductdetailComponent implements OnInit, OnDestroy {
     this.productService.getProduct(id).subscribe(
       (data: Product) => {
         this.isLoading = false;
+        console.log('Producto recibido del backend:', JSON.stringify(data, null, 2));
         if (!data || Object.keys(data).length === 0) {
           console.warn('No product received for ID:', id);
           return;
@@ -81,7 +70,7 @@ export class ProductdetailComponent implements OnInit, OnDestroy {
   }
 
   private transformImages(images: any[]): { image_id: number; image_url: string }[] {
-    if (images.length === 0) return [];
+    if (!images || !Array.isArray(images)) return [];
     if (typeof images[0] === 'string') {
       return images.map((url, index) => ({
         image_id: index + 1,
@@ -112,19 +101,15 @@ export class ProductdetailComponent implements OnInit, OnDestroy {
   }
 
   addToCart(product: Product) {
-    console.log('Agregando producto desde Productdetail:', product);
     this.cartService.add(product);
   }
 
   removeFromCart(product: Product) {
-    console.log('Eliminando producto desde Productdetail:', product);
     this.cartService.remove(product);
   }
 
   isProductInCart(product: Product) {
-    const inCart = this.cart.some(item => item.id === product.id);
-    console.log(`¿Producto ${product.id} en carrito?`, inCart);
-    return inCart;
+    return this.cart.some(item => item.id === product.id);
   }
 
   relatedProducts() {
@@ -164,5 +149,9 @@ export class ProductdetailComponent implements OnInit, OnDestroy {
 
   onImageError(event: Event) {
     (event.target as HTMLImageElement).src = 'assets/placeholder.jpg';
+  }
+
+  isInStock(): boolean {
+    return parseInt(this.product.stock) > 0;
   }
 }

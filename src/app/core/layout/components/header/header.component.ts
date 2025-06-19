@@ -1,8 +1,8 @@
-// src/app/header.component.ts
 import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CartService } from 'src/app/core/services/cart.service';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
+import { Product } from 'src/app/modules/product/model';
 
 @Component({
   selector: 'app-header',
@@ -14,7 +14,7 @@ export class HeaderComponent implements OnInit {
   mobileMenuOpen = false;
   showAccountMenu = false;
   activeDropdown: string | null = null;
-  cart: any[] = [];
+  cart: Product[] = [];
   isHeaderTopHidden = false;
   isHeaderFixedHidden = false;
   userName: string | null = null;
@@ -33,6 +33,7 @@ export class HeaderComponent implements OnInit {
     });
     this.cartService.cartUpdated.subscribe(() => {
       this.cart = this.cartService.getCart;
+      console.log('Cart updated in Header:', this.cart);
     });
   }
 
@@ -130,12 +131,14 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  // Methods for cart modal
-  openCartModal() {
+  openCartModal(event: Event) {
+    event.stopPropagation();
+    console.log('Opening cart modal');
     this.isCartModalOpen = true;
   }
 
   closeCartModal() {
+    console.log('Closing cart modal');
     this.isCartModalOpen = false;
   }
 }
