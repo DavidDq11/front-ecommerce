@@ -2,8 +2,9 @@
 header {
   position: relative;
   overflow: visible;
-  padding: 0; // Remove header padding
+  padding: 0;
   margin: 0;
+  z-index: 10000; /* Coincide con app-header */
 }
 
 /* Parte superior que se oculta */
@@ -22,9 +23,9 @@ header {
 
 /* Parte que contiene el título y el buscador */
 .header-fixed {
-  padding: 0 !important; // Remove all padding
+  padding: 0 !important;
   margin: 0 !important;
-  height: auto; // Allow height to adjust to content
+  height: auto;
 }
 
 .header-fixed.hidden {
@@ -37,51 +38,45 @@ header {
 }
 
 .logo-container {
-  height: 180px; // Set to your preferred size for desktop
+  height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 2;
   background: transparent;
-  padding: 0; // Remove padding to eliminate extra space
-  margin: 0; // Remove margins to eliminate extra space
+  padding: 0;
+  margin: 0;
   margin-left: 30px;
 }
 
 .logo-image {
-  height: 180px; // Match the container height
+  height: 180px;
   width: auto;
   object-fit: contain;
   background: transparent;
   box-shadow: none;
   padding: 0;
-  margin: 0; // Ensure no extra space
+  margin: 0;
 }
 
 .flex.items-center.justify-between.w-full.md\:w-auto {
-  gap: 1rem; // Adds spacing between logo and hamburger
-  padding: 0; // Remove padding from the flex container
-  margin: 0; // Remove margins from the flex container
-  height: 60px; // Match logo height to reduce extra space
-  align-items: center; // Ensure vertical centering
+  gap: 1rem;
+  padding: 0;
+  margin: 0;
+  height: 60px;
+  align-items: center;
 }
 
 /* Navegación de categorías */
 nav {
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 11000; /* Mayor que el header y contenido de main */
   background-color: white;
   padding: 1rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
 }
-
-/* Remove this rule since <nav> is no longer a sibling of .header-fixed.hidden */
-/* .header-fixed.hidden + nav {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  background-color: #ffffff;
-} */
 
 /* Asegura que el elemento padre tenga posición relativa */
 .group {
@@ -98,7 +93,9 @@ nav {
   border-radius: 0.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   min-width: 12rem;
-  z-index: 1000;
+  max-height: none; /* Elimina restricciones de altura */
+  overflow: visible; /* Evita scroll */
+  z-index: 12000; /* Alto para priorizar sobre main y header */
   display: none;
   animation: fadeIn 0.2s ease-in-out;
 }
@@ -109,8 +106,10 @@ nav {
 
 .dropdown-menu ul {
   list-style: none;
-  padding: 0;
+  padding: 0.5rem 0;
   margin: 0;
+  max-height: none; /* Sin límite de altura */
+  overflow: visible; /* Evita scroll */
 }
 
 .dropdown-menu li:hover {
@@ -118,7 +117,7 @@ nav {
 }
 
 .dropdown-menu li {
-  padding: 0.25rem 0.75rem;
+  padding: 0.75rem 1rem; /* Aumentado para mejor legibilidad */
 }
 
 .dropdown-menu li a {
@@ -185,43 +184,37 @@ nav {
   nav {
     position: sticky;
     top: 0;
-    z-index: 1050;
+    z-index: 11000;
   }
 
   .logo-container {
-    height: 120px; // Smaller size for mobile
+    height: 120px;
   }
+
   .logo-image {
-    height: 120px; // Match mobile height
+    height: 120px;
   }
+
   .flex.items-center.justify-between.w-full.md\:w-auto {
-    height: 70px; // Match mobile logo height
-  }
-
-  .dropdown-menu.show {
-    background-color: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  .account-menu.show {
-    display: block;
-    z-index: 2050; /* Asegurar que esté por encima de otros elementos en móviles */
-  }
-
-  ul {
-    gap: 0.5rem;
+    height: 70px;
   }
 
   nav ul {
-    overflow-x: auto;
+    display: flex;
+    flex-direction: row; /* Mantiene disposición horizontal */
+    flex-wrap: nowrap; /* Evita que los elementos se apilen */
+    justify-content: flex-start;
+    gap: 0.5rem;
+    overflow-x: auto; /* Permite scroll horizontal si es necesario */
     -webkit-overflow-scrolling: touch;
     padding-bottom: 0.5rem;
-    justify-content: flex-start;
+    white-space: nowrap; /* Evita que los elementos se rompan en varias líneas */
   }
 
   nav li {
     position: relative;
     z-index: 1040;
+    flex-shrink: 0; /* Evita que los elementos se compriman */
   }
 
   nav li img {
@@ -234,40 +227,46 @@ nav {
   }
 
   .dropdown-menu {
-    position: fixed;
-    top: 60px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-    z-index: 2000;
-    border-radius: 0.5rem;
+    position: fixed; /* Usa fixed para estar por encima de todo */
+    top: 190px; /* Ajustado para la altura del header (120px logo + 70px nav) */
+    left: 0;
+    right: 0;
+    width: 100%; /* Ocupa todo el ancho de la pantalla */
+    max-height: none; /* Sin límite de altura */
+    overflow: visible; /* Evita scroll */
+    z-index: 12000; /* Por encima del header */
+    border-radius: 0; /* Sin bordes redondeados en móviles */
     display: none;
   }
 
   .dropdown-menu.show {
     display: block;
   }
+
+  .dropdown-menu ul {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .dropdown-menu li {
+    font-size: 1rem;
+    padding: 1rem;
+    text-align: left;
+  }
+
+  .account-menu.show {
+    display: block;
+    z-index: 2050;
+  }
 }
 
 /* Ajustes para pantallas grandes (min-width: 769px) */
 @media (min-width: 769px) {
-  ul {
-    gap: 1.5rem;
-  }
-
-  .account-menu {
-    position: absolute;
-    right: 0;
-    top: 100%;
-    margin-top: 0.5rem;
-  }
-
   nav ul {
     gap: 1.5rem;
     flex-wrap: wrap;
     justify-content: center;
+    overflow: visible;
   }
 
   nav li img {
@@ -294,5 +293,12 @@ nav {
 
   .group:hover .dropdown-menu {
     display: block;
+  }
+
+  .account-menu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 0.5rem;
   }
 }

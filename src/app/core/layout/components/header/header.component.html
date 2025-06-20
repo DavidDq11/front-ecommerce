@@ -180,140 +180,94 @@
   </div>
 
   <!-- Category navigation -->
-  <nav class="bg-white text-orange-900 py-3 px-4 shadow-md sticky top-0 z-1000">
-    <ul
-      class="flex flex-row justify-center items-center gap-4 md:gap-6 overflow-x-auto md:overflow-visible whitespace-nowrap">
+  <nav class="bg-white text-orange-900 py-2 px-2 shadow-sm sticky top-0 z-1000 h-12">
+    <ul class="flex flex-row justify-center items-center gap-2 md:gap-4 overflow-x-auto md:overflow-visible whitespace-nowrap">
       <!-- Perro -->
-      <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('dog')"
-        [ngClass]="{'active': activeDropdown === 'dog'}">
-        <div
-          class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-orange-600 to-orange-400 group-hover:w-full transition-all duration-300 md:block hidden">
-        </div>
-        <img src="assets/icon/dog.png" alt="Perro"
-          class="w-6 h-6 md:w-10 md:h-10 mr-1 md:mr-2 transition-transform duration-300 group-hover:scale-110" />
-        <a
-          class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-1 text-sm md:text-lg">
-          Perro
-          <i
-            class="fa-solid fa-chevron-down ml-1 text-xs md:text-sm transform transition-transform duration-300 group-hover:rotate-180"></i>
+      <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('dog')" [ngClass]="{'active': activeDropdown === 'dog'}">
+        <div class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-orange-600 to-orange-400 group-hover:w-full transition-all duration-300 md:block hidden"></div>
+        <img src="assets/icon/dog.png" alt="Perro" class="w-6 h-6 md:w-8 md:h-8 mr-0 transition-transform duration-300 group-hover:scale-110" style="max-width: 1.5rem; max-height: 1.5rem; object-fit: contain;">
+        <a class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-0.5 text-xs md:text-sm"> Perro 
+          <i class="fa-solid fa-chevron-down ml-0.5 text-2xs md:text-xs transform transition-transform duration-300 group-hover:rotate-180"></i>
         </a>
         <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'dog'}">
           <ul class="py-2 bg-white rounded-lg shadow-lg">
             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/perro/alimento"
-                class="text-orange-900 hover:text-orange-600 text-sm">Alimento</a>
+              <a routerlink="/categories/perro/alimento" class="text-orange-900 hover:text-orange-600 text-sm" ng-reflect-router-link="/categories/perro/alimento" href="/categories/perro/alimento">Alimento</a>
             </li>
             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/perro/cachorros"
-                class="text-orange-900 hover:text-orange-600 text-sm">Cachorros</a>
+              <a routerlink="/categories/perro/snacks" class="text-orange-900 hover:text-orange-600 text-sm" ng-reflect-router-link="/categories/perro/snacks" href="/categories/perro/snacks">Snacks</a>
             </li>
             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/perro/juguetes"
-                class="text-orange-900 hover:text-orange-600 text-sm">Juguetes</a>
+              <a routerlink="/categories/perro/juguetes" class="text-orange-900 hover:text-orange-600 text-sm" ng-reflect-router-link="/categories/perro/juguetes" href="/categories/perro/juguetes">Juguetes</a>
             </li>
           </ul>
         </div>
       </li>
       <!-- Gato -->
-      <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('cat')"
-        [ngClass]="{'active': activeDropdown === 'cat'}">
-        <div
-          class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-orange-600 to-orange-400 group-hover:w-full transition-all duration-300 md:block hidden">
-        </div>
-        <img src="assets/icon/cat.png" alt="Gato"
-          class="w-6 h-6 md:w-10 md:h-10 mr-1 md:mr-2 transition-transform duration-300 group-hover:scale-110" />
-        <a
-          class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-1 text-sm md:text-lg">
-          Gato
-          <i
-            class="fa-solid fa-chevron-down ml-1 text-xs md:text-sm transform transition-transform duration-300 group-hover:rotate-180"></i>
+      <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('cat')" [ngClass]="{'active': activeDropdown === 'cat'}">
+        <div class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-orange-600 to-orange-400 group-hover:w-full transition-all duration-300 md:block hidden"></div>
+        <img src="assets/icon/cat.png" alt="Gato" class="w-6 h-6 md:w-8 md:h-8 mr-0 transition-transform duration-300 group-hover:scale-110" style="max-width: 1.5rem; max-height: 1.5rem; object-fit: contain;">
+        <a class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-0.5 text-xs md:text-sm"> Gato 
+          <i class="fa-solid fa-chevron-down ml-0.5 text-2xs md:text-xs transform transition-transform duration-300 group-hover:rotate-180"></i>
         </a>
         <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'cat'}">
           <ul class="py-2 bg-white rounded-lg shadow-lg">
             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/gato/alimento"
-                class="text-orange-900 hover:text-orange-600 text-sm">Alimento</a>
+              <a routerlink="/categories/gato/alimento" class="text-orange-900 hover:text-orange-600 text-sm" ng-reflect-router-link="/categories/gato/alimento" href="/categories/gato/alimento">Alimento</a>
             </li>
           </ul>
         </div>
       </li>
       <!-- Caballo -->
-      <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('horse')"
-        [ngClass]="{'active': activeDropdown === 'horse'}">
-        <div
-          class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-orange-600 to-orange-400 group-hover:w-full transition-all duration-300 md:block hidden">
-        </div>
-        <img src="assets/icon/horse.png" alt="Caballo"
-          class="w-6 h-6 md:w-10 md:h-10 mr-1 md:mr-2 transition-transform duration-300 group-hover:scale-110" />
-        <a
-          class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-1 text-sm md:text-lg">
-          Caballo
-          <i
-            class="fa-solid fa-chevron-down ml-1 text-xs md:text-sm transform transition-transform duration-300 group-hover:rotate-180"></i>
+      <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('horse')" [ngClass]="{'active': activeDropdown === 'horse'}">
+        <div class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-orange-600 to-orange-400 group-hover:w-full transition-all duration-300 md:block hidden"></div>
+        <img src="assets/icon/horse.png" alt="Caballo" class="w-6 h-6 md:w-8 md:h-8 mr-0 transition-transform duration-300 group-hover:scale-110" style="max-width: 1.5rem; max-height: 1.5rem; object-fit: contain;">
+        <a class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-0.5 text-xs md:text-sm"> Caballo 
+          <i class="fa-solid fa-chevron-down ml-0.5 text-2xs md:text-xs transform transition-transform duration-300 group-hover:rotate-180"></i>
         </a>
         <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'horse'}">
           <ul class="py-2 bg-white rounded-lg shadow-lg">
             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/caballo/alimento"
-                class="text-orange-900 hover:text-orange-600 text-sm">Alimento</a>
+              <a routerlink="/categories/caballo/alimento" class="text-orange-900 hover:text-orange-600 text-sm" ng-reflect-router-link="/categories/caballo/alimento" href="/categories/caballo/alimento">Alimento</a>
             </li>
             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/caballo/accesorios"
-                class="text-orange-900 hover:text-orange-600 text-sm">Accesorios</a>
+              <a routerlink="/categories/caballo/accesorios" class="text-orange-900 hover:text-orange-600 text-sm" ng-reflect-router-link="/categories/caballo/accesorios" href="/categories/caballo/accesorios">Accesorios</a>
             </li>
           </ul>
         </div>
       </li>
       <!-- Pájaros -->
-      <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('bird')"
-        [ngClass]="{'active': activeDropdown === 'bird'}">
-        <div
-          class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-orange-600 to-orange-400 group-hover:w-full transition-all duration-300 md:block hidden">
-        </div>
-        <img src="assets/icon/bird.png" alt="Pájaros"
-          class="w-6 h-6 md:w-10 md:h-10 mr-1 md:mr-2 transition-transform duration-300 group-hover:scale-110" />
-        <a
-          class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-1 text-sm md:text-lg">
-          Pájaros
-          <i
-            class="fa-solid fa-chevron-down ml-1 text-xs md:text-sm transform transition-transform duration-300 group-hover:rotate-180"></i>
+      <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('bird')" [ngClass]="{'active': activeDropdown === 'bird'}">
+        <div class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-orange-600 to-orange-400 group-hover:w-full transition-all duration-300 md:block hidden"></div>
+        <img src="assets/icon/bird.png" alt="Pájaros" class="w-6 h-6 md:w-8 md:h-8 mr-0 transition-transform duration-300 group-hover:scale-110" style="max-width: 1.5rem; max-height: 1.5rem; object-fit: contain;">
+        <a class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-0.5 text-xs md:text-sm"> Pájaros 
+          <i class="fa-solid fa-chevron-down ml-0.5 text-2xs md:text-xs transform transition-transform duration-300 group-hover:rotate-180"></i>
         </a>
         <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'bird'}">
           <ul class="py-2 bg-white rounded-lg shadow-lg">
             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/pajaros/alimento"
-                class="text-orange-900 hover:text-orange-600 text-sm">Alimento</a>
+              <a routerlink="/categories/pajaros/alimento" class="text-orange-900 hover:text-orange-600 text-sm" ng-reflect-router-link="/categories/pajaros/alimento" href="/categories/pajaros/alimento">Alimento</a>
             </li>
             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/pajaros/jaulas"
-                class="text-orange-900 hover:text-orange-600 text-sm">Jaulas</a>
+              <a routerlink="/categories/pajaros/jaulas" class="text-orange-900 hover:text-orange-600 text-sm" ng-reflect-router-link="/categories/pajaros/jaulas" href="/categories/pajaros/jaulas">Jaulas</a>
             </li>
           </ul>
         </div>
       </li>
       <!-- Vaca -->
-      <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('cow')"
-        [ngClass]="{'active': activeDropdown === 'cow'}">
-        <div
-          class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-orange-600 to-orange-400 group-hover:w-full transition-all duration-300 md:block hidden">
-        </div>
-        <img src="assets/icon/cow.png" alt="Vaca"
-          class="w-6 h-6 md:w-10 md:h-10 mr-1 md:mr-2 transition-transform duration-300 group-hover:scale-110" />
-        <a
-          class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-1 text-sm md:text-lg">
-          Vaca
-          <i
-            class="fa-solid fa-chevron-down ml-1 text-xs md:text-sm transform transition-transform duration-300 group-hover:rotate-180"></i>
+      <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('cow')" [ngClass]="{'active': activeDropdown === 'cow'}">
+        <div class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-orange-600 to-orange-400 group-hover:w-full transition-all duration-300 md:block hidden"></div>
+        <img src="assets/icon/cow.png" alt="Vaca" class="w-6 h-6 md:w-8 md:h-8 mr-0 transition-transform duration-300 group-hover:scale-110" style="max-width: 1.5rem; max-height: 1.5rem; object-fit: contain;">
+        <a class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-0.5 text-xs md:text-sm"> Vaca 
+          <i class="fa-solid fa-chevron-down ml-0.5 text-2xs md:text-xs transform transition-transform duration-300 group-hover:rotate-180"></i>
         </a>
         <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'cow'}">
           <ul class="py-2 bg-white rounded-lg shadow-lg">
             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/vaca/alimento"
-                class="text-orange-900 hover:text-orange-600 text-sm">Alimento</a>
+              <a routerlink="/categories/vaca/alimento" class="text-orange-900 hover:text-orange-600 text-sm" ng-reflect-router-link="/categories/vaca/alimento" href="/categories/vaca/alimento">Alimento</a>
             </li>
             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/vaca/cuidado"
-                class="text-orange-900 hover:text-orange-600 text-sm">Cuidado</a>
+              <a routerlink="/categories/vaca/cuidado" class="text-orange-900 hover:text-orange-600 text-sm" ng-reflect-router-link="/categories/vaca/cuidado" href="/categories/vaca/cuidado">Cuidado</a>
             </li>
           </ul>
         </div>
