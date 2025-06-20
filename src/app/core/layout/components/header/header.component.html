@@ -40,7 +40,7 @@
     </div>
   </div>
 
-  <!-- Main navigation bar with title and hamburger -->
+  <!-- Main navigation bar with title, hamburger, and cart -->
   <div class="header-fixed" [ngClass]="{'hidden': isHeaderFixedHidden}">
     <div class="flex flex-col md:flex-row items-center justify-between py-2 px-2 md:py-3 md:px-4">
       <div class="flex items-center justify-between w-full md:w-auto">
@@ -49,12 +49,24 @@
             <img src="assets/images/logo.png" alt="DOMIPETS Logo" class="logo-image">
           </div>
         </a>
-        <button class="md:hidden text-white focus:outline-none p-1 rounded-full bg-orange-800 bg-opacity-80 hover:bg-yellow-300 hover:text-orange-900 transition-colors" (click)="toggleMobileMenu()">
-          <i class="fa-solid fa-bars text-xl"></i>
-        </button>
+        <div class="md:hidden flex items-center gap-2">
+          <button class="text-white focus:outline-none p-1 rounded-full bg-orange-800 bg-opacity-80 hover:bg-yellow-300 hover:text-orange-900 transition-colors" (click)="toggleMobileMenu()">
+            <i class="fa-solid fa-bars text-xl"></i>
+          </button>
+          <div class="relative">
+            <button (click)="openCartModal($event)" class="p-2 bg-orange-800 rounded-full shadow-sm hover:shadow-yellow-300/30 transition-all">
+              <i class="fa-solid fa-shopping-bag text-yellow-300 text-lg"></i>
+            </button>
+            <span *ngIf="cart && cart.length > 0"
+              class="absolute inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-orange-900 bg-yellow-300 rounded-full -top-1 -right-1 border-2 border-orange-800 animate-bounce">
+              {{cart.length}}
+            </span>
+            <app-cart-modal [isOpen]="isCartModalOpen" (close)="closeCartModal()"></app-cart-modal>
+          </div>
+        </div>
       </div>
 
-      <!-- Mobile menu -->
+      <!-- Mobile menu (without cart) -->
       <div class="md:hidden w-full" [ngClass]="{'hidden': !mobileMenuOpen}">
         <div class="flex flex-col items-center gap-3 py-3 bg-orange-900">
           <div class="relative w-11/12">
@@ -66,50 +78,38 @@
                 class="w-full py-2 px-1 text-orange-900 outline-none text-xs" />
             </div>
           </div>
-          <div class="flex flex-col items-center gap-3 w-full">
-            <div class="relative flex items-center cursor-pointer group hover:text-yellow-300"
-              (click)="toggleAccountMenu()">
-              <span class="flex items-center gap-2">
-                <i class="fa-solid fa-paw text-yellow-300 animate-bounce"></i>
-                <span class="text-xs">{{ userName ? userName : 'Ingresar' }}</span>
-              </span>
-              <i class="fa-solid fa-chevron-down ml-1 text-xs"></i>
-              <div class="account-menu" [ngClass]="{'show': showAccountMenu}">
-                <ul class="py-2 bg-white rounded-md shadow-sm w-11/12">
-                  <ng-container *ngIf="!userName; else userMenu">
-                    <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
-                      <a routerLink="/register" class="text-orange-900 hover:text-orange-600 text-xs">Registrarse como nuevo cliente</a>
-                    </li>
-                    <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
-                      <a routerLink="/login" class="text-orange-900 hover:text-orange-600 text-xs">Iniciar sesión existente</a>
-                    </li>
-                  </ng-container>
-                  <ng-template #userMenu>
-                    <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
-                      <a routerLink="/profile" class="text-orange-900 hover:text-orange-600 text-xs">Mi perfil</a>
-                    </li>
-                    <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
-                      <a routerLink="/orders" class="text-orange-900 hover:text-orange-600 text-xs">Mis pedidos</a>
-                    </li>
-                    <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
-                      <a routerLink="/pets" class="text-orange-900 hover:text-orange-600 text-xs">Mis mascotas</a>
-                    </li>
-                    <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
-                      <a (click)="logOut()" class="text-orange-900 hover:text-orange-600 text-xs">Cerrar sesión</a>
-                    </li>
-                  </ng-template>
-                </ul>
-              </div>
-            </div>
-            <div class="relative">
-              <button (click)="openCartModal($event)" class="p-2 bg-orange-800 rounded-full shadow-sm hover:shadow-yellow-300/30 transition-all">
-                <i class="fa-solid fa-shopping-bag text-yellow-300 text-lg"></i>
-              </button>
-              <span *ngIf="cart && cart.length > 0"
-                class="absolute inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-orange-900 bg-yellow-300 rounded-full -top-1 -right-1 border-2 border-orange-800 animate-bounce">
-                {{cart.length}}
-              </span>
-              <app-cart-modal [isOpen]="isCartModalOpen" (close)="closeCartModal()"></app-cart-modal>
+          <div class="relative flex items-center cursor-pointer group hover:text-yellow-300"
+            (click)="toggleAccountMenu()">
+            <span class="flex items-center gap-2">
+              <i class="fa-solid fa-paw text-yellow-300 animate-bounce"></i>
+              <span class="text-xs">{{ userName ? userName : 'Ingresar' }}</span>
+            </span>
+            <i class="fa-solid fa-chevron-down ml-1 text-xs"></i>
+            <div class="account-menu" [ngClass]="{'show': showAccountMenu}">
+              <ul class="py-2 bg-white rounded-md shadow-sm w-11/12">
+                <ng-container *ngIf="!userName; else userMenu">
+                  <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
+                    <a routerLink="/register" class="text-orange-900 hover:text-orange-600 text-xs">Registrarse como nuevo cliente</a>
+                  </li>
+                  <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
+                    <a routerLink="/login" class="text-orange-900 hover:text-orange-600 text-xs">Iniciar sesión existente</a>
+                  </li>
+                </ng-container>
+                <ng-template #userMenu>
+                  <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
+                    <a routerLink="/profile" class="text-orange-900 hover:text-orange-600 text-xs">Mi perfil</a>
+                  </li>
+                  <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
+                    <a routerLink="/orders" class="text-orange-900 hover:text-orange-600 text-xs">Mis pedidos</a>
+                  </li>
+                  <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
+                    <a routerLink="/pets" class="text-orange-900 hover:text-orange-600 text-xs">Mis mascotas</a>
+                  </li>
+                  <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
+                    <a (click)="logOut()" class="text-orange-900 hover:text-orange-600 text-xs">Cerrar sesión</a>
+                  </li>
+                </ng-template>
+              </ul>
             </div>
           </div>
         </div>
