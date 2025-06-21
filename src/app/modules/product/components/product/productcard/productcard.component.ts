@@ -19,11 +19,11 @@ export class ProductcardComponent implements OnInit, OnDestroy {
   constructor(private cartService: CartService, private productService: ProductService) {}
 
   ngOnInit(): void {
-    // Suscribirse al carrito para mantenerlo actualizado
+    console.log('Producto recibido en Productcard a las', new Date().toLocaleString(), ':', this.product);
     this.subscription.add(
       this.cartService.cartUpdated.subscribe(cart => {
         this.cart = cart;
-        console.log('Carrito actualizado en Productcard:', cart);
+        console.log('Carrito actualizado en Productcard a las', new Date().toLocaleString(), ':', cart);
       })
     );
     this.calculateDiscount();
@@ -43,18 +43,18 @@ export class ProductcardComponent implements OnInit, OnDestroy {
   }
 
   addToCart(product: Product) {
-    console.log('Agregando producto desde Productcard:', product);
+    console.log('Agregando producto desde Productcard a las', new Date().toLocaleString(), ':', product);
     this.cartService.add(product);
   }
 
   removeFromCart(product: Product) {
-    console.log('Eliminando producto desde Productcard:', product);
+    console.log('Eliminando producto desde Productcard a las', new Date().toLocaleString(), ':', product);
     this.cartService.remove(product);
   }
 
   isProductInCart(product: Product) {
     const inCart = this.cart.some(item => item.id === product.id);
-    console.log(`¿Producto ${product.id} en carrito?`, inCart);
+    console.log(`¿Producto ${product.id} en carrito a las`, new Date().toLocaleString(), '?', inCart);
     return inCart;
   }
 
@@ -64,5 +64,6 @@ export class ProductcardComponent implements OnInit, OnDestroy {
 
   onImageError(event: Event) {
     (event.target as HTMLImageElement).src = 'assets/placeholder.jpg';
+    console.log('Imagen no encontrada, usando placeholder a las', new Date().toLocaleString());
   }
 }

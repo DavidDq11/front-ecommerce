@@ -11,7 +11,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
   styles: [],
 })
 export class ProductComponent implements OnInit, OnDestroy {
-  pagedProducts: Product[] = []; // Only current page's products
+  pagedProducts: Product[] = []; // Solo los productos de la página actual
   category = '';
   isLoading = false;
   isFilter = false;
@@ -24,7 +24,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   };
   ratingList: boolean[] = [];
 
-  // Pagination variables
+  // Variables de paginación
   currentPage = 1;
   pageSize = 25;
   totalItems = 0;
@@ -40,15 +40,15 @@ export class ProductComponent implements OnInit, OnDestroy {
     this.subscribeToFilteredProducts();
     this.route.params.subscribe((data: Params) => {
       this.category = data['category'];
-      this.currentPage = 1; // Reset to page 1 on category change
+      this.currentPage = 1; // Reiniciar a página 1 al cambiar de categoría
       this.getProductsByCategory();
     });
   }
 
   subscribeToFilteredProducts() {
     this.subsFilterProducts = this.filterService.filteredProducts.subscribe((data) => {
-      this.pagedProducts = [...data]; // Sync with filtered paginated data
-      console.log('Productos filtrados actualizados (page', this.currentPage, '):', this.pagedProducts.length, this.pagedProducts);
+      this.pagedProducts = [...data]; // Sincronizar con los datos paginados filtrados
+      console.log('Productos filtrados actualizados (página', this.currentPage, 'a las', new Date().toLocaleString(), '):', this.pagedProducts.length, this.pagedProducts);
     });
   }
 
@@ -57,7 +57,7 @@ export class ProductComponent implements OnInit, OnDestroy {
     this.ratingList = [false, false, false, false];
     this.resetFilter();
     const offset = (this.currentPage - 1) * this.pageSize;
-    console.log('Fetching page', this.currentPage, 'with offset', offset, 'limit', this.pageSize);
+    console.log('Obteniendo página', this.currentPage, 'con offset', offset, 'límite', this.pageSize, 'a las', new Date().toLocaleString());
     this.productService.getByCategory(this.category, this.pageSize, offset).subscribe(
       (response) => {
         this.isLoading = false;
@@ -80,12 +80,12 @@ export class ProductComponent implements OnInit, OnDestroy {
           this.filterService.setSelectedCategory(initialCategoryId);
           this.applyInitialFilter(initialCategoryId);
         }
-        console.log('Backend response for page', this.currentPage, ':', response);
+        console.log('Respuesta del backend para página', this.currentPage, 'a las', new Date().toLocaleString(), ':', response);
       },
       (error) => {
         this.isLoading = false;
         this.error = error.message;
-        console.error('Error loading products:', error);
+        console.error('Error al cargar productos a las', new Date().toLocaleString(), ':', error);
       }
     );
   }
@@ -154,7 +154,7 @@ export class ProductComponent implements OnInit, OnDestroy {
 
   getPageNumbers(): number[] {
     const pages = [];
-    const maxPagesToShow = 5; // Número máximo de páginas visibles
+    const maxPagesToShow = 3; // Número máximo de páginas visibles
     let startPage = Math.max(1, this.currentPage - Math.floor(maxPagesToShow / 2));
     let endPage = Math.min(this.totalPages, startPage + maxPagesToShow - 1);
 

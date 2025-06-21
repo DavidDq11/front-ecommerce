@@ -22,11 +22,8 @@
       
       <!-- Contenedor de productos -->
       <div *ngIf="pagedProducts.length > 0">
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          <app-productcard 
-            *ngFor="let product of pagedProducts" 
-            [product]="product"
-          ></app-productcard>
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5">
+          <app-productcard *ngFor="let product of pagedProducts" [product]="product"></app-productcard>
         </div>
       </div>
 
@@ -42,7 +39,7 @@
         <h4 class="text-md px-4 py-2">NO PRODUCTS</h4>
       </div>
 
-      <!-- Error message -->
+      <!-- Mensaje de error -->
       <div class="text-red-500 flex flex-col py-20 md:py-50 min-h-[50vh] md:h-[80vh] justify-center items-center" *ngIf="error">
         <i class="fa-solid fa-circle-exclamation text-6xl"></i>
         <h4 class="text-md px-4 py-2">{{ error }}</h4>
