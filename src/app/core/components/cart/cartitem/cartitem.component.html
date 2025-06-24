@@ -21,7 +21,7 @@
         <p class="text-sm" *ngIf="item.size">Size: {{item&&item.size}}</p>
         <p class="text-sm">
             <span class="text-gray-700 mr-2">Product: {{item.type}}</span>
-            <span class="font-semibold text-green-700" *ngIf="item.stock=='In stock'">{{item.stock}}</span> 
+            <span class="font-semibold text-orange-700" *ngIf="item.stock=='In stock'">{{item.stock}}</span> 
             <span class="font-semibold text-yellow-700" *ngIf="item.stock=='Out of stock'">{{item.stock}}</span> 
         </p>
 
@@ -45,7 +45,7 @@
         <div class="order-2 lg:order-1 text-right">
             <p class="font-semibold text-gray-700">Total</p>
             <div class="">
-                <span class="text-lg text-green-700 font-semibold">{{ item.totalprice | currency:'COP':'symbol':'1.0-0' }}</span>
+                <span class="text-lg text-blue-700 font-semibold">{{ item.totalprice | currency:'COP':'symbol':'1.0-0' }}</span>
             </div>
         </div>
 

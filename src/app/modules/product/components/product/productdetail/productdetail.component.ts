@@ -152,6 +152,6 @@ export class ProductdetailComponent implements OnInit {
   }
 
   isInStock(): boolean {
-    return parseInt(this.product.stock) > 0;
+    return this.product.stock === 'In stock';
   }
 }
