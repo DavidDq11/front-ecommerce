@@ -1,76 +1,122 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs'; // Importa BehaviorSubject
+import { Observable, BehaviorSubject, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+
+interface User {
+  id?: number;
+  name?: string;
+  email?: string;
+  token?: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private apiUrl = environment.baseAPIURL;
-  private tokenKey = 'authToken'; // Clave para almacenar el token en localStorage
-  private userKey = 'authUser';   // Clave para almacenar los datos del usuario en localStorage
+  private tokenKey = 'authToken';
+  private userKey = 'authUser';
+  private inactivityTimeout = 300 * 60 * 1000; // 5 hours in milliseconds
 
-  // BehaviorSubject para emitir los datos del usuario
-  private userSubject = new BehaviorSubject<any>(null);
-  public user$ = this.userSubject.asObservable(); // Observable público para que los componentes se suscriban
+  private userSubject = new BehaviorSubject<User | null>(null);
+  public user$ = this.userSubject.asObservable();
+
+  private inactivityTimer: any; // Timer for inactivity tracking
 
   constructor(private http: HttpClient, private router: Router) {
-    // Cargar los datos iniciales del usuario desde localStorage al iniciar el servicio
+    this.initializeInactivityTracking();
     const storedUser = this.getUserData();
-    if (storedUser) {
+    if (storedUser && typeof storedUser === 'object') {
       this.userSubject.next(storedUser);
     }
   }
 
-  // Registro de usuario
+  // Initialize inactivity tracking
+  private initializeInactivityTracking(): void {
+    this.resetInactivityTimer();
+    this.setupActivityListeners();
+  }
+
+  // Reset the inactivity timer on user activity
+  private resetInactivityTimer(): void {
+    if (this.inactivityTimer) {
+      clearTimeout(this.inactivityTimer);
+    }
+    this.inactivityTimer = setTimeout(() => {
+      this.logoutDueToInactivity();
+    }, this.inactivityTimeout);
+  }
+
+  // Set up event listeners for user activity
+  private setupActivityListeners(): void {
+    ['click', 'keypress', 'mousemove'].forEach(event => {
+      document.addEventListener(event, () => this.resetInactivityTimer());
+    });
+  }
+
+  // Logout due to inactivity
+  private logoutDueToInactivity(): void {
+    console.log('Logging out due to 5 hours of inactivity');
+    this.logout();
+  }
+
   register(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}register`, userData);
+    return this.http.post(`${this.apiUrl}register`, userData).pipe(
+      catchError(error => {
+        console.error('Registration error:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
-  // Inicio de sesión
   login(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}login`, userData);
+    return this.http.post(`${this.apiUrl}login`, userData).pipe(
+      catchError(error => {
+        console.error('Login error:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
-  // Guardar el token recibido
   setToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
+    this.resetInactivityTimer(); // Reset timer on login
   }
 
-  // Guardar los datos del usuario y emitirlos
-  setUserData(user: any): void {
+  setUserData(user: User): void {
     localStorage.setItem(this.userKey, JSON.stringify(user));
-    this.userSubject.next(user); // Emite los nuevos datos del usuario
+    this.userSubject.next(user);
+    this.resetInactivityTimer(); // Reset timer on user data update
   }
 
-  // Obtener el token
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey);
   }
 
-  // Obtener los datos del usuario desde localStorage
-  getUserData(): any {
+  getUserData(): User | null {
     const user = localStorage.getItem(this.userKey);
-    return user ? JSON.parse(user) : null; // Devuelve los datos del usuario o null si no hay datos
+    return user ? JSON.parse(user) : null;
   }
 
-  // Eliminar el token y los datos del usuario (logout)
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
-    this.userSubject.next(null); // Emite null para indicar que no hay usuario
-    this.router.navigate(['/login']); // Redirige al login
+    this.userSubject.next(null);
+    this.router.navigate(['/login']).catch(err => console.error('Navigation error:', err));
+    if (this.inactivityTimer) {
+      clearTimeout(this.inactivityTimer);
+    }
   }
 
-  // Verificar si el usuario está autenticado
   isLoggedIn(): boolean {
-    return !!this.getToken(); // Devuelve true si hay un token
+    return !!this.getToken();
   }
 
-  // Método para Google Sign-In (a implementar más adelante)
   googleSignIn(): Observable<any> {
-    throw new Error('Google Sign-In no implementado aún');
+    window.location.href = `${this.apiUrl}auth/google`;
+    return new Observable(); // Handle callback separately if needed
   }
 }

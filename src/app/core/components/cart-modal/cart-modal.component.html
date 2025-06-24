@@ -29,11 +29,11 @@
     <div class="modal-footer">
       <div class="totals">
         <p>Subtotal: {{ total | currency:'COP':'symbol':'1.0-0' }}</p>
-        <p>Impuestos (GST): {{ gstAmount | currency:'COP':'symbol':'1.0-0' }}</p>
+        <p>Impuestos (IVA): {{ gstAmount | currency:'COP':'symbol':'1.0-0' }}</p>
         <p><strong>Total Estimado: {{ estimatedTotal | currency:'COP':'symbol':'1.0-0' }}</strong></p>
       </div>
       <button class="checkout-button" (click)="goToCheckout()" [disabled]="cart.length === 0">
-        Proceder al Pago
+        Realizar Pedido
       </button>
     </div>
   </div>

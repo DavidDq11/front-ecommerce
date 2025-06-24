@@ -1,5 +1,5 @@
-<div class="mt-8 p-4 sm:p-6 w-full max-w-full sm:max-w-md md:max-w-lg mx-auto bg-white rounded-xl shadow-2xl border border-purple-200 transform hover:scale-105 transition duration-300">
-  <h4 class="py-4 text-white text-lg sm:text-xl text-center font-semibold bg-purple-600 rounded-t-xl border-b-2 border-purple-400">
+<div class="mt-8 p-4 sm:p-6 w-full max-w-full sm:max-w-md md:max-w-lg mx-auto bg-white rounded-xl shadow-2xl border border-orange-200 transform hover:scale-105 transition duration-300">
+  <h4 class="py-4 text-white text-lg sm:text-xl text-center font-semibold bg-orange-600 rounded-t-xl border-b-2 border-orange-400">
     <i class="fas fa-paw mr-2"></i> Regístrate en DOMIPETS
   </h4>
   <div class="mt-6">
@@ -11,7 +11,7 @@
             type="text"
             id="firstName"
             formControlName="firstName"
-            class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+            class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
             placeholder="David"
             required
           />
@@ -22,7 +22,7 @@
             type="text"
             id="lastName"
             formControlName="lastName"
-            class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+            class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
             placeholder="Paul"
             required
           />
@@ -34,7 +34,7 @@
           type="email"
           id="email"
           formControlName="email"
-          class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+          class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
           placeholder="davidpaul@test.com"
           required
         />
@@ -45,7 +45,7 @@
           type="password"
           id="password"
           formControlName="password"
-          class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+          class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
           required
         />
       </div>
@@ -55,7 +55,7 @@
           type="password"
           id="confirmPassword"
           formControlName="confirmPassword"
-          class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+          class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
           required
         />
       </div>
@@ -64,23 +64,23 @@
           id="terms"
           type="checkbox"
           formControlName="terms"
-          class="h-4 w-4 text-purple-600 border-gray-300 rounded"
+          class="h-4 w-4 text-orange-600 border-gray-300 rounded"
           required
         />
         <label for="terms" class="ml-2 text-sm text-gray-700">
-          Estoy de acuerdo con los <a href="#" class="text-purple-600 hover:underline">términos y condiciones</a>
+          Estoy de acuerdo con los <a href="#" class="text-orange-600 hover:underline">términos y condiciones</a>
         </label>
       </div>
       <button
         type="submit"
         [disabled]="registerForm.invalid || isLoading"
-        class="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition duration-200 disabled:bg-purple-400"
+        class="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition duration-200 disabled:bg-orange-400"
       >
         <span *ngIf="isLoading" class="spinner"></span>
         <span *ngIf="!isLoading">Registrar</span>
       </button>
       <p class="mt-4 text-sm text-center text-gray-600">
-        ¿Ya eres miembro? <a [routerLink]="['/login']" class="text-purple-600 hover:underline">Ingresar</a>
+        ¿Ya eres miembro? <a [routerLink]="['/login']" class="text-orange-600 hover:underline">Ingresar</a>
       </p>
     </form>
     <div class="mt-4 text-center">
