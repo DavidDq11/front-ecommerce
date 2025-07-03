@@ -24,7 +24,7 @@ export class ProductService {
     );
   }
 
-  getByCategory(category: string, limit: number = 25, offset: number = 0): Observable<{ products: Product[]; total: number; totalPages: number }> {
+  getByCategory(category: string, params: any = { limit: 25, offset: 0 }): Observable<{ products: Product[]; total: number; totalPages: number }> {
     const categoryMap = {
       'DryFood': 'Pet Food',
       'WetFood': 'Wet Food',
@@ -32,12 +32,17 @@ export class ProductService {
       'Litter': 'Litter'
     };
     const backendCategory = categoryMap[category as keyof typeof categoryMap] || category;
-    let params = new HttpParams()
+    let httpParams = new HttpParams()
       .set('category', backendCategory)
-      .set('limit', limit.toString())
-      .set('offset', offset.toString());
-    console.log('Requesting category:', backendCategory, 'with limit:', limit, 'offset:', offset); // Debug log
-    return this.http.get<{ products: Product[]; total: number; totalPages: number }>(`${environment.baseAPIURL}products`, { params });
+      .set('limit', (params.limit ?? 25).toString()) // Fallback to 25 if undefined
+      .set('offset', (params.offset ?? 0).toString()); // Fallback to 0 if undefined
+    
+    if (params.brand) {
+      httpParams = httpParams.set('brand', params.brand);
+    }
+
+    console.log('Requesting category:', backendCategory, 'with params:', { brand: params.brand, limit: params.limit ?? 25, offset: params.offset ?? 0 }); // Debug log
+    return this.http.get<{ products: Product[]; total: number; totalPages: number }>(`${environment.baseAPIURL}products`, { params: httpParams });
   }
 
   getRelated(category: string, limit: number = 6, offset: number = 0): Observable<{ products: Product[]; total: number; page: number; totalPages: number }> {

@@ -12,6 +12,11 @@ button:hover i {
   z-index: 10; /* Menor que el dropdown-menu */
 }
 
+/* Sombra de texto para títulos elegantes */
+.text-shadow-sm {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 /* Categories Section Styling */
 .categories {
   .category-item {
@@ -40,6 +45,103 @@ button:hover i {
   .category-item:hover .icon-wrapper {
       box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
   }
+}
+
+/* Brands Section Styling */
+.brands-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.brands-container {
+  display: flex;
+  flex-wrap: nowrap; /* Prevent wrapping to keep items in a single row */
+  overflow-x: auto; /* Enable horizontal scrolling */
+  scroll-behavior: smooth; /* Smooth scrolling */
+  gap: 1.5rem;
+  padding: 1rem;
+  scrollbar-width: none; /* Firefox: Hide scrollbar */
+  -ms-overflow-style: none; /* IE and Edge: Hide scrollbar */
+}
+
+/* Webkit browsers: Hide scrollbar */
+.brands-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Snap scrolling for better UX */
+.brands-container.snap-x {
+  scroll-snap-type: x mandatory;
+}
+
+.brand-item {
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  flex: 0 0 auto; /* Prevent items from shrinking */
+  width: calc((100% - 9rem) / 7); /* Show up to 7 brands, accounting for 1.5rem gap */
+  min-width: 80px; /* Minimum width for small screens */
+  max-width: 120px; /* Maximum width for consistency */
+  scroll-snap-align: center; /* Center items when scrolling */
+}
+
+.brand-item:hover {
+  color: #9333ea; /* Purple hover color to match the theme */
+}
+
+.brand-item .brand-wrapper {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.brand-item.brand-selected .brand-wrapper {
+  box-shadow: 0 0 0 3px #9333ea; /* Purple border for selected brand */
+}
+
+.brand-item:hover .brand-wrapper {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.brand-item span {
+  text-align: center;
+}
+
+/* Navigation Buttons */
+.brand-nav-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 10;
+  transition: background-color 0.3s ease;
+}
+
+.brand-nav-button:hover {
+  background-color: #9333ea;
+}
+
+.brand-nav-button:hover i {
+  color: white;
+}
+
+.brand-nav-button.left-0 {
+  left: 10px;
+}
+
+.brand-nav-button.right-0 {
+  right: 10px;
 }
 
 /* Estilos para el contenedor del menú */
@@ -102,6 +204,21 @@ ul[ng-reflect-ng-class] {
     text-align: center;
   }
 
+  .brand-item {
+    width: 80px; /* Fixed width for small screens */
+    min-width: 80px;
+  }
+
+  .brand-item .brand-wrapper {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .brand-item span {
+    font-size: 0.75rem;
+    white-space: normal;
+  }
+
   .truncate {
       white-space: nowrap;
       overflow: hidden;
@@ -145,6 +262,11 @@ ul[ng-reflect-ng-class] {
     font-size: 1rem;
     padding: 1rem;
   }
+
+  .brand-nav-button {
+    width: 32px;
+    height: 32px;
+  }
 }
 
 @media (min-width: 641px) and (max-width: 1024px) {
@@ -161,6 +283,16 @@ ul[ng-reflect-ng-class] {
   .category-item .icon-wrapper {
     width: 5rem;
     height: 5rem;
+  }
+
+  .brand-item {
+    width: 100px;
+    min-width: 100px;
+  }
+
+  .brand-item .brand-wrapper {
+    width: 4rem;
+    height: 4rem;
   }
 }
 

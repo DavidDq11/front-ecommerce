@@ -58,7 +58,7 @@ export class ProductComponent implements OnInit, OnDestroy {
     this.resetFilter();
     const offset = (this.currentPage - 1) * this.pageSize;
     console.log('Obteniendo página', this.currentPage, 'con offset', offset, 'límite', this.pageSize, 'a las', new Date().toLocaleString());
-    this.productService.getByCategory(this.category, this.pageSize, offset).subscribe(
+    this.productService.getByCategory(this.category, { limit: this.pageSize, offset }).subscribe(
       (response) => {
         this.isLoading = false;
         if (response.products.length === 0) {
