@@ -54,7 +54,6 @@ export class ProductcardComponent implements OnInit, OnDestroy {
 
   isProductInCart(product: Product) {
     const inCart = this.cart.some(item => item.id === product.id);
-    console.log(`¿Producto ${product.id} en carrito a las`, new Date().toLocaleString(), '?', inCart);
     return inCart;
   }
 

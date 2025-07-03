@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment';
 interface RawBrand {
   id: number;
   name: string;
-  image_url?: string | null; // Propiedad devuelta por el backend
+  image?: string | null; // Cambiar de image_url a image
 }
 
 // Interfaz para los datos usados en el frontend
@@ -73,9 +73,18 @@ export class HomeComponent implements OnInit {
         this.brands = brands.map(brand => ({
           id: brand.id,
           name: brand.name,
-          image: brand.image_url || undefined // Mapear image_url a image
+          image: brand.image || undefined // Usar brand.image en lugar de brand.image_url
         }));
         console.log('Marcas obtenidas:', this.brands);
+        // Depuración adicional para verificar la carga de imágenes
+        this.brands.forEach(brand => {
+          if (brand.image) {
+            const img = new Image();
+            img.src = brand.image;
+            img.onload = () => console.log(`Imagen cargada exitosamente: ${brand.image}`);
+            img.onerror = (error) => console.error(`Error al cargar imagen: ${brand.image}`, error);
+          }
+        });
       },
       (error) => {
         console.error('Error fetching brands:', error);
@@ -183,7 +192,6 @@ export class HomeComponent implements OnInit {
 
   isProductInCart(product: Product) {
     const inCart = this.cartService.getCart.some((item: Product) => item.id === product.id);
-    console.log(`¿Producto ${product.id} en carrito?`, inCart);
     return inCart;
   }
 }
