@@ -38,6 +38,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     this.subscribeToFilteredProducts();
     this.route.params.subscribe((data: Params) => {
       console.log('Parámetros de la ruta:', data);

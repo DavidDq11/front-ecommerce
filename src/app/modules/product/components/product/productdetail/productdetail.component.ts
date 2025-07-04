@@ -7,7 +7,7 @@ import { CartService } from 'src/app/core/services/cart.service';
 @Component({
   selector: 'app-productdetail',
   templateUrl: './productdetail.component.html',
-  styles: []
+  styleUrls: ['./productdetail.component.scss'] // Añadido el archivo SCSS
 })
 export class ProductdetailComponent implements OnInit {
   isLoading = false;
@@ -34,6 +34,7 @@ export class ProductdetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     this.cart = this.cartService.getCart;
     this.route.params.subscribe(() => {
       this.getProduct();
