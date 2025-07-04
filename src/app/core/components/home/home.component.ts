@@ -5,19 +5,18 @@ import { ProductService } from 'src/app/modules/product/services/product.service
 import { CartService } from 'src/app/core/services/cart.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { Router } from '@angular/router';
 
-// Interfaz para los datos crudos del backend
 interface RawBrand {
   id: number;
   name: string;
-  image?: string | null; // Cambiar de image_url a image
+  image?: string | null;
 }
 
-// Interfaz para los datos usados en el frontend
 interface Brand {
   id: number;
   name: string;
-  image?: string; // Propiedad esperada por el frontend
+  image?: string;
 }
 
 @Component({
@@ -58,7 +57,8 @@ export class HomeComponent implements OnInit {
     private _productService: ProductService,
     private _filterService: FilterService,
     private cartService: CartService,
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -73,10 +73,9 @@ export class HomeComponent implements OnInit {
         this.brands = brands.map(brand => ({
           id: brand.id,
           name: brand.name,
-          image: brand.image || undefined // Usar brand.image en lugar de brand.image_url
+          image: brand.image || undefined
         }));
         console.log('Marcas obtenidas:', this.brands);
-        // Depuración adicional para verificar la carga de imágenes
         this.brands.forEach(brand => {
           if (brand.image) {
             const img = new Image();
@@ -96,22 +95,21 @@ export class HomeComponent implements OnInit {
   selectBrand(brandId: number, brandName: string) {
     this.selectedBrandId = this.selectedBrandId === brandId ? null : brandId;
     this.selectedBrandName = this.selectedBrandId ? brandName : null;
-    this.newArrivalProducts();
+    const categoryPath = this.getCategoryPath(this.selectedCategoryId);
+    this.router.navigate([`/categories/${categoryPath}`], {
+      queryParams: this.selectedBrandId ? { brand_id: this.selectedBrandId } : {}
+    });
   }
 
   newArrivalProducts() {
     this.isLoading = true;
     const params: any = {
-      limit: 25, // Default limit
-      offset: 0  // Default offset
+      limit: 25,
+      offset: 0
     };
-    if (this.selectedBrandName) {
-      params.brand = this.selectedBrandName;
-    }
-    if (!this.selectedCategoryId) {
-      params.category = 'DryFood';
-    }
-    this._productService.getByCategory(params.category || 'DryFood', params).subscribe(
+    const categoryPath = this.getCategoryPath(this.selectedCategoryId);
+    params.category = categoryPath;
+    this._productService.getByCategory(params.category, params).subscribe(
       (response: { products: Product[], total: number }) => {
         this.isLoading = false;
         console.log('Datos recibidos del backend:', JSON.stringify(response.products, null, 2));
@@ -140,23 +138,30 @@ export class HomeComponent implements OnInit {
     this.selectedBrandId = null;
     this.selectedBrandName = null;
     this._filterService.setSelectedCategory(categoryId);
+    const categoryPath = this.getCategoryPath(categoryId);
+    this.router.navigate([`/categories/${categoryPath}`]);
+    this._filterService.getProductTypeFilter(categoryPath);
+    this.newArrivalProducts();
+  }
+
+  getCategoryPath(categoryId: number | null): string {
     const categoryMap: Record<number, string> = {
       1: 'DryFood',
       2: 'WetFood',
       3: 'Snacks',
       4: 'Litter'
     };
-    const category = categoryMap[categoryId];
-    if (category) {
-      this._filterService.getProductTypeFilter(category);
-      this.newArrivalProducts();
-    }
+    return categoryId && categoryMap[categoryId] ? categoryMap[categoryId] : 'DryFood';
+  }
+
+  getProductImageUrl(product: Product): string {
+    return product.images && product.images.length > 0 ? product.images[0].image_url : 'assets/placeholder.jpg';
   }
 
   scrollBrands(direction: 'left' | 'right') {
     const container = document.querySelector('.brands-container') as HTMLElement;
     if (container) {
-      const scrollAmount = container.clientWidth * 0.8; // Scroll 80% of the container width
+      const scrollAmount = container.clientWidth * 0.8;
       if (direction === 'left') {
         container.scrollLeft -= scrollAmount;
       } else {
@@ -176,7 +181,7 @@ export class HomeComponent implements OnInit {
 
   onBrandImageError(event: Event) {
     const imgElement = event.target as HTMLImageElement;
-    imgElement.src = 'assets/placeholder.jpg'; // Usar imagen de respaldo
+    imgElement.src = 'assets/placeholder.jpg';
     console.log('Error cargando imagen de marca:', imgElement.src);
   }
 

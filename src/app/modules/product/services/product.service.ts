@@ -34,14 +34,14 @@ export class ProductService {
     const backendCategory = categoryMap[category as keyof typeof categoryMap] || category;
     let httpParams = new HttpParams()
       .set('category', backendCategory)
-      .set('limit', (params.limit ?? 25).toString()) // Fallback to 25 if undefined
-      .set('offset', (params.offset ?? 0).toString()); // Fallback to 0 if undefined
+      .set('limit', (params.limit ?? 25).toString())
+      .set('offset', (params.offset ?? 0).toString());
     
-    if (params.brand) {
-      httpParams = httpParams.set('brand', params.brand);
+    if (params.brand_id) {
+      httpParams = httpParams.set('brand_id', params.brand_id.toString());
     }
 
-    console.log('Requesting category:', backendCategory, 'with params:', { brand: params.brand, limit: params.limit ?? 25, offset: params.offset ?? 0 }); // Debug log
+    console.log('Requesting category:', backendCategory, 'with params:', { brand_id: params.brand_id, limit: params.limit ?? 25, offset: params.offset ?? 0 });
     return this.http.get<{ products: Product[]; total: number; totalPages: number }>(`${environment.baseAPIURL}products`, { params: httpParams });
   }
 
