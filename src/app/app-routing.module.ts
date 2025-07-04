@@ -10,6 +10,7 @@ import { canActivate } from './shared/services/auth/authguard.service';
 import { SearchresultComponent } from './core/components/searchresult/searchresult.component';
 import { TermsComponent } from './core/components/terms/terms.component';
 import { PrivacyComponent } from './core/components/privacy/privacy.component';
+import { ProductComponent } from './modules/product/components/product/product.component';
 
 const routes: Routes = [
   {
@@ -19,12 +20,10 @@ const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
-    // canActivate: [canActivate]
   },
   {
     path: 'register',
     component: RegisterComponent,
-    // canActivate: [canActivate]
   },
   {
     path: 'products',
@@ -33,6 +32,10 @@ const routes: Routes = [
   {
     path: 'categories',
     loadChildren: () => import('./modules/product/product.module').then(m => m.ProductModule)
+  },
+  { 
+    path: 'brands/:brand_id',
+    component: ProductComponent
   },
   {
     path: 'shopping-cart',
@@ -43,7 +46,6 @@ const routes: Routes = [
     component: CheckoutComponent,
     canActivate: [canActivate],
   },
-  // Nuevas rutas para Términos y Privacidad
   {
     path: 'terms',
     component: TermsComponent

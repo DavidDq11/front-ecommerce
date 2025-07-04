@@ -6,18 +6,7 @@ import { CartService } from 'src/app/core/services/cart.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
-
-interface RawBrand {
-  id: number;
-  name: string;
-  image?: string | null;
-}
-
-interface Brand {
-  id: number;
-  name: string;
-  image?: string;
-}
+import { Brand, RawBrand } from 'src/app/modules/product/model/Brand.model';
 
 @Component({
   selector: 'app-home',
@@ -95,10 +84,9 @@ export class HomeComponent implements OnInit {
   selectBrand(brandId: number, brandName: string) {
     this.selectedBrandId = this.selectedBrandId === brandId ? null : brandId;
     this.selectedBrandName = this.selectedBrandId ? brandName : null;
-    const categoryPath = this.getCategoryPath(this.selectedCategoryId);
-    this.router.navigate([`/categories/${categoryPath}`], {
-      queryParams: this.selectedBrandId ? { brand_id: this.selectedBrandId } : {}
-    });
+    this.selectedCategoryId = null;
+    console.log('Seleccionando marca:', brandId, brandName);
+    this.router.navigate([`/brands/${this.selectedBrandId}`]);
   }
 
   newArrivalProducts() {

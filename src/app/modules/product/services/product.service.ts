@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { BehaviorSubject, Observable, catchError, map, throwError } from 'rxjs';
-import { Product } from '../model';
+import { BehaviorSubject, Observable, catchError, map, of, throwError } from 'rxjs';
+import { Product} from '../model';
+import { RawBrand } from '../model/Brand.model';
 
 @Injectable({
   providedIn: 'root'
@@ -24,25 +25,56 @@ export class ProductService {
     );
   }
 
-  getByCategory(category: string, params: any = { limit: 25, offset: 0 }): Observable<{ products: Product[]; total: number; totalPages: number }> {
-    const categoryMap = {
-      'DryFood': 'Pet Food',
-      'WetFood': 'Wet Food',
-      'Snacks': 'Pet Treats',
-      'Litter': 'Litter'
-    };
-    const backendCategory = categoryMap[category as keyof typeof categoryMap] || category;
-    let httpParams = new HttpParams()
-      .set('category', backendCategory)
-      .set('limit', (params.limit ?? 25).toString())
-      .set('offset', (params.offset ?? 0).toString());
-    
-    if (params.brand_id) {
-      httpParams = httpParams.set('brand_id', params.brand_id.toString());
+  getByCategory(category: string, params: any = {}): Observable<{ products: Product[], total: number, totalPages: number }> {
+    let httpParams = new HttpParams();
+    console.log('Parámetros recibidos en getByCategory:', params, 'category:', category);
+
+    // Solo incluir parámetros válidos y excluir category si brand_id está presente
+    for (const key in params) {
+      if (params.hasOwnProperty(key) && params[key] !== undefined && params[key] !== null && params[key] !== '' && !(key === 'category' && params.brand_id)) {
+        httpParams = httpParams.set(key, params[key].toString());
+      }
     }
 
-    console.log('Requesting category:', backendCategory, 'with params:', { brand_id: params.brand_id, limit: params.limit ?? 25, offset: params.offset ?? 0 });
-    return this.http.get<{ products: Product[]; total: number; totalPages: number }>(`${environment.baseAPIURL}products`, { params: httpParams });
+    console.log('Parámetros enviados al backend:', httpParams.toString());
+
+    if (params.brand_id) {
+      return this.http.get<{ products: Product[], total: number, totalPages: number }>(
+        `${this.url}s/${params.brand_id}`,
+        { params: httpParams }
+      ).pipe(
+        map(response => {
+          console.log('Respuesta para brand_id:', response);
+          return response;
+        }),
+        catchError(error => {
+          console.error('Error en getByCategory (brand_id):', error);
+          return throwError(() => new Error(error.message));
+        })
+      );
+    }
+
+    if (category && category !== '') {
+      httpParams = httpParams.set('category', category);
+    }
+
+    return this.http.get<{ products: Product[], total: number, totalPages: number }>(
+      this.url + 's',
+      { params: httpParams }
+    ).pipe(
+      map(response => {
+        console.log('Respuesta para categoría:', response);
+        return response;
+      }),
+      catchError(error => {
+        console.error('Error en getByCategory (categoría):', error);
+        return throwError(() => new Error(error.message));
+      })
+    );
+  }
+
+  getById(id: number): Observable<Product> {
+    return this.http.get<Product>(`${this.url}/${id}`);
   }
 
   getRelated(category: string, limit: number = 6, offset: number = 0): Observable<{ products: Product[]; total: number; page: number; totalPages: number }> {
@@ -71,6 +103,16 @@ export class ProductService {
     return this.http.get<Product[]>(this.url + 's', {
       params: new HttpParams().set('q', query)
     });
+  }
+
+  getBrandName(brandId: number): Observable<string> {
+    return this.http.get<RawBrand>(`${environment.baseAPIURL}brands/${brandId}`).pipe(
+      map(brand => brand.name),
+      catchError(error => {
+        console.error('Error al obtener el nombre de la marca:', error);
+        return of('Marca desconocida');
+      })
+    );
   }
 
   getRatingStar(product: Product) {
