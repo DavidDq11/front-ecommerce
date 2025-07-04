@@ -17,11 +17,11 @@ export class BreadcrumbComponent implements OnInit{
   listenRoute(){
     this.router.events.subscribe((router:any)=>{
       let url=router.url;
-      console.log('url',router.routerEvent)
+      // console.log('url',router.routerEvent)
     })
-    console.log('dsd',this.route.url);
+    // console.log('dsd',this.route.url);
     this.route.url.subscribe((url:UrlSegment[])=>{
-      console.log('data',url);
+      // console.log('data',url);
       url.map((path:any)=>{
         this.breadcrumbList.push({
           path:path.path,

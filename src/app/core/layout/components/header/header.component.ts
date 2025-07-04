@@ -61,7 +61,12 @@ export class HeaderComponent implements OnInit {
   toggleAccountMenu() {
     this.showAccountMenu = !this.showAccountMenu;
     if (this.showAccountMenu) {
-      this.activeDropdown = null;
+      this.activeDropdown = null; // Cerrar dropdowns de categorías
+      if (window.innerWidth <= 768) {
+        this.mobileMenuOpen = true; // Mantener menú móvil abierto
+      }
+    } else if (window.innerWidth <= 768) {
+      this.mobileMenuOpen = false; // Cerrar menú móvil al ocultar cuenta
     }
   }
 
@@ -70,9 +75,9 @@ export class HeaderComponent implements OnInit {
       this.activeDropdown = null;
     } else {
       this.activeDropdown = category;
-      this.showAccountMenu = false;
+      this.showAccountMenu = false; // Cerrar menú de cuenta
       if (window.innerWidth <= 768) {
-        this.mobileMenuOpen = false;
+        this.mobileMenuOpen = true; // Asegurar que el menú móvil esté abierto
       }
     }
   }
@@ -90,6 +95,9 @@ export class HeaderComponent implements OnInit {
     const target = event.target as HTMLElement;
     if (!target.closest('.group') && !target.closest('.dropdown-menu')) {
       this.activeDropdown = null;
+    }
+    if (!target.closest('.group') && !target.closest('.account-menu')) {
+      this.showAccountMenu = false;
     }
   }
 

@@ -86,13 +86,13 @@
             </span>
             <i class="fa-solid fa-chevron-down ml-1 text-xs"></i>
             <div class="account-menu" [ngClass]="{'show': showAccountMenu}">
-              <ul class="py-2 bg-white rounded-md shadow-sm w-11/12">
+              <ul class="py-2 bg-white rounded-md shadow-sm w-90% mx-auto">
                 <ng-container *ngIf="!userName; else userMenu">
                   <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
-                    <a routerLink="/register" class="text-orange-900 hover:text-orange-600 text-xs">Registrarse como nuevo cliente</a>
+                    <a routerLink="/register" class="text-orange-900 hover:text-orange-600 text-xs">Registrarse</a>
                   </li>
                   <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
-                    <a routerLink="/login" class="text-orange-900 hover:text-orange-600 text-xs">Iniciar sesión existente</a>
+                    <a routerLink="/login" class="text-orange-900 hover:text-orange-600 text-xs">Iniciar sesión</a>
                   </li>
                 </ng-container>
                 <ng-template #userMenu>
@@ -141,10 +141,10 @@
               <ul class="py-2">
                 <ng-container *ngIf="!userName; else userMenuDesktop">
                   <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                    <a routerLink="/register" class="text-orange-900 hover:text-orange-600">Registrarse como nuevo cliente</a>
+                    <a routerLink="/register" class="text-orange-900 hover:text-orange-600">Registrarse</a>
                   </li>
                   <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                    <a routerLink="/login" class="text-orange-900 hover:text-orange-600">Iniciar sesión existente</a>
+                    <a routerLink="/login" class="text-orange-900 hover:text-orange-600">Iniciar sesión</a>
                   </li>
                 </ng-container>
                 <ng-template #userMenuDesktop>
