@@ -1,107 +1,92 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 import { Product } from 'src/app/modules/product/model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CartService {
-  private cartSubject = new BehaviorSubject<Product[]>([]);
-  private totalAmount = new BehaviorSubject<number>(0);
-  private gstAmount = new BehaviorSubject<number>(0);
-  private estimatedTotal = new BehaviorSubject<number>(0);
-  private gstRate: number = 0.19;
-  cartUpdated: Observable<Product[]> = this.cartSubject.asObservable();
-  totalAmount$: Observable<number> = this.totalAmount.asObservable();
-  gstAmount$: Observable<number> = this.gstAmount.asObservable();
-  estimatedTotal$: Observable<number> = this.estimatedTotal.asObservable();
+  private cart = new BehaviorSubject<Product[]>([]);
+  cartUpdated = this.cart.asObservable();
+  private readonly CART_KEY = 'cart';
 
   constructor() {
     this.loadCart();
   }
 
   private loadCart() {
-    const cart = localStorage.getItem('cart');
-    if (cart) {
-      this.cartSubject.next(JSON.parse(cart));
-      this.updateTotals();
+    const savedCart = localStorage.getItem(this.CART_KEY);
+    if (savedCart) {
+      this.cart.next(JSON.parse(savedCart));
     }
   }
 
-  get getCart(): Product[] {
-    return this.cartSubject.getValue();
+  private saveCart() {
+    localStorage.setItem(this.CART_KEY, JSON.stringify(this.cart.value));
   }
 
-  getTotalAmount(): Observable<number> {
-    return this.totalAmount$;
-  }
-
-  getGstAmount(): Observable<number> {
-    return this.gstAmount$;
-  }
-
-  getEstimatedTotal(): Observable<number> {
-    return this.estimatedTotal$;
-  }
-
-  add(product: Product) {
-    console.log('Ejecutando método add en CartService');
-    console.log('Intentando agregar producto:', JSON.stringify(product, null, 2));
-    const currentCart = this.cartSubject.getValue();
-    const existingProduct = currentCart.find(item => item.id === product.id);
+  addToCart(product: Product) {
+    const currentCart = this.cart.value;
+    const existingProduct = currentCart.find(
+      (item) => item.id === product.id && item.size === product.size
+    );
     if (existingProduct) {
-      existingProduct.qty = (existingProduct.qty ?? 0) + 1;
+      existingProduct.qty = (existingProduct.qty ?? 1) + 1;
       existingProduct.totalprice = existingProduct.price * existingProduct.qty;
     } else {
-      const normalizedImages = Array.isArray(product.images)
-        ? product.images.map((img, i) => typeof img === 'string' ? { image_id: i + 1, image_url: img } : img)
-        : [];
-      const newProduct: Product = { ...product, qty: 1, totalprice: product.price, images: normalizedImages };
-      currentCart.push(newProduct);
+      product.qty = 1;
+      product.totalprice = product.price;
+      currentCart.push(product);
     }
-    this.cartSubject.next([...currentCart]);
-    localStorage.setItem('cart', JSON.stringify(currentCart));
-    console.log('Carrito guardado en localStorage:', localStorage.getItem('cart'));
-    this.updateTotals();
-    console.log('Carrito actualizado:', currentCart);
+    this.cart.next([...currentCart]);
+    this.saveCart();
+  }
+
+  updateQuantity(product: Product, qty: number) {
+    const currentCart = this.cart.value;
+    const existingProduct = currentCart.find(
+      (item) => item.id === product.id && item.size === product.size
+    );
+    if (existingProduct) {
+      existingProduct.qty = qty;
+      existingProduct.totalprice = existingProduct.price * qty;
+      this.cart.next([...currentCart]);
+      this.saveCart();
+    }
   }
 
   remove(product: Product) {
-    let currentCart = this.cartSubject.getValue();
-    currentCart = currentCart.filter(item => item.id !== product.id);
-    this.cartSubject.next([...currentCart]);
-    localStorage.setItem('cart', JSON.stringify(currentCart));
-    this.updateTotals();
+    const currentCart = this.cart.value.filter(
+      (item) => !(item.id === product.id && item.size === product.size)
+    );
+    this.cart.next([...currentCart]);
+    this.saveCart();
   }
 
-  updateQuantity(product: Product, quantity: number) {
-    const currentCart = this.cartSubject.getValue();
-    const existingProduct = currentCart.find(item => item.id === product.id);
-    if (existingProduct) {
-      existingProduct.qty = quantity;
-      existingProduct.totalprice = existingProduct.price * quantity;
-      this.cartSubject.next([...currentCart]);
-      localStorage.setItem('cart', JSON.stringify(currentCart));
-      this.updateTotals();
-    }
+  getCart() {
+    return this.cart.value;
+  }
+
+  getTotalAmount() {
+    return this.cartUpdated.pipe(
+      map((cart) => cart.reduce((sum, item) => sum + (item.totalprice || 0), 0))
+    );
+  }
+
+  getGstAmount() {
+    return this.getTotalAmount().pipe(
+      map((total) => total * 0.19) // Suponiendo IVA del 19%
+    );
+  }
+
+  getEstimatedTotal() {
+    return this.getTotalAmount().pipe(
+      map((total) => total + total * 0.19)
+    );
   }
 
   clearCart() {
-    this.cartSubject.next([]);
-    localStorage.removeItem('cart');
-    this.updateTotals();
-  }
-
-  getTotal(): number {
-    return this.totalAmount.getValue();
-  }
-
-  private updateTotals() {
-    const currentCart = this.cartSubject.getValue();
-    const subtotal = currentCart.reduce((sum, item) => sum + (item.totalprice ?? 0), 0);
-    const gst = subtotal * this.gstRate;
-    this.totalAmount.next(subtotal);
-    this.gstAmount.next(gst);
-    this.estimatedTotal.next(subtotal + gst);
+    this.cart.next([]);
+    this.saveCart();
   }
 }

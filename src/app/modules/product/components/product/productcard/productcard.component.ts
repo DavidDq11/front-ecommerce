@@ -44,7 +44,7 @@ export class ProductcardComponent implements OnInit, OnDestroy {
 
   addToCart(product: Product) {
     console.log('Agregando producto desde Productcard a las', new Date().toLocaleString(), ':', product);
-    this.cartService.add(product);
+    this.cartService.addToCart(product);
   }
 
   removeFromCart(product: Product) {

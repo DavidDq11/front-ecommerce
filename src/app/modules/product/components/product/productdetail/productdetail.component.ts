@@ -7,7 +7,7 @@ import { CartService } from 'src/app/core/services/cart.service';
 @Component({
   selector: 'app-productdetail',
   templateUrl: './productdetail.component.html',
-  styleUrls: ['./productdetail.component.scss'] // Añadido el archivo SCSS
+  styleUrls: ['./productdetail.component.scss']
 })
 export class ProductdetailComponent implements OnInit {
   isLoading = false;
@@ -35,7 +35,10 @@ export class ProductdetailComponent implements OnInit {
 
   ngOnInit(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    this.cart = this.cartService.getCart;
+    this.cart = this.cartService.getCart();
+    this.cartService.cartUpdated.subscribe((cart) => {
+      this.cart = cart;
+    });
     this.route.params.subscribe(() => {
       this.getProduct();
       this.scrollToTop();
@@ -102,7 +105,7 @@ export class ProductdetailComponent implements OnInit {
   }
 
   addToCart(product: Product) {
-    this.cartService.add(product);
+    this.cartService.addToCart(product);
   }
 
   removeFromCart(product: Product) {

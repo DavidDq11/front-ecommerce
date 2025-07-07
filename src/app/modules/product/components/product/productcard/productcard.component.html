@@ -1,11 +1,10 @@
 <div class="relative flex flex-col bg-white hover:border border-gray-300 rounded-lg shadow-sm overflow-hidden w-full max-w-xs sm:max-w-md mx-auto">
     <a [routerLink]="['/categories','product',product.id]" class="w-full h-24 sm:h-32 md:h-40 lg:h-48 overflow-hidden relative">
-        <img 
-            class="w-full h-full object-cover rounded-t-lg transition-all duration-500 hover:scale-110"
-            [ngClass]="{'grayscale': product.stock === 'Out of stock'}"
-            [src]="product.images[0]?.image_url || 'assets/placeholder.jpg'" 
-            [alt]="product.title || 'Product image'" 
-            (error)="onImageError($event)" />
+        <img
+            [src]="product.images && product.images.length > 0 ? product.images[0].image_url : 'assets/placeholder.jpg'"
+            [alt]="product.title"
+            class="w-20 h-20 object-cover rounded"
+            />
     </a>
     
     <div class="flex flex-col justify-between p-2 sm:p-3 md:p-4 w-full">

@@ -3,11 +3,12 @@ import { CartService } from 'src/app/core/services/cart.service';
 import { Product } from 'src/app/modules/product/model';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-cart-modal',
   templateUrl: './cart-modal.component.html',
-  styleUrls: ['./cart-modal.component.scss']
+  styleUrls: ['./cart-modal.component.scss'],
 })
 export class CartModalComponent implements OnInit, OnDestroy {
   @Input() isOpen = false;
@@ -19,42 +20,37 @@ export class CartModalComponent implements OnInit, OnDestroy {
   estimatedTotal = 0;
   private subscriptions: Subscription = new Subscription();
 
-  constructor(private cartService: CartService, private router: Router) {}
+  constructor(
+    private cartService: CartService,
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
-    console.log('Inicializando CartModalComponent');
     this.subscriptions.add(
-      this.cartService.cartUpdated.subscribe(cart => {
+      this.cartService.cartUpdated.subscribe((cart) => {
         this.cart = cart;
-        console.log('Carrito actualizado en CartModal:', cart);
       })
     );
-
     this.subscriptions.add(
-      this.cartService.getTotalAmount().subscribe(total => {
+      this.cartService.getTotalAmount().subscribe((total) => {
         this.total = Number(total.toFixed(2));
-        console.log('Total actualizado:', this.total);
       })
     );
-
     this.subscriptions.add(
-      this.cartService.getGstAmount().subscribe(gst => {
+      this.cartService.getGstAmount().subscribe((gst) => {
         this.gstAmount = Number(gst.toFixed(2));
-        console.log('GST actualizado:', this.gstAmount);
       })
     );
-
     this.subscriptions.add(
-      this.cartService.getEstimatedTotal().subscribe(estimated => {
+      this.cartService.getEstimatedTotal().subscribe((estimated) => {
         this.estimatedTotal = Number(estimated.toFixed(2));
-        console.log('Estimated Total actualizado:', this.estimatedTotal);
       })
     );
   }
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
-    console.log('CartModalComponent destruido');
   }
 
   closeModal(event: MouseEvent) {
@@ -82,7 +78,12 @@ export class CartModalComponent implements OnInit, OnDestroy {
   }
 
   goToCheckout() {
-    this.router.navigate(['/checkout']);
+    const isGuest = !this.authService.isAuthenticated();
+    console.log('Navigating to checkout with isGuest:', isGuest); // Añadir log para depuración
+    this.router.navigate(['/checkout'], { 
+      state: { isGuest },
+      queryParams: { isGuest: isGuest ? 'true' : 'false' } // Añadir isGuest como query param
+    });
     this.close.emit();
   }
 }

@@ -1,0 +1,61 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+
+
+interface Order {
+  order_number: string;
+  status: string;
+  total: number;
+  created_at: string;
+  items: Array<{
+    id: number;
+    title: string;
+    size?: string;
+    totalprice: number;
+    images?: Array<{ image_id: number; image_url: string }>;
+    sizes?: Array<{ size_id: number; size: string; price: number; stock_quantity: number; image_url?: string }>;
+  }>;
+}
+
+@Component({
+  selector: 'app-order-confirmation',
+  templateUrl: './order-confirmation.component.html',
+  styleUrls: ['./order-confirmation.component.scss'],
+})
+export class OrderConfirmationComponent implements OnInit {
+  order: Order | null = null;
+  displayOrder: Order | null = null;
+  orderNumber: string | null = null;
+  isGuest: boolean = true;
+
+  constructor(private http: HttpClient, private router: Router) {}
+
+  ngOnInit() {
+    const state = history.state;
+    this.orderNumber = state.orderNumber;
+    this.isGuest = state.isGuest ?? true;
+    if (this.orderNumber) {
+      this.loadOrder();
+    }
+  }
+
+  loadOrder() {
+    this.http.get<Order>(`/api/orders/${this.orderNumber}`).subscribe({
+      next: (order) => {
+        this.order = order;
+        this.displayOrder = order;
+      },
+      error: (error) => {
+        console.error('Error fetching order:', error);
+        alert('Error al cargar los detalles del pedido');
+      },
+    });
+  }
+
+  trackOrder() {
+    if (this.orderNumber) {
+      this.loadOrder();
+    }
+  }
+}

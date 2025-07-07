@@ -24,13 +24,13 @@ export class HeaderComponent implements OnInit {
   constructor(private cartService: CartService, public authService: AuthService) {}
 
   ngOnInit(): void {
-    this.cart = this.cartService.getCart;
+    this.cart = this.cartService.getCart();
     this.checkUserStatus();
     this.userSubscription = this.authService.user$.subscribe(user => {
       this.userName = user?.name || null;
     });
     this.cartService.cartUpdated.subscribe(() => {
-      this.cart = this.cartService.getCart;
+      this.cart = this.cartService.getCart();
       console.log('Cart updated in Header:', this.cart);
     });
   }

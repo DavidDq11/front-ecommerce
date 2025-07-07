@@ -20,6 +20,8 @@ import { SharedModule } from './shared/shared.module';
 import { TermsComponent } from './core/components/terms/terms.component'; // Nuevo
 import { PrivacyComponent } from './core/components/privacy/privacy.component';
 import { CartModalComponent } from './core/components/cart-modal/cart-modal.component';
+import { CommonModule } from '@angular/common';
+import { OrderConfirmationComponent } from './modules/order-confirmation/order-confirmation.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,13 +38,15 @@ import { CartModalComponent } from './core/components/cart-modal/cart-modal.comp
     SearchComponent,
     TermsComponent,
     PrivacyComponent,
-    CartModalComponent
+    OrderConfirmationComponent,
+    CartModalComponent,
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     FormsModule, 
     ReactiveFormsModule,
+    CommonModule,
     AppRoutingModule,
     SharedModule
   ],

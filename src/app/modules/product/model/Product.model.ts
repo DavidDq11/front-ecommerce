@@ -4,17 +4,15 @@ export interface Product {
   description: string;
   category: string;
   type: string;
-  sizes?: { size_id: number; size: string; price: number; stock_quantity: number; image_url?: string }[];
-  size?: string;
+  animal_category: string;
+  brand?: string;
+  sizes: { size_id: number; size: string; price: number; stock_quantity: number; image_url?: string }[];
   images: { image_id: number; image_url: string }[];
-  stock: string;
   price: number;
   prevprice?: number;
-  qty?: number;
-  discount?: number;
-  totalprice?: number;
-  rating: {
-    rate: number;
-    count: number;
-  };
-}
+  stock: string;
+  rating: { rate: number; count: number };
+  size?: string; // Tamaño seleccionado
+  qty?: number; // Cantidad en el carrito
+  totalprice?: number; // Precio total (price * qty)
+} 

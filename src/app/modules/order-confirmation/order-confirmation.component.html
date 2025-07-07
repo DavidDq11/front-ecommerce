@@ -1,0 +1,32 @@
+<div class="container mx-auto px-4 py-8">
+  <h2 class="text-2xl font-bold mb-4">Confirmación de Pedido</h2>
+  <div *ngIf="displayOrder; else loading">
+    <p><strong>Número de Pedido:</strong> {{ displayOrder!.order_number }}</p>
+    <p><strong>Estado:</strong> {{ displayOrder!.status }}</p>
+    <p><strong>Total:</strong> {{ displayOrder!.total | currency:'COP':'symbol':'1.0-0' }}</p>
+    <p><strong>Fecha:</strong> {{ displayOrder!.created_at | date:'medium' }}</p>
+    <div class="mb-4">
+      <h3 class="text-lg font-semibold">Artículos</h3>
+      <div *ngFor="let item of displayOrder!.items" class="flex justify-between border-b py-2">
+        <div>
+          <img
+            [src]="item.images && item.images.length > 0 ? item.images[0].image_url : item.sizes && item.sizes.length > 0 ? item.sizes[0].image_url : 'assets/placeholder.jpg'"
+            [alt]="item.title"
+            class="w-20 h-20 object-cover rounded"
+          />
+          <span>{{ item.title }} ({{ item.size || 'Sin tamaño' }})</span>
+        </div>
+        <span>{{ item.totalprice | currency:'COP':'symbol':'1.0-0' }}</span>
+      </div>
+    </div>
+    <button
+      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-orange-600"
+      (click)="trackOrder()"
+    >
+      Rastrear Pedido
+    </button>
+  </div>
+  <ng-template #loading>
+    <p>Cargando detalles del pedido...</p>
+  </ng-template>
+</div>

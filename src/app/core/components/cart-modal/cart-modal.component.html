@@ -11,7 +11,11 @@
         <p>Tu carrito está vacío.</p>
       </div>
       <div *ngFor="let item of cart" class="cart-item">
-        <img [src]="item.images && item.images[0]?.image_url || 'assets/placeholder.jpg'" [alt]="item.title" class="item-image">
+        <img
+          [src]="item.images && item.images.length > 0 ? item.images[0].image_url : item.sizes && item.sizes.length > 0 ? item.sizes[0].image_url : 'assets/placeholder.jpg'"
+          [alt]="item.title"
+          class="item-image"
+        />
         <div class="item-details">
           <h3>{{ item.title }}</h3>
           <p>Precio: {{ item.price | currency:'COP':'symbol':'1.0-0' }}</p>

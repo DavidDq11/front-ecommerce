@@ -24,7 +24,7 @@ export class AuthService {
   private userSubject = new BehaviorSubject<User | null>(null);
   public user$ = this.userSubject.asObservable();
 
-  private inactivityTimer: any; // Timer for inactivity tracking
+  private inactivityTimer: any;
 
   constructor(private http: HttpClient, private router: Router) {
     this.initializeInactivityTracking();
@@ -34,13 +34,11 @@ export class AuthService {
     }
   }
 
-  // Initialize inactivity tracking
   private initializeInactivityTracking(): void {
     this.resetInactivityTimer();
     this.setupActivityListeners();
   }
 
-  // Reset the inactivity timer on user activity
   private resetInactivityTimer(): void {
     if (this.inactivityTimer) {
       clearTimeout(this.inactivityTimer);
@@ -50,14 +48,12 @@ export class AuthService {
     }, this.inactivityTimeout);
   }
 
-  // Set up event listeners for user activity
   private setupActivityListeners(): void {
     ['click', 'keypress', 'mousemove'].forEach(event => {
       document.addEventListener(event, () => this.resetInactivityTimer());
     });
   }
 
-  // Logout due to inactivity
   private logoutDueToInactivity(): void {
     console.log('Logging out due to 5 hours of inactivity');
     this.logout();
@@ -83,13 +79,14 @@ export class AuthService {
 
   setToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
-    this.resetInactivityTimer(); // Reset timer on login
+    localStorage.setItem('isLogged', 'true'); // Añadir para consistencia
+    this.resetInactivityTimer();
   }
 
   setUserData(user: User): void {
     localStorage.setItem(this.userKey, JSON.stringify(user));
     this.userSubject.next(user);
-    this.resetInactivityTimer(); // Reset timer on user data update
+    this.resetInactivityTimer();
   }
 
   getToken(): string | null {
@@ -104,6 +101,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
+    localStorage.removeItem('isLogged'); // Añadir para consistencia
     this.userSubject.next(null);
     this.router.navigate(['/login']).catch(err => console.error('Navigation error:', err));
     if (this.inactivityTimer) {
@@ -115,8 +113,12 @@ export class AuthService {
     return !!this.getToken();
   }
 
+  isAuthenticated(): boolean {
+    return this.isLoggedIn(); // Alinear con isLoggedIn
+  }
+
   googleSignIn(): Observable<any> {
     window.location.href = `${this.apiUrl}auth/google`;
-    return new Observable(); // Handle callback separately if needed
+    return new Observable();
   }
 }

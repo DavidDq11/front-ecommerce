@@ -1,8 +1,8 @@
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { AuthService } from './auth.service'; // Adjust path as needed
+import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -15,25 +15,29 @@ export class AuthinterceptorService implements HttpInterceptor {
     const token = this.authService.getToken();
     let request = req;
 
-    // Add Authorization header only if token exists and request is not for public routes
-    if (token && !this.isPublicRoute(req.url)) {
+    console.log('Interceptor: URL=', req.url, 'Token=', token);
+
+    // No añadir Authorization header para rutas públicas o de invitados
+    if (token && !this.isPublicOrGuestRoute(req.url)) {
       request = req.clone({
         setHeaders: { Authorization: `Bearer ${token}` }
       });
     }
 
     return next.handle(request).pipe(
-      catchError(error => {
-        if (error.status === 401) {
-          this.authService.logout(); // Clears token and redirects to /login
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401 && !this.isPublicOrGuestRoute(req.url)) {
+          console.log('Interceptor: 401 error, redirecting to /login');
+          this.authService.logout();
+          this.router.navigate(['/login']);
         }
         return throwError(() => error);
       })
     );
   }
 
-  private isPublicRoute(url: string): boolean {
-    const publicRoutes = ['/login', '/register'];
+  private isPublicOrGuestRoute(url: string): boolean {
+    const publicRoutes = ['/api/login', '/api/register', '/api/guest-orders'];
     return publicRoutes.some(route => url.includes(route));
   }
 }

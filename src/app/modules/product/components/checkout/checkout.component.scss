@@ -1,0 +1,8 @@
+.container {
+  @apply max-w-5xl mx-auto;
+}
+
+/* Ensure smooth transitions for focus states */
+input, select {
+  @apply transition duration-200 ease-in-out;
+}

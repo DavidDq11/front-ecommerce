@@ -175,7 +175,7 @@ export class HomeComponent implements OnInit {
 
   addToCart(product: Product) {
     console.log('Agregando producto desde Home:', JSON.stringify(product, null, 2));
-    this.cartService.add(product);
+    this.cartService.addToCart(product);
   }
 
   removeFromCart(product: Product) {
@@ -184,7 +184,6 @@ export class HomeComponent implements OnInit {
   }
 
   isProductInCart(product: Product) {
-    const inCart = this.cartService.getCart.some((item: Product) => item.id === product.id);
-    return inCart;
+    return this.cartService.getCart().some((item: Product) => item.id === product.id);
   }
 }

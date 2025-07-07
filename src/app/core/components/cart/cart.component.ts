@@ -23,49 +23,42 @@ import { Subscription } from 'rxjs';
 })
 export class CartComponent implements OnInit, OnDestroy {
   cart: Product[] = [];
-  total!: number;
-  gstAmount!: number;
-  estimatedTotal!: number;
+  total: number = 0;
+  gstAmount: number = 0;
+  estimatedTotal: number = 0;
   gstRate = 0.19;
   shippingCost = 0;
-  subsTotal!: Subscription;
-  subsGST!: Subscription;
-  subsEstimatedTotal!: Subscription;
-  subsCart!: Subscription;
+  private subsTotal!: Subscription;
+  private subsGST!: Subscription;
+  private subsEstimatedTotal!: Subscription;
+  private subsCart!: Subscription;
 
   constructor(private cartService: CartService, private router: Router) {}
 
-  ngOnInit(): void {
-    this.getCart();
-    this.getTotal();
-    this.subsCart = this.cartService.cartUpdated.subscribe(() => {
-      this.cart = this.cartService.getCart;
+  ngOnInit() {
+    this.cart = this.cartService.getCart();
+    this.subsCart = this.cartService.cartUpdated.subscribe((cart) => {
+      this.cart = cart;
     });
-  }
-
-  getCart() {
-    this.cart = this.cartService.getCart;
-  }
-
-  getTotal() {
-    this.total = this.cartService.getTotal();
-    this.subsTotal = this.cartService.getTotalAmount().subscribe(data => this.total = parseInt(data.toFixed(2)));
-    this.subsGST = this.cartService.getGstAmount().subscribe(data => this.gstAmount = parseInt(data.toFixed(2)));
-    this.subsEstimatedTotal = this.cartService.getEstimatedTotal().subscribe(data => this.estimatedTotal = parseInt(data.toFixed(2)));
+    this.subsTotal = this.cartService.getTotalAmount().subscribe((data) => {
+      this.total = Number(data.toFixed(2));
+    });
+    this.subsGST = this.cartService.getGstAmount().subscribe((data) => {
+      this.gstAmount = Number(data.toFixed(2));
+    });
+    this.subsEstimatedTotal = this.cartService.getEstimatedTotal().subscribe((data) => {
+      this.estimatedTotal = Number(data.toFixed(2));
+    });
   }
 
   goToCheckout() {
     this.router.navigate(['/checkout']);
   }
 
-  unsubscribeSubject() {
-    this.subsTotal.unsubscribe();
-    this.subsGST.unsubscribe();
-    this.subsEstimatedTotal.unsubscribe();
-    this.subsCart?.unsubscribe();
-  }
-
   ngOnDestroy(): void {
-    this.unsubscribeSubject();
+    this.subsTotal?.unsubscribe();
+    this.subsGST?.unsubscribe();
+    this.subsEstimatedTotal?.unsubscribe();
+    this.subsCart?.unsubscribe();
   }
 }
