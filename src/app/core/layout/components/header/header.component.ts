@@ -70,14 +70,17 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  toggleDropdown(category: string) {
+  toggleDropdown(category: string, event?: Event) {
+    if (event) {
+      event.stopPropagation(); // Evitar propagación del evento
+    }
     if (this.activeDropdown === category) {
       this.activeDropdown = null;
     } else {
       this.activeDropdown = category;
       this.showAccountMenu = false; // Cerrar menú de cuenta
-      if (window.innerWidth <= 768) {
-        this.mobileMenuOpen = true; // Asegurar que el menú móvil esté abierto
+      if (window.innerWidth <= 768 && this.mobileMenuOpen) {
+        this.mobileMenuOpen = false; // Cerrar menú hamburguesa en móviles si está abierto
       }
     }
   }

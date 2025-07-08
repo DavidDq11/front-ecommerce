@@ -264,8 +264,8 @@ ul[ng-reflect-ng-class] {
   }
 
   .brand-item .brand-wrapper {
-    width: 3rem;
-    height: 3rem;
+    width: 4rem;
+    height: 4rem;
   }
 
   .brand-item span {
@@ -347,6 +347,14 @@ ul[ng-reflect-ng-class] {
   .brand-item .brand-wrapper {
     width: 4rem;
     height: 4rem;
+  }
+
+  .brand-item .brand-wrapper img {
+    padding: 0.5rem; /* Reduce el padding para que la imagen ocupe más espacio */
+  }
+
+  .brand-item span {
+    font-size: 0.875rem; /* Aumenta de 0.75rem a 0.875rem para mejor legibilidad */
   }
 }
 
