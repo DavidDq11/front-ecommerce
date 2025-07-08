@@ -92,25 +92,47 @@ export class HomeComponent implements OnInit {
   newArrivalProducts() {
     this.isLoading = true;
     const params: any = {
-      limit: 25,
+      limit: 50, // Aumentar el límite para asegurar suficientes productos para la aleatorización
       offset: 0
     };
     const categoryPath = this.getCategoryPath(this.selectedCategoryId);
     params.category = categoryPath;
+
     this._productService.getByCategory(params.category, params).subscribe(
       (response: { products: Product[], total: number }) => {
         this.isLoading = false;
         console.log('Datos recibidos del backend:', JSON.stringify(response.products, null, 2));
         const data = response.products;
+
         if (data.length === 0) {
           console.warn('No products returned', params);
           this.products = [];
           return;
         }
-        const maxStartIndex = Math.max(0, data.length - 6);
-        const startIndex = Math.floor(Math.random() * maxStartIndex);
-        const lastIndex = startIndex + 6;
-        this.products = data.slice(startIndex, lastIndex);
+
+        // Generar una semilla basada en la fecha actual
+        const today = new Date();
+        const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+
+        // Función para barajar el array con una semilla determinista
+        const seededShuffle = (array: Product[], seed: number) => {
+          const rng = (seed: number) => {
+            const x = Math.sin(seed++) * 10000;
+            return x - Math.floor(x);
+          };
+          const shuffled = [...array];
+          for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(rng(seed + i) * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+          }
+          return shuffled;
+        };
+
+        // Barajar los productos con la semilla
+        const shuffledProducts = seededShuffle(data, seed);
+
+        // Seleccionar los primeros 5 productos
+        this.products = shuffledProducts.slice(0, 6);
         console.log('Productos seleccionados:', this.products.map(p => ({ id: p.id, title: p.title, stock: p.stock, images: p.images })));
       },
       (error) => {

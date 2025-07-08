@@ -3,13 +3,13 @@
         <img
             [src]="product.images && product.images.length > 0 ? product.images[0].image_url : 'assets/placeholder.jpg'"
             [alt]="product.title"
-            class="w-20 h-20 object-cover rounded"
-            />
+            class="w-full h-full object-cover rounded"
+        />
     </a>
     
     <div class="flex flex-col justify-between p-2 sm:p-3 md:p-4 w-full">
         <a [routerLink]="['/categories','product',product.id]">
-            <h5 class="mb-1 sm:mb-2 text-sm sm:text-base tracking-tight text-gray-900 truncate" *ngIf="product?.title">
+            <h5 class="mb-1 sm:mb-2 text-sm sm:text-base tracking-tight text-gray-900 line-clamp-2" *ngIf="product?.title">
                 {{product.title}}
             </h5>
             <!-- Depuración: Mostrar mensaje si el título no está (opcional) -->
@@ -18,7 +18,7 @@
         <p class="text-sm sm:text-base text-gray-700">
             <span class="font-bold mr-1 sm:mr-2">{{product.price | currency:'COP':'symbol':'1.0-0' }}</span> 
             <span class="line-through mr-1 sm:mr-2 text-gray-500" *ngIf="product.prevprice !== 0">{{product.prevprice | currency:'COP':'symbol':'1.0-0' }}</span> 
-            <span class="text-sm font-bold text-red-700" *ngIf="product.prevprice !== 0">(-{{discount | currency:'COP':'symbol':'1.0-0' }}%)</span> 
+            <!-- <span class="text-sm font-bold text-red-700" *ngIf="product.prevprice !== 0">(-{{discount | currency:'COP':'symbol':'1.0-0' }}%)</span>  -->
         </p>
         
         <p class="flex items-center text-sm sm:text-base">
