@@ -132,7 +132,7 @@ export class HomeComponent implements OnInit {
         const shuffledProducts = seededShuffle(data, seed);
 
         // Seleccionar los primeros 5 productos
-        this.products = shuffledProducts.slice(0, 6);
+        this.products = shuffledProducts.slice(0, 5);
         console.log('Productos seleccionados:', this.products.map(p => ({ id: p.id, title: p.title, stock: p.stock, images: p.images })));
       },
       (error) => {
@@ -207,5 +207,13 @@ export class HomeComponent implements OnInit {
 
   isProductInCart(product: Product) {
     return this.cartService.getCart().some((item: Product) => item.id === product.id);
+  }
+
+  getRatingStar(product: Product): boolean[] {
+    if (!product.rating || !product.rating.rate) {
+      return []; // O devuelve [false, false, false, false, false] para mostrar 5 estrellas vacías
+    }
+    const rating = Math.round(product.rating.rate);
+    return Array(5).fill(false).map((_, index) => index < rating);
   }
 }

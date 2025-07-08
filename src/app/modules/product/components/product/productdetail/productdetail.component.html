@@ -41,20 +41,20 @@
       <p class="text-sm text-gray-600 mt-2">{{ product.type }}</p>
 
       <div class="flex items-center my-4">
-        <span class="text-lg mr-2">{{ product.rating.rate }}</span>
-        <div class="flex items-center" role="img" [attr.aria-label]="'Product rating of ' + product.rating.rate + ' out of 5'">
+        <span class="text-lg mr-2">{{ product.rating?.rate || 5 }}</span>
+        <div class="flex items-center" role="img" [attr.aria-label]="'Calificación del producto de ' + (product.rating?.rate || 5) + ' de 5'">
           <span *ngFor="let ratestar of ratingList; let i = index" class="star-container">
-            <i class="fas fa-star" [ngClass]="{'filled': ratestar}" aria-hidden="true"></i>
+            <i class="fas fa-star text-sm" [ngClass]="{'filled': ratestar}" aria-hidden="true"></i>
           </span>
         </div>
-        <span class="ml-2 text-gray-600">{{ product.rating.count }} Calificacion</span>
+        <span class="ml-2 text-gray-600">{{ product.rating?.count || 0 }} Calificaciones</span>
       </div>
 
       <div class="mt-6">
         <h3 class="text-xl font-semibold text-gray-700">Detalles del Producto</h3>
         <div class="mt-2">
           <h5 class="text-lg text-gray-600">INFORMACIÓN GENERAL</h5>
-          <p class="text-gray-700 leading-relaxed mt-2">{{ product.description || 'No description available' }}</p>
+          <p class="text-gray-700 leading-relaxed mt-2">{{ product.description || 'No hay descripción disponible' }}</p>
         </div>
       </div>
 
@@ -80,14 +80,14 @@
       </div>
 
       <div class="flex flex-col lg:flex-row gap-4 mt-6">
-        <div *ngIf="!isInStock()" class="py-3 px-6 text-yellow-600 bg-yellow-100 rounded-lg">
+        <div *ngIf="!isInStock()" class="py-3 px-6 text-yellow-600 bg-gray-100 rounded-lg">
           No disponible
         </div>
         <button
           *ngIf="isInStock()"
           class="py-3 px-6 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-all duration-200"
           (click)="addToCart(product)"
-          aria-label="Add to cart"
+          aria-label="Agregar al carrito"
         >
           <i class="fa-solid fa-bag-shopping mr-2"></i> Agregar al Carro
         </button>
@@ -95,11 +95,11 @@
           class="py-3 px-6 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200"
           (click)="removeFromCart(product)"
           *ngIf="isProductInCart(product)"
-          aria-label="Remove from cart"
+          aria-label="Eliminar del carrito"
         >
           <i class="fa-solid fa-trash mr-2"></i> Eliminar
         </button>
-        <button class="py-3 px-6 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all duration-200" aria-label="Add to wishlist">
+        <button class="py-3 px-6 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all duration-200" aria-label="Agregar a la lista de deseos">
           <i class="fa-regular fa-heart mr-2"></i>Adicionar a la lista<br> de deseos
         </button>
       </div>
@@ -115,16 +115,16 @@
         class="p-4"
       ></app-productcard>
     </div>
-    <nav class="flex justify-center mt-6" aria-label="related products pagination">
+    <nav class="flex justify-center mt-6" aria-label="Paginación de productos relacionados">
       <ul class="inline-flex -space-x-px text-sm font-medium">
         <li>
           <button
             (click)="changePage(currentPage - 1)"
             [disabled]="currentPage === 1"
             class="px-4 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 disabled:opacity-50"
-            aria-label="Previous page"
+            aria-label="Página anterior"
           >
-            Previous
+            Anterior
           </button>
         </li>
         <li *ngFor="let page of [].constructor(totalPages); let i = index">
@@ -132,7 +132,7 @@
             (click)="changePage(i + 1)"
             [ngClass]="currentPage === i + 1 ? 'bg-teal-500 text-white' : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-100'"
             class="px-4 py-2 leading-tight border rounded-none hover:text-gray-700"
-            [attr.aria-label]="'Page ' + (i + 1)"
+            [attr.aria-label]="'Página ' + (i + 1)"
           >
             {{ i + 1 }}
           </button>
@@ -142,19 +142,19 @@
             (click)="changePage(currentPage + 1)"
             [disabled]="currentPage === totalPages"
             class="px-4 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 disabled:opacity-50"
-            aria-label="Next page"
+            aria-label="Siguiente página"
           >
-            Next
+            Siguiente
           </button>
         </li>
       </ul>
     </nav>
   </article>
 
-  <article class="text-gray-500 flex flex-col py-20 h-[60vh] justify-center items-center bg-gray-50 rounded-lg animate-fade-in" *ngIf="!isLoading && relatedProductList.length === 0">
+  <article class="text-gray-600 flex flex-col py-20 h-[60vh] justify-center items-center bg-gray-50 rounded-lg animate-fade-in" *ngIf="!isLoading && relatedProductList.length === 0">
     <span>
       <svg class="w-16 h-16 text-teal-500" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2pxzm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8pxzm-1-13h2v6h-2zm0 8h2v2h-2z"/>
       </svg>
     </span>
     <h4 class="text-lg text-gray-700 mt-4">No hay productos relacionados por ahora. ¡Explora más opciones!</h4>

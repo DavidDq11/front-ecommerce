@@ -15,7 +15,7 @@ export class ProductdetailComponent implements OnInit {
   category!: string;
   cart: Product[] = [];
   relatedProductList: Product[] = [];
-  ratingList: boolean[] = [];
+  ratingList: boolean[] = [true, true, true, true, true]; // Valor por defecto: 5 estrellas llenas
   images: { image_id: number; image_url: string }[] = [];
   imageSrc?: { image_id: number; image_url: string };
   selectedImage?: number;
@@ -53,7 +53,7 @@ export class ProductdetailComponent implements OnInit {
         this.isLoading = false;
         console.log('Producto recibido del backend:', JSON.stringify(data, null, 2));
         if (!data || Object.keys(data).length === 0) {
-          console.warn('No product received for ID:', id);
+          console.warn('No product recibido para ID:', id);
           return;
         }
         this.product = data;
@@ -68,7 +68,7 @@ export class ProductdetailComponent implements OnInit {
       },
       (error) => {
         this.isLoading = false;
-        console.error('Error loading product:', error);
+        console.error('Error al cargar producto:', error);
       }
     );
   }
@@ -101,7 +101,14 @@ export class ProductdetailComponent implements OnInit {
   }
 
   getRatingStar() {
-    this.ratingList = this.productService.getRatingStar(this.product);
+    if (!this.product.rating || !this.product.rating.rate) {
+      // Si no hay datos de calificación, usar 5 estrellas llenas
+      this.ratingList = [true, true, true, true, true];
+      console.log('Usando calificación por defecto (5 estrellas llenas) para producto', this.product.id);
+    } else {
+      this.ratingList = this.productService.getRatingStar(this.product);
+      console.log('ratingList para producto', this.product.id, ':', this.ratingList);
+    }
   }
 
   addToCart(product: Product) {
@@ -129,7 +136,7 @@ export class ProductdetailComponent implements OnInit {
       },
       (error) => {
         this.isLoading = false;
-        console.error('Error loading related products:', error);
+        console.error('Error al cargar productos relacionados:', error);
       }
     );
   }

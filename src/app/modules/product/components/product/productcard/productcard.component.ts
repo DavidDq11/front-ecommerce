@@ -7,11 +7,11 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-productcard',
   templateUrl: './productcard.component.html',
-  styles: []
+  styleUrls: ['./productcard.component.scss'],
 })
 export class ProductcardComponent implements OnInit, OnDestroy {
   @Input() product!: Product;
-  ratingList: boolean[] = [];
+  ratingList: boolean[] = [true, true, true, true, true]; // Valor por defecto: 5 estrellas llenas
   cart: Product[] = [];
   discount?: number;
   private subscription: Subscription = new Subscription();
@@ -42,6 +42,17 @@ export class ProductcardComponent implements OnInit, OnDestroy {
     }
   }
 
+  getRatingStar(): void {
+    if (!this.product.rating || !this.product.rating.rate) {
+      // Si no hay datos de calificación, mantener el valor por defecto (5 estrellas llenas)
+      this.ratingList = [true, true, true, true, true];
+      console.log('Usando calificación por defecto (5 estrellas) para producto', this.product.id);
+    } else {
+      this.ratingList = this.productService.getRatingStar(this.product);
+      console.log('ratingList para producto', this.product.id, ':', this.ratingList);
+    }
+  }
+
   addToCart(product: Product) {
     console.log('Agregando producto desde Productcard a las', new Date().toLocaleString(), ':', product);
     this.cartService.addToCart(product);
@@ -52,13 +63,8 @@ export class ProductcardComponent implements OnInit, OnDestroy {
     this.cartService.remove(product);
   }
 
-  isProductInCart(product: Product) {
-    const inCart = this.cart.some(item => item.id === product.id);
-    return inCart;
-  }
-
-  getRatingStar() {
-    this.ratingList = this.productService.getRatingStar(this.product);
+  isProductInCart(product: Product): boolean {
+    return this.cartService.getCart().some((item: Product) => item.id === product.id);
   }
 
   onImageError(event: Event) {

@@ -115,12 +115,12 @@ export class ProductService {
     );
   }
 
-  getRatingStar(product: Product) {
-    this.ratingList = [];
-    [...Array(5)].map((_, index) => {
-      return index + 1 <= Math.trunc(product?.rating.rate) ? this.ratingList.push(true) : this.ratingList.push(false);
-    });
-    return this.ratingList;
+  getRatingStar(product: Product): boolean[] {
+    if (!product.rating || !product.rating.rate) {
+      return [true, true, true, true, true]; // 5 estrellas llenas por defecto
+    }
+    const rating = Math.round(product.rating.rate);
+    return Array(5).fill(false).map((_, index) => index < rating);
   }
 
   private mapCategory(category: string): string {

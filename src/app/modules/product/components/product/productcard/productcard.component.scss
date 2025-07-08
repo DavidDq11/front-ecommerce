@@ -1,0 +1,12 @@
+.star-container {
+  display: inline-flex;
+  align-items: center;
+}
+
+.fas.fa-star {
+  color: #d1d5db; /* Color gris para estrellas vacías */
+}
+
+.fas.fa-star.filled {
+  color: #f59e0b; /* Color dorado para estrellas llenas */
+}
