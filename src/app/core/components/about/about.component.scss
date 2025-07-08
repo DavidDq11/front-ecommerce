@@ -1,0 +1,77 @@
+/* About Section */
+.about-section {
+  background-color: #f9fafb; /* Fondo gris claro, consistente con bg-gray-50 */
+}
+
+.about-section .bg-teal-500 {
+  background-color: #14b8a6; /* Color teal para bloques destacados */
+}
+
+.about-section .text-teal-500 {
+  color: #14b8a6;
+}
+
+.about-section .shadow-md {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.about-section .hover\:shadow-lg:hover {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+}
+
+.about-section .rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.about-section .grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+}
+
+/* Botón de Retroceder */
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+@media (min-width: 768px) {
+  .about-section .grid {
+    grid-template-columns: repeat(3, 1fr); /* Tres columnas en escritorio */
+  }
+}
+
+@media (max-width: 640px) {
+  .about-section h1 {
+    font-size: 1.875rem; /* Tamaño de fuente más pequeño en móviles */
+  }
+  .about-section h2 {
+    font-size: 1.5rem;
+  }
+  .about-section p {
+    font-size: 0.875rem; /* Texto más pequeño en móviles */
+    line-height: 1.25rem;
+  }
+  .about-section .bg-teal-500 {
+    padding: 1rem;
+  }
+  .about-section a {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  .about-section img {
+    height: 12rem; /* Ajustar altura de la imagen en móviles */
+  }
+  .back-button {
+    font-size: 0.75rem; /* Botón más pequeño en móviles */
+    padding: 0.5rem 1rem;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .about-section img {
+    height: 16rem; /* Ajustar altura de la imagen en tabletas */
+  }
+}

@@ -12,6 +12,7 @@ import { SearchresultComponent } from './core/components/searchresult/searchresu
 import { TermsComponent } from './core/components/terms/terms.component';
 import { PrivacyComponent } from './core/components/privacy/privacy.component';
 import { ProductComponent } from './modules/product/components/product/product.component';
+import { AboutComponent } from './core/components/about/about.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -25,6 +26,7 @@ const routes: Routes = [
   { path: 'order-confirmation', component: OrderConfirmationComponent, canActivate: [canActivate] },
   { path: 'terms', component: TermsComponent },
   { path: 'privacy', component: PrivacyComponent },
+  { path: 'about', component: AboutComponent },
   { path: '**', component: Page404Component, data: { message: 'Oops... This is a Bad request' } }
 ];
 

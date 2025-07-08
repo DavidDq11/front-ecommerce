@@ -22,6 +22,7 @@ import { PrivacyComponent } from './core/components/privacy/privacy.component';
 import { CartModalComponent } from './core/components/cart-modal/cart-modal.component';
 import { CommonModule } from '@angular/common';
 import { OrderConfirmationComponent } from './modules/order-confirmation/order-confirmation.component';
+import { AboutComponent } from './core/components/about/about.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -40,6 +41,7 @@ import { OrderConfirmationComponent } from './modules/order-confirmation/order-c
     PrivacyComponent,
     OrderConfirmationComponent,
     CartModalComponent,
+    AboutComponent,
   ],
   imports: [
     BrowserModule,

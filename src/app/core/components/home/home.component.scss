@@ -188,6 +188,60 @@ ul[ng-reflect-ng-class] {
   background-color: #f7f7f7;
 }
 
+/* About Us Section */
+.about-us-section {
+  background-color: #f9fafb; /* Fondo gris claro, consistente con bg-gray-50 */
+}
+
+.about-us-section .bg-teal-500 {
+  background-color: #14b8a6; /* Color teal para el compromiso de entrega */
+}
+
+.about-us-section .text-teal-500 {
+  color: #14b8a6;
+}
+
+.about-us-section .shadow-md {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.about-us-section .hover\:shadow-lg:hover {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+}
+
+.about-us-section .rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.about-us-section .grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .about-us-section .grid {
+    grid-template-columns: repeat(3, 1fr); /* Tres columnas en escritorio */
+  }
+}
+
+@media (max-width: 640px) {
+  .about-us-section h3 {
+    font-size: 1.5rem; /* Tamaño de fuente más pequeño en móviles */
+  }
+  .about-us-section p {
+    font-size: 0.875rem; /* Texto más pequeño en móviles */
+    line-height: 1.25rem;
+  }
+  .about-us-section .bg-teal-500 {
+    padding: 1rem;
+  }
+  .about-us-section a {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
 /* Ajustes para pantallas pequeñas */
 @media (max-width: 640px) {
   .categories-container {

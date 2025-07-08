@@ -1,0 +1,115 @@
+<section class="w-full px-4 md:px-6 lg:px-8 py-2 bg-gray-50">
+  <!-- Botón de Retroceder -->
+  <div class="max-w-7xl mx-auto mb-6">
+    <a [routerLink]="['/']" class="inline-flex items-center px-4 py-2 bg-teal-500 text-white rounded-lg shadow-md hover:bg-teal-600 hover:shadow-lg transition-all duration-300">
+      <i class="fa-solid fa-arrow-left mr-2"></i>
+      Volver al Inicio
+    </a>
+  </div>
+
+  <!-- Encabezado -->
+  <div class="max-w-7xl mx-auto text-center">
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-800 
+               bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent mb-4">
+      Sobre Domipets
+    </h1>
+    <p class="text-lg sm:text-xl text-gray-600 mb-8">
+      Tu tienda de mascotas en Manizales y Villa María, creada con pasión por los animales
+    </p>
+  </div>
+
+  <!-- Nuestra Historia -->
+  <div class="max-w-7xl mx-auto mb-12">
+    <div class="bg-white p-6 sm:p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+      <div class="flex flex-col md:flex-row items-center gap-6">
+        <div class="md:w-1/2">
+          <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">Nuestra Historia</h2>
+          <p class="text-gray-600 text-sm sm:text-base leading-relaxed">
+            Somos dos jóvenes de Manizales, amantes de los animales, que soñamos con progresar y hacer una diferencia en nuestra comunidad. 
+            En 2025, fundamos Domipets para llevar productos de calidad a los dueños de mascotas, entendiendo las dificultades que enfrentan en 
+            Manizales y Villa María, como el acceso limitado a productos especializados o entregas lentas. Nuestra pasión por los peludos nos impulsa 
+            a ofrecer un servicio cercano, confiable y rápido, para que tú y tus mascotas tengan lo mejor.
+          </p>
+        </div>
+        <div class="md:w-1/2">
+          <img src="assets/about/pets-together.jpg" alt="Mascotas felices" 
+               class="w-full h-48 sm:h-64 md:h-80 object-cover rounded-lg shadow-md"
+               (error)="onImageError($event)">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nuestra Misión -->
+  <div class="max-w-7xl mx-auto mb-12">
+    <div class="bg-gradient-to-b from-white to-gray-100 p-6 sm:p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 text-center mb-4">Nuestra Misión</h2>
+      <p class="text-gray-600 text-sm sm:text-base leading-relaxed text-center max-w-3xl mx-auto">
+        En Domipets, nuestra misión es simplificar la vida de los dueños de mascotas en Manizales y Villa María, ofreciendo productos de calidad 
+        con un servicio excepcional. Entendemos que encontrar lo mejor para tus peludos puede ser un desafío, por eso nos esforzamos en ser tu aliado 
+        confiable, con entregas rápidas y una atención que refleja nuestro amor por los animales.
+      </p>
+    </div>
+  </div>
+
+  <!-- Compromiso de Entrega -->
+  <div class="max-w-7xl mx-auto mb-12">
+    <div class="bg-teal-500 p-6 sm:p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-white">
+      <div class="flex items-center justify-center gap-4 mb-4">
+        <i class="fa-solid fa-truck-fast text-3xl sm:text-4xl"></i>
+        <h2 class="text-2xl sm:text-3xl font-bold">Compromiso de Entrega</h2>
+      </div>
+      <p class="text-sm sm:text-base leading-relaxed text-center">
+        Pide antes de las 3 p.m. y recibe tus productos el mismo día en Manizales y Villa María. 
+        If pides después, entregamos a primera hora del día siguiente. 
+        ¡Confía en nosotros para llevar lo mejor a tus peludos, rápido y sin complicaciones!
+      </p>
+    </div>
+  </div>
+
+  <!-- Nuestros Valores -->
+  <div class="max-w-7xl mx-auto mb-12">
+    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 text-center mb-8">
+      Nuestros Valores
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-center">
+        <i class="fa-solid fa-star text-orange-600 text-3xl mb-4"></i>
+        <h3 class="text-lg font-semibold text-gray-800 mb-2">Calidad</h3>
+        <p class="text-gray-600 text-sm leading-relaxed">
+          Ofrecemos solo los mejores productos para garantizar la felicidad y salud de tus mascotas.
+        </p>
+      </div>
+      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-center">
+        <i class="fa-solid fa-heart text-orange-600 text-3xl mb-4"></i>
+        <h3 class="text-lg font-semibold text-gray-800 mb-2">Pasión por las Mascotas</h3>
+        <p class="text-gray-600 text-sm leading-relaxed">
+          Amamos a los animales y trabajamos con dedicación para que tú y tus peludos estén felices.
+        </p>
+      </div>
+      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-center">
+        <i class="fa-solid fa-home text-orange-600 text-3xl mb-4"></i>
+        <h3 class="text-lg font-semibold text-gray-800 mb-2">Compromiso Local</h3>
+        <p class="text-gray-600 text-sm leading-relaxed">
+          Como orgullosos manizaleños, apoyamos a nuestra comunidad con un servicio cercano y confiable.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Llamado a la Acción -->
+  <div class="max-w-7xl mx-auto text-center">
+    <div class="bg-white p-6 sm:p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
+        Únete a la familia Domipets
+      </h2>
+      <p class="text-gray-600 text-sm sm:text-base leading-relaxed mb-6">
+        Descubre por qué somos la elección de los amantes de las mascotas en Manizales y Villa María. 
+        Explora nuestros productos y déjanos cuidar de tus peludos.
+      </p>
+      <a [routerLink]="['/']" class="inline-block px-6 py-3 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-all duration-200">
+        Explora nuestros productos
+      </a>
+    </div>
+  </div>
+</section>

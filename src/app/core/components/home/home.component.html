@@ -68,6 +68,45 @@
     </div>
   </div>
 
+  <!-- About Us Section -->
+  <section class="py-10 bg-gray-50 about-us-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h3 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-800 text-center mb-8 
+                 bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent">
+        Domipets: Tu aliado para tus mascotas
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Historia -->
+        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-center">
+          <i class="fa-solid fa-paw text-orange-600 text-3xl mb-4"></i>
+          <h4 class="text-lg font-semibold text-gray-800 mb-2">Quiénes Somos</h4>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            Somos Domipets, una tienda local de Manizales y Villa María que lleva productos de calidad para tus mascotas directamente a tu puerta.
+          </p>
+        </div>
+        <!-- Compromiso de Entrega -->
+        <div class="bg-teal-500 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-center text-white">
+          <i class="fa-solid fa-truck-fast text-white text-3xl mb-4"></i>
+          <h4 class="text-lg font-semibold mb-2">Compromiso de Entrega</h4>
+          <p class="text-sm leading-relaxed">
+            Pide antes de las 3 p.m. y recibe el mismo día en Manizales y Villa María. Después de las 3 p.m., entregamos a primera hora del día siguiente.
+          </p>
+        </div>
+        <!-- Llamado a la Acción -->
+        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-center flex flex-col justify-center">
+          <i class="fa-solid fa-heart text-orange-600 text-3xl mb-4"></i>
+          <h4 class="text-lg font-semibold text-gray-800 mb-2">Únete a Domipets</h4>
+          <p class="text-gray-600 text-sm leading-relaxed mb-4">
+            Descubre por qué somos la elección de los amantes de las mascotas.
+          </p>
+          <a [routerLink]="['/about']" class="inline-block px-6 py-3 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-all duration-200">
+            Conoce más
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- New Arrivals Section -->
   <article class="my-5 md:my-8">
     <div class="flex items-center justify-center gap-3 mb-6">
