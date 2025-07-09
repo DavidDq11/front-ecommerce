@@ -41,13 +41,13 @@
       <p class="text-sm text-gray-600 mt-2">{{ product.type }}</p>
 
       <div class="flex items-center my-4">
-        <span class="text-lg mr-2">{{ product.rating?.rate || 5 }}</span>
-        <div class="flex items-center" role="img" [attr.aria-label]="'Calificación del producto de ' + (product.rating?.rate || 5) + ' de 5'">
+        <span class="text-lg mr-2">{{ product.rating.rate || 5 }}</span>
+        <div class="flex items-center" role="img" [attr.aria-label]="'Calificación del producto de ' + (product.rating.rate || 5) + ' de 5'">
           <span *ngFor="let ratestar of ratingList; let i = index" class="star-container">
             <i class="fas fa-star text-sm" [ngClass]="{'filled': ratestar}" aria-hidden="true"></i>
           </span>
         </div>
-        <span class="ml-2 text-gray-600">{{ product.rating?.count || 0 }} Calificaciones</span>
+        <span class="ml-2 text-gray-600">{{ product.rating.count || 0 }} Calificaciones</span>
       </div>
 
       <div class="mt-6">
