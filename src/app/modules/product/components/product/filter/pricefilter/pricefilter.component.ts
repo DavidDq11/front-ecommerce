@@ -28,7 +28,7 @@ import { Renderer2 } from '@angular/core';
 })
 export class PricefilterComponent implements OnInit {
   @Output() priceChange = new EventEmitter<{ minPrice: number, maxPrice: number }>();
-  minVal = 100;
+  minVal = 0;
   maxVal = 100000;
   min = 0;
   max = 100000;

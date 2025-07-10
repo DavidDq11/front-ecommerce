@@ -8,11 +8,8 @@
     >
       <app-filter 
         [category]="category ?? ''"
-        [ratingList]="ratingList"
-        [selectedFilter]="selectedFilter"
         (onFilter)="onFilter($event)"
         (categoryChange)="onCategoryFilter($event)"
-        (ratingChange)="onRatingFilter($event)"
         (priceChange)="onPriceFilter($event)"
       ></app-filter>   
     </aside>

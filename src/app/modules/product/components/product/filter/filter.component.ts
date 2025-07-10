@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { FilterService } from '../../../services/filter.service';
 
 @Component({
@@ -11,10 +11,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   @Input() category!: string;
   @Output() onFilter = new EventEmitter<boolean>();
   @Output() categoryChange = new EventEmitter<number | null>();
-  @Output() ratingChange = new EventEmitter<number | null>();
   @Output() priceChange = new EventEmitter<{ minPrice: number, maxPrice: number }>();
-  @Input() ratingList!: boolean[];
-  @Input() selectedFilter!: { rating: BehaviorSubject<number | null>, categoryId: BehaviorSubject<number | null> };
 
   filterCategories = [
     { id: 1, label: 'Alimentos Secos', value: 'DryFood', checked: false },
@@ -30,7 +27,6 @@ export class FilterComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadCategoryFilters();
     this.subscribeToSelectedCategory();
-    this.initFilterValues();
   }
 
   loadCategoryFilters() {
@@ -41,23 +37,20 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   subscribeToSelectedCategory() {
-    this.categorySub = this.selectedFilter.categoryId.subscribe(categoryId => {
+    this.categorySub = this.filterService.filterList.subscribe(() => {
       this.updateCheckedCategory();
     });
   }
 
   updateCheckedCategory() {
-    const selectedId = this.selectedFilter.categoryId.getValue();
+    const selectedCategory = this.category ? this.getCategoryIdFromLabel(this.category) : null;
     this.filterCategories = this.filterCategories.map(cat => ({
       ...cat,
-      checked: cat.id === selectedId
+      checked: cat.id === selectedCategory
     }));
   }
 
   applyFilter(value: number, type: string) {
-    if (type === 'rating') {
-      this.ratingChange.emit(value);
-    }
     if (type === 'category') {
       this.categoryChange.emit(value);
     }
@@ -76,9 +69,13 @@ export class FilterComponent implements OnInit, OnDestroy {
     if (this.categorySub) this.categorySub.unsubscribe();
   }
 
-  initFilterValues() {
-    this.selectedFilter.rating.subscribe(value => {
-      this.ratingList = [false, false, false, false].map((_, i) => value ? i + 1 <= value : false);
-    });
+  private getCategoryIdFromLabel(category: string): number | null {
+    const typeMap = {
+      'DryFood': 1,
+      'WetFood': 2,
+      'Snacks': 3,
+      'Litter': 4
+    };
+    return typeMap[category as keyof typeof typeMap] || null;
   }
 }

@@ -14,10 +14,21 @@ export class FilterService {
     { id: 3, label: 'Snacks', value: 'Snacks', checked: false },
     { id: 4, label: 'Arena para Gatos', value: 'Litter', checked: false }
   ]);
+  private originalProducts: Product[] = []; // Almacenar productos originales
 
   constructor(private productService: ProductService) {}
 
   setAllProducts(products: Product[]) {
-    this.filteredProducts.next([...products]);
+    this.originalProducts = [...products]; // Guardar copia de los productos originales
+    this.filteredProducts.next([...products]); // Inicializar productos filtrados
+  }
+
+  applyPriceFilter(minPrice: number, maxPrice: number) {
+    // Filtrar los productos originales según el rango de precios
+    const filtered = this.originalProducts.filter(product => 
+      product.price >= minPrice && product.price <= maxPrice
+    );
+    this.filteredProducts.next(filtered);
+    console.log('Productos filtrados por precio:', filtered.length);
   }
 }

@@ -20,7 +20,7 @@
       <span *ngFor="let ratestar of ratingList; let i = index" class="star-container">
         <i class="fas fa-star text-sm" [ngClass]="{'filled': ratestar}" aria-hidden="true"></i>
       </span>
-      <span class="ml-2 text-xs sm:text-sm text-gray-600">({{ product.rating.count || 0 }})</span>
+      <!-- <span class="ml-2 text-xs sm:text-sm text-gray-600">({{ product.rating.count || 0 }})</span> -->
     </div>
     <p class="text-xs sm:text-sm text-gray-700">
       <span class="font-bold mr-2">{{ product.price | currency:'COP':'symbol':'1.0-0' }}</span>
