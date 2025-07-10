@@ -31,7 +31,7 @@ export class LoginComponent {
         this.authService.login(userData).subscribe(
             (response) => {
                 this.isLoading = false;
-                console.log('Respuesta de la API:', response); // Depura la respuesta
+                // console.log('Respuesta de la API:', response); // Depura la respuesta
 
                 // Verifica la estructura de la respuesta
                 let token = response.token; // Intenta obtener el token directamente

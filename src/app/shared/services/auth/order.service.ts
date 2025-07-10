@@ -41,12 +41,12 @@ export class OrderService {
   private apiUrl = environment.baseAPIURL;
 
   constructor(private http: HttpClient) {
-    console.log('OrderService: Using baseAPIURL=', this.apiUrl); // Log para depuración
+    // console.log('OrderService: Using baseAPIURL=', this.apiUrl); // Log para depuración
   }
 
   placeOrder(orderData: OrderData, isGuest: boolean): Observable<any> {
     const endpoint = isGuest ? `${this.apiUrl}guest-orders` : `${this.apiUrl}orders`;
-    console.log('OrderService: Placing order to', endpoint, 'with isGuest=', isGuest, 'data=', orderData);
+    // console.log('OrderService: Placing order to', endpoint, 'with isGuest=', isGuest, 'data=', orderData);
     return this.http.post(endpoint, orderData).pipe(
       catchError(error => {
         console.error('OrderService: Error processing order:', error);

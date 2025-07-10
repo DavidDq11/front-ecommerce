@@ -79,7 +79,7 @@ export class CartModalComponent implements OnInit, OnDestroy {
 
   goToCheckout() {
     const isGuest = !this.authService.isAuthenticated();
-    console.log('Navigating to checkout with isGuest:', isGuest); // Añadir log para depuración
+    // console.log('Navigating to checkout with isGuest:', isGuest); // Añadir log para depuración
     this.router.navigate(['/checkout'], { 
       state: { isGuest },
       queryParams: { isGuest: isGuest ? 'true' : 'false' } // Añadir isGuest como query param

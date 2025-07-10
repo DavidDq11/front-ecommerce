@@ -56,10 +56,10 @@ export class CheckoutComponent implements OnInit {
     });
     const state = history.state;
     this.isGuest = state.isGuest || this.router.getCurrentNavigation()?.extras.queryParams?.['isGuest'] === 'true' || !this.authService.isAuthenticated();
-    console.log('CheckoutComponent: history.state=', state, 'isGuest=', this.isGuest);
+    // console.log('CheckoutComponent: history.state=', state, 'isGuest=', this.isGuest);
 
     if (!this.isGuest && !this.authService.isAuthenticated()) {
-      console.log('CheckoutComponent: Redirecting to /login');
+      // console.log('CheckoutComponent: Redirecting to /login');
       this.router.navigate(['/login'], { queryParams: { returnUrl: '/checkout' } });
       return;
     }
@@ -86,7 +86,7 @@ export class CheckoutComponent implements OnInit {
       total: this.total,
     };
 
-    console.log('CheckoutComponent: Submitting order with isGuest=', this.isGuest, 'data=', orderData);
+    // console.log('CheckoutComponent: Submitting order with isGuest=', this.isGuest, 'data=', orderData);
 
     this.orderService.placeOrder(orderData, this.isGuest).subscribe({
       next: (response: any) => {

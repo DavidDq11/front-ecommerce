@@ -29,9 +29,9 @@ import { Renderer2 } from '@angular/core';
 export class PricefilterComponent implements OnInit {
   @Output() priceChange = new EventEmitter<{ minPrice: number, maxPrice: number }>();
   minVal = 0;
-  maxVal = 100000;
+  maxVal = 300000;
   min = 0;
-  max = 100000;
+  max = 300000;
   step = 100;
   priceDiff = 500;
   @ViewChild('progress') progress!: ElementRef;

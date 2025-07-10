@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router, UrlSegment} from '@angular/router';
 
 
@@ -11,6 +11,9 @@ import { ActivatedRoute, Router, UrlSegment} from '@angular/router';
 
 export class BreadcrumbComponent implements OnInit{
   breadcrumbList:{path:string;label:string}[]=[];
+  @Output() toggleFilterModal = new EventEmitter<void>();
+
+  
   constructor(private router:Router,private route:ActivatedRoute){}
 
 
@@ -29,6 +32,10 @@ export class BreadcrumbComponent implements OnInit{
         });
       })
     })
+  }
+
+  toggleFilterModalEvent() {
+    this.toggleFilterModal.emit();
   }
 
   ngOnInit(): void {

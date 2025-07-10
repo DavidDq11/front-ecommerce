@@ -29,6 +29,6 @@ export class FilterService {
       product.price >= minPrice && product.price <= maxPrice
     );
     this.filteredProducts.next(filtered);
-    console.log('Productos filtrados por precio:', filtered.length);
+    // console.log('Productos filtrados por precio:', filtered.length);
   }
 }

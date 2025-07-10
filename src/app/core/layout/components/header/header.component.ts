@@ -31,7 +31,7 @@ export class HeaderComponent implements OnInit {
     });
     this.cartService.cartUpdated.subscribe(() => {
       this.cart = this.cartService.getCart();
-      console.log('Cart updated in Header:', this.cart);
+      // console.log('Cart updated in Header:', this.cart);
     });
   }
 
@@ -122,12 +122,12 @@ export class HeaderComponent implements OnInit {
 
   openCartModal(event: Event) {
     event.stopPropagation();
-    console.log('Opening cart modal');
+    // console.log('Opening cart modal');
     this.isCartModalOpen = true;
   }
 
   closeCartModal() {
-    console.log('Closing cart modal');
+    // console.log('Closing cart modal');
     this.isCartModalOpen = false;
   }
 }

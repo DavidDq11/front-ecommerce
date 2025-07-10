@@ -19,6 +19,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   isFilter = false;
   error!: string;
   subsFilterProducts!: Subscription;
+  showFilterModal = false;
 
   selectedFilter: { categoryId: BehaviorSubject<number | null> } = {
     categoryId: new BehaviorSubject<number | null>(null)
@@ -55,14 +56,7 @@ export class ProductComponent implements OnInit, OnDestroy {
       }
 
       this.selectedFilter.categoryId.next(this.category ? this.getCategoryIdFromLabel(this.category) : null);
-
-      if (queryParams['category'] && queryParams['category'] !== params['category']) {
-        this.router.navigate([`/categories/${queryParams['category']}`], {
-          queryParams: { category: queryParams['category'], page: this.currentPage }
-        });
-      } else {
-        this.getProducts(this.category, this.brandId, this.currentPage);
-      }
+      this.getProducts(this.category, this.brandId, this.currentPage); // Siempre cargar productos
     });
   }
 
@@ -84,15 +78,15 @@ export class ProductComponent implements OnInit, OnDestroy {
     this.productService.getByCategory(category || 'DryFood', params).subscribe(
       response => {
         this.isLoading = false;
-        this.pagedProducts = response.products;
-        this.totalItems = response.total;
-        this.totalPages = response.totalPages;
-        this.filterService.setAllProducts(this.pagedProducts); // Guardar productos originales
-        console.log('Productos cargados para página', this.currentPage, ':', this.pagedProducts.length);
+        this.pagedProducts = response.products || [];
+        this.totalItems = response.total || 0;
+        this.totalPages = response.totalPages || 1;
+        this.filterService.setAllProducts(this.pagedProducts);
+        console.log('Productos cargados para página', this.currentPage, ':', this.pagedProducts.length, 'Total páginas:', this.totalPages);
       },
       error => {
         this.isLoading = false;
-        this.error = error.message;
+        this.error = error.message || 'Error al cargar productos';
         console.error('Error al cargar productos:', error);
       }
     );
@@ -104,16 +98,20 @@ export class ProductComponent implements OnInit, OnDestroy {
       queryParams: { category: category || 'DryFood', page: 1 }
     });
     console.log('Filtro de categoría aplicado:', category);
+    this.showFilterModal = false;
   }
 
   onPriceFilter({ minPrice, maxPrice }: { minPrice: number; maxPrice: number }) {
-    // Aplicar filtro de precio localmente
     this.filterService.applyPriceFilter(minPrice, maxPrice);
+    this.showFilterModal = false;
   }
 
   private updateQueryParams(changes: { [key: string]: any }) {
-    const queryParams = { ...this.route.snapshot.queryParams, ...changes, page: 1 };
+    const queryParams = { ...this.route.snapshot.queryParams, ...changes };
     this.router.navigate([], { relativeTo: this.route, queryParams });
+    this.currentPage = Number(changes['page']) || this.currentPage; // Actualizar currentPage
+    this.getProducts(this.category, this.brandId, this.currentPage); // Recargar productos
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     console.log('QueryParams actualizados:', queryParams);
   }
 
@@ -135,11 +133,39 @@ export class ProductComponent implements OnInit, OnDestroy {
     this.isFilter = value;
   }
 
-  previousPage() { if (this.currentPage > 1) this.updateQueryParams({ page: this.currentPage - 1 }); }
-  nextPage() { if (this.currentPage < this.totalPages) this.updateQueryParams({ page: this.currentPage + 1 }); }
-  goToPage(page: number) { if (page >= 1 && page <= this.totalPages) this.updateQueryParams({ page }); }
-  goToFirstPage() { if (this.currentPage !== 1) this.updateQueryParams({ page: 1 }); }
-  goToLastPage() { if (this.currentPage !== this.totalPages) this.updateQueryParams({ page: this.totalPages }); }
+  toggleFilterModal() {
+    this.showFilterModal = !this.showFilterModal;
+  }
+
+  previousPage() { 
+    if (this.currentPage > 1) {
+      this.updateQueryParams({ page: this.currentPage - 1 });
+    }
+  }
+
+  nextPage() { 
+    if (this.currentPage < this.totalPages) {
+      this.updateQueryParams({ page: this.currentPage + 1 });
+    }
+  }
+
+  goToPage(page: number) { 
+    if (page >= 1 && page <= this.totalPages) {
+      this.updateQueryParams({ page });
+    }
+  }
+
+  goToFirstPage() { 
+    if (this.currentPage !== 1) {
+      this.updateQueryParams({ page: 1 });
+    }
+  }
+
+  goToLastPage() { 
+    if (this.currentPage !== this.totalPages) {
+      this.updateQueryParams({ page: this.totalPages });
+    }
+  }
 
   getPageNumbers(): number[] {
     const pages = [];

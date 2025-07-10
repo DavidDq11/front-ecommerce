@@ -55,7 +55,7 @@ export class AuthService {
   }
 
   private logoutDueToInactivity(): void {
-    console.log('Logging out due to 5 hours of inactivity');
+    // console.log('Logging out due to 5 hours of inactivity');
     this.logout();
   }
 

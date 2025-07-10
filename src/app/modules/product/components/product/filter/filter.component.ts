@@ -12,6 +12,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   @Output() onFilter = new EventEmitter<boolean>();
   @Output() categoryChange = new EventEmitter<number | null>();
   @Output() priceChange = new EventEmitter<{ minPrice: number, maxPrice: number }>();
+  @Output() closeModal = new EventEmitter<void>(); // New event for closing the modal
 
   filterCategories = [
     { id: 1, label: 'Alimentos Secos', value: 'DryFood', checked: false },
@@ -53,15 +54,17 @@ export class FilterComponent implements OnInit, OnDestroy {
   applyFilter(value: number, type: string) {
     if (type === 'category') {
       this.categoryChange.emit(value);
+      this.closeModal.emit(); // Close modal when applying a filter
     }
   }
 
   onPriceFilter(event: { minPrice: number, maxPrice: number }) {
     this.priceChange.emit(event);
+    this.closeModal.emit(); // Close modal when applying a price filter
   }
 
   onClose() {
-    this.onFilter.emit(false);
+    this.closeModal.emit(); // Emit closeModal event instead of onFilter
   }
 
   ngOnDestroy(): void {

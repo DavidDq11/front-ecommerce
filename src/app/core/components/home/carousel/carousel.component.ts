@@ -19,7 +19,7 @@ export class CarouselComponent implements OnInit, AfterViewInit {
   constructor() {}
 
   ngOnInit(): void {
-    console.log('Imágenes del carrusel:', this.slideImages);
+    // console.log('Imágenes del carrusel:', this.slideImages);
   }
 
   ngAfterViewInit(): void {

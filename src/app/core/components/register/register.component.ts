@@ -52,7 +52,7 @@ export class RegisterComponent implements OnInit {
       this.authService.register(userData).subscribe(
         (response) => {
           this.isLoading = false;
-          console.log('Respuesta de la API al registrar:', response); // Depura la respuesta
+          // console.log('Respuesta de la API al registrar:', response); // Depura la respuesta
           Swal.fire({
             icon: 'success',
             title: '¡Bienvenido(a), ' + this.registerForm.value.firstName + '!',
@@ -61,7 +61,7 @@ export class RegisterComponent implements OnInit {
             confirmButtonText: '¡Vamos allá!'
           }).then(() => {
             this.router.navigate(['/']).then(() => {
-              console.log('Redirección a / ejecutada');
+              // console.log('Redirección a / ejecutada');
             }).catch(err => {
               console.error('Error en redirección:', err);
             });

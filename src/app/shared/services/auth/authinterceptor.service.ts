@@ -15,7 +15,7 @@ export class AuthinterceptorService implements HttpInterceptor {
     const token = this.authService.getToken();
     let request = req;
 
-    console.log('Interceptor: URL=', req.url, 'Token=', token);
+    // console.log('Interceptor: URL=', req.url, 'Token=', token);
 
     // No añadir Authorization header para rutas públicas o de invitados
     if (token && !this.isPublicOrGuestRoute(req.url)) {
@@ -27,7 +27,7 @@ export class AuthinterceptorService implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401 && !this.isPublicOrGuestRoute(req.url)) {
-          console.log('Interceptor: 401 error, redirecting to /login');
+          // console.log('Interceptor: 401 error, redirecting to /login');
           this.authService.logout();
           this.router.navigate(['/login']);
         }

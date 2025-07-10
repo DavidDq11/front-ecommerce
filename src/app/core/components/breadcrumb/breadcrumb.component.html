@@ -1,5 +1,5 @@
-<nav class="flex mb-6 px-4 py-2 bg-gradient-to-r from-orange-600 to-orange-500 text-white shadow-md rounded-lg" aria-label="Breadcrumb">
-  <ol class="inline-flex items-center space-x-2 md:space-x-4">
+<nav class="flex mb-6 px-4 py-2 bg-gradient-to-r from-orange-600 to-orange-500 text-white shadow-md rounded-lg items-center" aria-label="Breadcrumb">
+  <ol class="inline-flex items-center space-x-2 md:space-x-4 flex-1">
     <!-- Inicio con ícono de casa -->
     <li class="inline-flex items-center">
       <a href="/" class="inline-flex items-center text-sm font-medium text-yellow-300 hover:text-white transition-all duration-300 bg-white bg-opacity-10 rounded-md px-2 py-1 hover:bg-opacity-20">
@@ -53,4 +53,11 @@
       </span>
     </li>
   </ol>
+  <!-- Botón de filtro para móviles -->
+  <button 
+    class="md:hidden text-sm font-medium text-yellow-300 hover:text-white transition-all duration-300 bg-white bg-opacity-10 rounded-md px-2 py-1 hover:bg-opacity-20 flex items-center"
+    (click)="toggleFilterModalEvent()"
+  >
+    <i class="fa-solid fa-filter mr-1"></i> Filtros
+  </button>
 </nav>

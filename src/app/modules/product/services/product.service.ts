@@ -27,7 +27,7 @@ export class ProductService {
 
   getByCategory(category: string, params: any = {}): Observable<{ products: Product[], total: number, totalPages: number }> {
     let httpParams = new HttpParams();
-    console.log('Parámetros recibidos en getByCategory:', params, 'category:', category);
+    // console.log('Parámetros recibidos en getByCategory:', params, 'category:', category);
 
     // Solo incluir parámetros válidos y excluir category si brand_id está presente
     for (const key in params) {
@@ -36,7 +36,7 @@ export class ProductService {
       }
     }
 
-    console.log('Parámetros enviados al backend:', httpParams.toString());
+    // console.log('Parámetros enviados al backend:', httpParams.toString());
 
     if (params.brand_id) {
       return this.http.get<{ products: Product[], total: number, totalPages: number }>(
@@ -44,7 +44,7 @@ export class ProductService {
         { params: httpParams }
       ).pipe(
         map(response => {
-          console.log('Respuesta para brand_id:', response);
+          // console.log('Respuesta para brand_id:', response);
           return response;
         }),
         catchError(error => {
@@ -63,7 +63,7 @@ export class ProductService {
       { params: httpParams }
     ).pipe(
       map(response => {
-        console.log('Respuesta para categoría:', response);
+        // console.log('Respuesta para categoría:', response);
         return response;
       }),
       catchError(error => {

@@ -51,7 +51,7 @@ export class ProductdetailComponent implements OnInit {
     this.productService.getProduct(id).subscribe(
       (data: Product) => {
         this.isLoading = false;
-        console.log('Producto recibido del backend:', JSON.stringify(data, null, 2));
+        // console.log('Producto recibido del backend:', JSON.stringify(data, null, 2));
         if (!data || Object.keys(data).length === 0) {
           console.warn('No product recibido para ID:', id);
           return;
@@ -104,10 +104,10 @@ export class ProductdetailComponent implements OnInit {
     if (!this.product.rating || !this.product.rating.rate) {
       // Si no hay datos de calificación, usar 5 estrellas llenas
       this.ratingList = [true, true, true, true, true];
-      console.log('Usando calificación por defecto (5 estrellas llenas) para producto', this.product.id);
+      // console.log('Usando calificación por defecto (5 estrellas llenas) para producto', this.product.id);
     } else {
       this.ratingList = this.productService.getRatingStar(this.product);
-      console.log('ratingList para producto', this.product.id, ':', this.ratingList);
+      // console.log('ratingList para producto', this.product.id, ':', this.ratingList);
     }
   }
 

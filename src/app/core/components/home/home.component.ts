@@ -62,12 +62,13 @@ export class HomeComponent implements OnInit {
           name: brand.name,
           image: brand.image || undefined
         }));
-        console.log('Marcas obtenidas:', this.brands);
+        // console.log('Marcas obtenidas:', this.brands);
         this.brands.forEach(brand => {
           if (brand.image) {
             const img = new Image();
             img.src = brand.image;
-            img.onload = () => console.log(`Imagen cargada exitosamente: ${brand.image}`);
+            img.onload = () => 
+              // console.log(`Imagen cargada exitosamente: ${brand.image}`);
             img.onerror = (error) => console.error(`Error al cargar imagen: ${brand.image}`, error);
           }
         });
@@ -83,7 +84,7 @@ export class HomeComponent implements OnInit {
     this.selectedBrandId = this.selectedBrandId === brandId ? null : brandId;
     this.selectedBrandName = this.selectedBrandId ? brandName : null;
     this.selectedCategoryId = null;
-    console.log('Seleccionando marca:', brandId, brandName);
+    // console.log('Seleccionando marca:', brandId, brandName);
     this.router.navigate([`/brands/${this.selectedBrandId}`]);
   }
 
@@ -110,7 +111,7 @@ export class HomeComponent implements OnInit {
     this._productService.getByCategory(categoryPath || 'DryFood', params).subscribe(
       (response: { products: Product[], total: number }) => {
         this.isLoading = false;
-        console.log('Datos recibidos del backend:', JSON.stringify(response.products, null, 2));
+        // console.log('Datos recibidos del backend:', JSON.stringify(response.products, null, 2));
         const data = response.products;
 
         if (data.length === 0) {
@@ -137,7 +138,7 @@ export class HomeComponent implements OnInit {
 
         const shuffledProducts = seededShuffle(data, seed);
         this.products = shuffledProducts.slice(0, 5);
-        console.log('Productos seleccionados:', this.products.map(p => ({ id: p.id, title: p.title, stock: p.stock, images: p.images })));
+        // console.log('Productos seleccionados:', this.products.map(p => ({ id: p.id, title: p.title, stock: p.stock, images: p.images })));
       },
       (error) => {
         this.isLoading = false;
@@ -174,27 +175,27 @@ export class HomeComponent implements OnInit {
   }
 
   validateImages() {
-    console.log('Validating images:', this.images);
+    // console.log('Validating images:', this.images);
   }
 
   onImageError(event: Event) {
     (event.target as HTMLImageElement).src = 'assets/placeholder.jpg';
-    console.log('Error cargando imagen:', (event.target as HTMLImageElement).src);
+    // console.log('Error cargando imagen:', (event.target as HTMLImageElement).src);
   }
 
   onBrandImageError(event: Event) {
     const imgElement = event.target as HTMLImageElement;
     imgElement.src = 'assets/placeholder.jpg';
-    console.log('Error cargando imagen de marca:', imgElement.src);
+    // console.log('Error cargando imagen de marca:', imgElement.src);
   }
 
   addToCart(product: Product) {
-    console.log('Agregando producto desde Home:', JSON.stringify(product, null, 2));
+    // console.log('Agregando producto desde Home:', JSON.stringify(product, null, 2));
     this.cartService.addToCart(product);
   }
 
   removeFromCart(product: Product) {
-    console.log('Eliminando producto desde Home:', product);
+    // console.log('Eliminando producto desde Home:', product);
     this.cartService.remove(product);
   }
 

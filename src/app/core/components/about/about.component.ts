@@ -13,6 +13,6 @@ export class AboutComponent implements OnInit {
 
   onImageError(event: Event) {
     (event.target as HTMLImageElement).src = 'assets/placeholder.jpg';
-    console.log('Error cargando imagen:', (event.target as HTMLImageElement).src);
+    // console.log('Error cargando imagen:', (event.target as HTMLImageElement).src);
   }
 }
