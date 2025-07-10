@@ -16,7 +16,7 @@ export class CartModalComponent implements OnInit, OnDestroy {
 
   cart: Product[] = [];
   total = 0;
-  gstAmount = 0;
+  shippingCost = 6000; // Valor fijo de domicilio
   estimatedTotal = 0;
   private subscriptions: Subscription = new Subscription();
 
@@ -30,27 +30,23 @@ export class CartModalComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.cartService.cartUpdated.subscribe((cart) => {
         this.cart = cart;
+        this.updateTotals();
       })
     );
     this.subscriptions.add(
       this.cartService.getTotalAmount().subscribe((total) => {
         this.total = Number(total.toFixed(2));
-      })
-    );
-    this.subscriptions.add(
-      this.cartService.getGstAmount().subscribe((gst) => {
-        this.gstAmount = Number(gst.toFixed(2));
-      })
-    );
-    this.subscriptions.add(
-      this.cartService.getEstimatedTotal().subscribe((estimated) => {
-        this.estimatedTotal = Number(estimated.toFixed(2));
+        this.updateTotals();
       })
     );
   }
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
+  }
+
+  private updateTotals() {
+    this.estimatedTotal = Number((this.total + this.shippingCost).toFixed(2));
   }
 
   closeModal(event: MouseEvent) {
@@ -79,10 +75,9 @@ export class CartModalComponent implements OnInit, OnDestroy {
 
   goToCheckout() {
     const isGuest = !this.authService.isAuthenticated();
-    // console.log('Navigating to checkout with isGuest:', isGuest); // Añadir log para depuración
     this.router.navigate(['/checkout'], { 
       state: { isGuest },
-      queryParams: { isGuest: isGuest ? 'true' : 'false' } // Añadir isGuest como query param
+      queryParams: { isGuest: isGuest ? 'true' : 'false' }
     });
     this.close.emit();
   }
