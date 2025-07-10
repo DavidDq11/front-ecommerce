@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Product } from 'src/app/modules/product/model';
-import { FilterService } from 'src/app/modules/product/services/filter.service';
 import { ProductService } from 'src/app/modules/product/services/product.service';
 import { CartService } from 'src/app/core/services/cart.service';
 import { HttpClient } from '@angular/common/http';
@@ -44,7 +43,6 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private _productService: ProductService,
-    private _filterService: FilterService,
     private cartService: CartService,
     private http: HttpClient,
     private router: Router
@@ -89,16 +87,27 @@ export class HomeComponent implements OnInit {
     this.router.navigate([`/brands/${this.selectedBrandId}`]);
   }
 
+  selectCategory(categoryId: number) {
+    this.selectedCategoryId = categoryId;
+    this.selectedBrandId = null;
+    this.selectedBrandName = null;
+    const categoryPath = this.getCategoryPath(categoryId);
+    this.router.navigate([`/categories/${categoryPath}`], { queryParams: { category: categoryPath } });
+    this.newArrivalProducts();
+  }
+
   newArrivalProducts() {
     this.isLoading = true;
     const params: any = {
-      limit: 50, // Aumentar el límite para asegurar suficientes productos para la aleatorización
+      limit: 50,
       offset: 0
     };
     const categoryPath = this.getCategoryPath(this.selectedCategoryId);
-    params.category = categoryPath;
+    if (categoryPath) {
+      params.category = categoryPath;
+    }
 
-    this._productService.getByCategory(params.category, params).subscribe(
+    this._productService.getByCategory(categoryPath || 'DryFood', params).subscribe(
       (response: { products: Product[], total: number }) => {
         this.isLoading = false;
         console.log('Datos recibidos del backend:', JSON.stringify(response.products, null, 2));
@@ -110,11 +119,9 @@ export class HomeComponent implements OnInit {
           return;
         }
 
-        // Generar una semilla basada en la fecha actual
         const today = new Date();
         const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
 
-        // Función para barajar el array con una semilla determinista
         const seededShuffle = (array: Product[], seed: number) => {
           const rng = (seed: number) => {
             const x = Math.sin(seed++) * 10000;
@@ -128,10 +135,7 @@ export class HomeComponent implements OnInit {
           return shuffled;
         };
 
-        // Barajar los productos con la semilla
         const shuffledProducts = seededShuffle(data, seed);
-
-        // Seleccionar los primeros 5 productos
         this.products = shuffledProducts.slice(0, 5);
         console.log('Productos seleccionados:', this.products.map(p => ({ id: p.id, title: p.title, stock: p.stock, images: p.images })));
       },
@@ -141,17 +145,6 @@ export class HomeComponent implements OnInit {
         console.error('HTTP Error:', error);
       }
     );
-  }
-
-  selectCategory(categoryId: number) {
-    this.selectedCategoryId = categoryId;
-    this.selectedBrandId = null;
-    this.selectedBrandName = null;
-    this._filterService.setSelectedCategory(categoryId);
-    const categoryPath = this.getCategoryPath(categoryId);
-    this.router.navigate([`/categories/${categoryPath}`]);
-    this._filterService.getProductTypeFilter(categoryPath);
-    this.newArrivalProducts();
   }
 
   getCategoryPath(categoryId: number | null): string {
@@ -211,7 +204,7 @@ export class HomeComponent implements OnInit {
 
   getRatingStar(product: Product): boolean[] {
     if (!product.rating || !product.rating.rate) {
-      return []; // O devuelve [false, false, false, false, false] para mostrar 5 estrellas vacías
+      return [false, false, false, false, false];
     }
     const rating = Math.round(product.rating.rate);
     return Array(5).fill(false).map((_, index) => index < rating);

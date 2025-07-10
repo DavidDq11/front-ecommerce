@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { CategoryFilter, Product } from '../../../model';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { FilterService } from '../../../services/filter.service';
 
@@ -9,20 +8,20 @@ import { FilterService } from '../../../services/filter.service';
   styles: []
 })
 export class FilterComponent implements OnInit, OnDestroy {
-  @Input() products!: Product[];
   @Input() category!: string;
   @Output() onFilter = new EventEmitter<boolean>();
+  @Output() categoryChange = new EventEmitter<number | null>();
+  @Output() ratingChange = new EventEmitter<number | null>();
+  @Output() priceChange = new EventEmitter<{ minPrice: number, maxPrice: number }>();
   @Input() ratingList!: boolean[];
   @Input() selectedFilter!: { rating: BehaviorSubject<number | null>, categoryId: BehaviorSubject<number | null> };
 
-  filterCategories: CategoryFilter[] = [
-    { id: 1, label: 'Alimentos Secos', value: 'Pet Food', checked: false },
-    { id: 2, label: 'Alimentos Húmedos', value: 'Wet Food', checked: false },
-    { id: 3, label: 'Snacks', value: 'Pet Treats', checked: false },
+  filterCategories = [
+    { id: 1, label: 'Alimentos Secos', value: 'DryFood', checked: false },
+    { id: 2, label: 'Alimentos Húmedos', value: 'WetFood', checked: false },
+    { id: 3, label: 'Snacks', value: 'Snacks', checked: false },
     { id: 4, label: 'Arena para Gatos', value: 'Litter', checked: false }
   ];
-  selectedRating: number | null = null;
-  selectedCategory: number | null = null;
   subsFilterList!: Subscription;
   categorySub!: Subscription;
 
@@ -42,47 +41,30 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   subscribeToSelectedCategory() {
-    this.categorySub = this.filterService.selectedCategoryId.subscribe((categoryId) => {
-      this.selectedCategory = categoryId;
+    this.categorySub = this.selectedFilter.categoryId.subscribe(categoryId => {
       this.updateCheckedCategory();
-      if (this.selectedCategory) {
-        this.applyFilter(this.selectedCategory, 'category');
-      }
     });
   }
 
   updateCheckedCategory() {
-    if (this.selectedCategory) {
-      this.filterCategories = this.filterCategories.map((cat) =>
-        cat.id === this.selectedCategory ? { ...cat, checked: true } : { ...cat, checked: false }
-      );
-    }
-  }
-
-  handleCheckbox(id: number): Product[] {
-    const checkedItems = this.filterCategories.map(item =>
-      item.id === id ? { ...item, checked: !item.checked } : { ...item, checked: false }
-    );
-    this.filterCategories = checkedItems;
-    return this.filterService.handleCatFilter(checkedItems);
-  }
-
-  handleRating(rating: number): Product[] {
-    this.ratingList = this.ratingList.map((rate, i) => rating >= i + 1);
-    return this.filterService.handleRateFilter(rating);
+    const selectedId = this.selectedFilter.categoryId.getValue();
+    this.filterCategories = this.filterCategories.map(cat => ({
+      ...cat,
+      checked: cat.id === selectedId
+    }));
   }
 
   applyFilter(value: number, type: string) {
-    let prods: Product[] = [];
     if (type === 'rating') {
-      this.selectedRating = value;
-      prods = this.handleRating(value);
+      this.ratingChange.emit(value);
     }
     if (type === 'category') {
-      this.selectedCategory = value;
-      prods = this.handleCheckbox(value);
+      this.categoryChange.emit(value);
     }
-    this.filterService.filterProduct(prods);
+  }
+
+  onPriceFilter(event: { minPrice: number, maxPrice: number }) {
+    this.priceChange.emit(event);
   }
 
   onClose() {
@@ -95,7 +77,8 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   initFilterValues() {
-    this.selectedFilter.rating.subscribe(value => this.selectedRating = value);
-    this.selectedFilter.categoryId.subscribe(value => this.selectedCategory = value);
+    this.selectedFilter.rating.subscribe(value => {
+      this.ratingList = [false, false, false, false].map((_, i) => value ? i + 1 <= value : false);
+    });
   }
 }

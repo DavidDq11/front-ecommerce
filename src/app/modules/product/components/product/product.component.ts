@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ProductService } from '../../services/product.service';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Product } from '../../model';
 import { FilterService } from '../../services/filter.service';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-product',
@@ -34,114 +34,75 @@ export class ProductComponent implements OnInit, OnDestroy {
   constructor(
     private productService: ProductService,
     private route: ActivatedRoute,
+    private router: Router,
     private filterService: FilterService
   ) {}
 
   ngOnInit(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.subscribeToFilteredProducts();
-    this.route.params.subscribe((data: Params) => {
-      console.log('Parámetros de la ruta:', data);
-      if (data['brand_id'] && !isNaN(Number(data['brand_id']))) {
-        this.brandId = Number(data['brand_id']);
-        this.category = null;
+    combineLatest([this.route.params, this.route.queryParams]).subscribe(([params, queryParams]) => {
+      console.log('Parámetros de la ruta:', params, 'QueryParams:', queryParams);
+      this.brandId = params['brand_id'] ? Number(params['brand_id']) : queryParams['brand_id'] ? Number(queryParams['brand_id']) : null;
+      // Priorizar queryParams['category'] sobre params['category']
+      this.category = queryParams['category'] || params['category'] || 'DryFood';
+      this.currentPage = Number(queryParams['page']) || 1;
+      const minPrice = queryParams['minPrice'] ? Number(queryParams['minPrice']) : null;
+      const maxPrice = queryParams['maxPrice'] ? Number(queryParams['maxPrice']) : null;
+      const rating = queryParams['rating'] ? Number(queryParams['rating']) : null;
+
+      if (this.brandId) {
         this.productService.getBrandName(this.brandId).subscribe(
-          name => {
-            this.selectedBrandName = name;
-            console.log('Nombre de la marca:', this.selectedBrandName);
-          },
-          error => {
-            console.error('Error al obtener el nombre de la marca:', error);
-            this.selectedBrandName = 'Marca desconocida';
-          }
+          name => this.selectedBrandName = name,
+          error => this.selectedBrandName = 'Marca desconocida'
         );
-      } else if (data['category']) {
-        const param = data['category'];
-        if (!isNaN(Number(param))) {
-          this.brandId = Number(param);
-          this.category = null;
-          this.productService.getBrandName(this.brandId).subscribe(
-            name => {
-              this.selectedBrandName = name;
-              console.log('Nombre de la marca (desde category):', this.selectedBrandName);
-            },
-            error => {
-              console.error('Error al obtener el nombre de la marca:', error);
-              this.selectedBrandName = 'Marca desconocida';
-            }
-          );
-        } else {
-          this.category = param || 'DryFood';
-          this.brandId = null;
-          this.selectedBrandName = null;
-        }
       } else {
-        this.category = 'DryFood';
-        this.brandId = null;
         this.selectedBrandName = null;
       }
-      this.currentPage = 1;
-      this.getProductsByCategory();
+
+      this.selectedFilter.categoryId.next(this.category ? this.getCategoryIdFromLabel(this.category) : null);
+      this.selectedFilter.rating.next(rating);
+      this.ratingList = [false, false, false, false].map((_, i) => rating ? i + 1 <= rating : false);
+
+      // Asegurar que la ruta base coincida con la categoría seleccionada
+      if (queryParams['category'] && queryParams['category'] !== params['category']) {
+        this.router.navigate([`/categories/${queryParams['category']}`], {
+          queryParams: { category: queryParams['category'], page: this.currentPage, minPrice, maxPrice, rating }
+        });
+      } else {
+        this.getProducts(this.category, this.brandId, rating, minPrice, maxPrice, this.currentPage);
+      }
     });
   }
 
   subscribeToFilteredProducts() {
-    this.subsFilterProducts = this.filterService.filteredProducts.subscribe((data) => {
+    this.subsFilterProducts = this.filterService.filteredProducts.subscribe(data => {
       this.pagedProducts = [...data];
-      console.log('Productos filtrados actualizados (página', this.currentPage, 'a las', new Date().toLocaleString(), '):', this.pagedProducts.length, this.pagedProducts);
+      console.log('Productos filtrados actualizados (página', this.currentPage, '):', this.pagedProducts.length);
     });
   }
 
-  getProductsByCategory(): void {
+  getProducts(category: string | null, brandId: number | null, rating: number | null, minPrice: number | null, maxPrice: number | null, page: number) {
     this.isLoading = true;
-    this.ratingList = [false, false, false, false];
-    this.resetFilter();
-    const offset = (this.currentPage - 1) * this.pageSize;
-    console.log('Obteniendo página', this.currentPage, 'con offset', offset, 'límite', this.pageSize, 'a las', new Date().toLocaleString());
+    const offset = (page - 1) * this.pageSize;
     const params: any = { limit: this.pageSize, offset };
+    if (brandId) params.brand_id = brandId;
+    if (category) params.category = category;
+    if (minPrice) params.minPrice = minPrice;
+    if (maxPrice) params.maxPrice = maxPrice;
+    // if (rating) params.minRating = rating; // Descomentar cuando el backend soporte rating
 
-    if (this.brandId) {
-      params.brand_id = this.brandId;
-      console.log('Filtrando por brand_id:', this.brandId);
-    } else if (this.category) {
-      params.category = this.category;
-      console.log('Filtrando por categoría:', this.category);
-    }
-
-    const categoryForService = this.brandId ? '' : this.category || 'DryFood';
-    console.log('categoryForService:', categoryForService, 'params:', params);
-
-    if (this.brandId) {
-      this.filterService.setSelectedCategory(null);
-      this.selectedFilter.categoryId.next(null);
-    }
-
-    this.productService.getByCategory(categoryForService, params).subscribe(
-      (response) => {
+    console.log('Solicitando productos con params:', params);
+    this.productService.getByCategory(category || 'DryFood', params).subscribe(
+      response => {
         this.isLoading = false;
-        console.log('Respuesta del backend:', response);
-        if (response.products.length === 0) {
-          this.pagedProducts = [];
-          this.totalItems = 0;
-          this.totalPages = 1;
-          this.filterService.setAllProducts([]);
-          this.filterService.filterProduct([]);
-        } else {
-          this.pagedProducts = [...response.products];
-          this.totalItems = response.total;
-          this.totalPages = response.totalPages;
-          this.filterService.setAllProducts(this.pagedProducts);
-          this.filterService.filterProduct(this.pagedProducts);
-        }
-        const initialCategoryId = this.brandId ? null : this.getCategoryIdFromLabel(this.category || 'DryFood');
-        if (initialCategoryId && this.currentPage === 1 && !this.brandId) {
-          this.selectedFilter.categoryId.next(initialCategoryId);
-          this.filterService.setSelectedCategory(initialCategoryId);
-          this.applyInitialFilter(initialCategoryId);
-        }
-        console.log('Productos cargados para página', this.currentPage, ':', this.pagedProducts);
+        this.pagedProducts = response.products;
+        this.totalItems = response.total;
+        this.totalPages = response.totalPages;
+        this.filterService.setAllProducts(this.pagedProducts);
+        console.log('Productos cargados para página', this.currentPage, ':', this.pagedProducts.length);
       },
-      (error) => {
+      error => {
         this.isLoading = false;
         this.error = error.message;
         console.error('Error al cargar productos:', error);
@@ -149,67 +110,52 @@ export class ProductComponent implements OnInit, OnDestroy {
     );
   }
 
-  private getCategoryIdFromLabel(category: string): number | null {
-    const typeMap = {
-      'DryFood': 1,
-      'WetFood': 2,
-      'Snacks': 3,
-      'Litter': 4
-    };
-    return typeMap[category as keyof typeof typeMap] || null;
+  onCategoryFilter(categoryId: number | null) {
+    const category = categoryId ? this.filterService.filterList.getValue().find(item => item.id === categoryId)?.value || null : null;
+    // Actualizar tanto los queryParams como la ruta base
+    this.router.navigate([`/categories/${category || 'DryFood'}`], {
+      queryParams: { category: category || 'DryFood', page: 1 }
+    });
+    console.log('Filtro de categoría aplicado:', category);
   }
 
-  private applyInitialFilter(categoryId: number): void {
-    const checkedItems = this.filterService.filterList.getValue().map(item =>
-      item.id === categoryId ? { ...item, checked: true } : { ...item, checked: false }
-    );
-    const filteredProducts = this.filterService.handleCatFilter(checkedItems);
-    this.filterService.filterProduct(filteredProducts);
+  onRatingFilter(rating: number | null) {
+    this.updateQueryParams({ rating });
   }
+
+  onPriceFilter({ minPrice, maxPrice }: { minPrice: number; maxPrice: number }) {
+    this.updateQueryParams({ minPrice, maxPrice });
+  }
+
+  private updateQueryParams(changes: { [key: string]: any }) {
+    const queryParams = { ...this.route.snapshot.queryParams, ...changes, page: 1 };
+    this.router.navigate([], { relativeTo: this.route, queryParams });
+    console.log('QueryParams actualizados:', queryParams);
+  }
+
+  private getCategoryIdFromLabel(category: string | null): number | null {
+  if (!category) return null;
+  const typeMap = {
+    'DryFood': 1,
+    'WetFood': 2,
+    'Snacks': 3, // Cambiado de 'Pet Treats' a 'Snacks' para coincidir con el backend
+    'Litter': 4,
+    'Pet Food': 1,
+    'Wet Food': 2,
+    'Pet Treats': 3
+  };
+  return typeMap[category as keyof typeof typeMap] || null;
+}
 
   onFilter(value: boolean) {
     this.isFilter = value;
   }
 
-  resetFilter() {
-    this.selectedFilter.categoryId.next(null);
-    this.selectedFilter.rating.next(null);
-  }
-
-  previousPage() {
-    if (this.currentPage > 1) {
-      this.currentPage--;
-      this.getProductsByCategory();
-    }
-  }
-
-  nextPage() {
-    if (this.currentPage < this.totalPages) {
-      this.currentPage++;
-      this.getProductsByCategory();
-    }
-  }
-
-  goToPage(page: number) {
-    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
-      this.currentPage = page;
-      this.getProductsByCategory();
-    }
-  }
-
-  goToFirstPage() {
-    if (this.currentPage !== 1) {
-      this.currentPage = 1;
-      this.getProductsByCategory();
-    }
-  }
-
-  goToLastPage() {
-    if (this.currentPage !== this.totalPages) {
-      this.currentPage = this.totalPages;
-      this.getProductsByCategory();
-    }
-  }
+  previousPage() { if (this.currentPage > 1) this.updateQueryParams({ page: this.currentPage - 1 }); }
+  nextPage() { if (this.currentPage < this.totalPages) this.updateQueryParams({ page: this.currentPage + 1 }); }
+  goToPage(page: number) { if (page >= 1 && page <= this.totalPages) this.updateQueryParams({ page }); }
+  goToFirstPage() { if (this.currentPage !== 1) this.updateQueryParams({ page: 1 }); }
+  goToLastPage() { if (this.currentPage !== this.totalPages) this.updateQueryParams({ page: this.totalPages }); }
 
   getPageNumbers(): number[] {
     const pages = [];
@@ -228,8 +174,6 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.subsFilterProducts) {
-      this.subsFilterProducts.unsubscribe();
-    }
+    if (this.subsFilterProducts) this.subsFilterProducts.unsubscribe();
   }
 }

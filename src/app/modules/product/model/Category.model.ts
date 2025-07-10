@@ -6,8 +6,8 @@ export interface Category {
 }
 
 export interface CategoryFilter {
-    label:string;
-    value:string|number;
-    checked:boolean;
-    id:number;
+  id: number;
+  label: string;
+  value: string; // Cambiado de `string | number` a `string`
+  checked: boolean;
 }
