@@ -16,6 +16,7 @@ export class CheckoutComponent implements OnInit {
   total = 0;
   isGuest = true;
   orderNumber: string | null = null;
+  estimatedTotal = 0;
 
   constructor(
     private cartService: CartService,
@@ -52,15 +53,14 @@ export class CheckoutComponent implements OnInit {
   ngOnInit() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.cart = this.cartService.getCart();
-    this.cartService.getEstimatedTotal().subscribe((total) => {
-      this.total = Number(total.toFixed(2));
+    this.cartService.getTotalAmount().subscribe((subtotal) => {
+      this.total = Number(subtotal.toFixed(2));
+      const shippingCost = 6000; // Costo fijo de domicilio
+      this.estimatedTotal = this.total + shippingCost; // Solo subtotal + envío
     });
     const state = history.state;
     this.isGuest = state.isGuest || this.router.getCurrentNavigation()?.extras.queryParams?.['isGuest'] === 'true' || !this.authService.isAuthenticated();
-    // console.log('CheckoutComponent: history.state=', state, 'isGuest=', this.isGuest);
-
     if (!this.isGuest && !this.authService.isAuthenticated()) {
-      // console.log('CheckoutComponent: Redirecting to /login');
       this.router.navigate(['/login'], { queryParams: { returnUrl: '/checkout' } });
       return;
     }

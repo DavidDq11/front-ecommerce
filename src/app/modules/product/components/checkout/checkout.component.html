@@ -80,9 +80,13 @@
         </div>
         <span class="font-semibold text-gray-900">{{ item.totalprice | currency:'COP':'symbol':'1.0-0' }}</span>
       </div>
+      <div class="flex justify-between items-center mt-4">
+        <span class="text-xl font-semibold text-gray-900">Domicilio:</span>
+        <span class="text-xl font-semibold text-gray-900">{{ 6000 | currency:'COP':'symbol':'1.0-0' }}</span>
+      </div>
       <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
         <span class="text-xl font-semibold text-gray-900">Total:</span>
-        <span class="text-xl font-semibold text-gray-900">{{ total | currency:'COP':'symbol':'1.0-0' }}</span>
+        <span class="text-xl font-semibold text-gray-900">{{ estimatedTotal | currency:'COP':'symbol':'1.0-0' }}</span>
       </div>
     </div>
 
