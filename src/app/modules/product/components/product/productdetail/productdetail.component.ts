@@ -112,6 +112,11 @@ export class ProductdetailComponent implements OnInit {
   }
 
   addToCart(product: Product) {
+    if (this.selectedSize) {
+      product.size = this.selectedSize; // Usa el tamaño seleccionado por el usuario
+    } else if (product.sizes && product.sizes.length > 0) {
+      product.size = product.sizes[0].size; // Fallback al tamaño por defecto si no se selecciona
+    }
     this.cartService.addToCart(product);
   }
 

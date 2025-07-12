@@ -24,6 +24,10 @@ export class LoginComponent {
     });
   }
 
+  ngOnInit() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   onSubmit() {
     if (this.loginForm.valid) {
         this.isLoading = true;

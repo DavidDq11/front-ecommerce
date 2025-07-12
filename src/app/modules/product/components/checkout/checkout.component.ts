@@ -50,6 +50,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   ngOnInit() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     this.cart = this.cartService.getCart();
     this.cartService.getEstimatedTotal().subscribe((total) => {
       this.total = Number(total.toFixed(2));
