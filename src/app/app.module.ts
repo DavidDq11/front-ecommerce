@@ -17,12 +17,14 @@ import { SearchresultComponent } from './core/components/searchresult/searchresu
 import { SearchComponent } from './core/layout/components/header/search/search.component';
 import { AuthinterceptorService } from './shared/services/auth/authinterceptor.service';
 import { SharedModule } from './shared/shared.module';
-import { TermsComponent } from './core/components/terms/terms.component'; // Nuevo
+import { TermsComponent } from './core/components/terms/terms.component';
 import { PrivacyComponent } from './core/components/privacy/privacy.component';
 import { CartModalComponent } from './core/components/cart-modal/cart-modal.component';
 import { CommonModule } from '@angular/common';
 import { OrderConfirmationComponent } from './modules/order-confirmation/order-confirmation.component';
 import { AboutComponent } from './core/components/about/about.component';
+import Swal from 'sweetalert2';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -46,7 +48,7 @@ import { AboutComponent } from './core/components/about/about.component';
   imports: [
     BrowserModule,
     HttpClientModule,
-    FormsModule, 
+    FormsModule,
     ReactiveFormsModule,
     CommonModule,
     AppRoutingModule,
@@ -54,9 +56,9 @@ import { AboutComponent } from './core/components/about/about.component';
   ],
   providers: [
     {
-      provide:HTTP_INTERCEPTORS,
-      useClass:AuthinterceptorService,
-      multi:true
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthinterceptorService,
+      multi: true
     }
   ],
   bootstrap: [AppComponent]

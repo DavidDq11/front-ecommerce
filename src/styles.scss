@@ -34,3 +34,47 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
+/* En src/style.scss */
+
+/* Sobrescribir z-index de SweetAlert2 para que esté por encima de todos los elementos */
+.swal2-container {
+  z-index: 200000 !important; /* Mayor que header (10000), nav (1000), account-menu (13000 en móviles), y modal del carrito (110000) */
+}
+
+/* Asegurar que el fondo del modal sea más opaco y esté por debajo de .swal2-container */
+.swal2-backdrop {
+  z-index: 199999 !important; /* Justo por debajo de .swal2-container */
+  background-color: rgba(0, 0, 0, 0.7) !important; /* Fondo más oscuro para destacar */
+}
+
+/* Personalizar colores de SweetAlert2 para coincidir con el diseño */
+.swal2-popup {
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+}
+
+.swal2-title {
+  color: #1e3a8a !important;
+}
+
+.swal2-content {
+  color: #4b5563 !important;
+}
+
+.swal2-confirm {
+  background-color: #1e3a8a !important;
+  border-radius: 4px !important;
+  color: white !important;
+}
+.swal2-confirm:hover {
+  background-color: #f59e0b !important;
+}
+
+.swal2-cancel, .swal2-deny {
+  background-color: #6b7280 !important;
+  border-radius: 4px !important;
+  color: white !important;
+}
+.swal2-cancel:hover, .swal2-deny:hover {
+  background-color: #4b5563 !important;
+}
