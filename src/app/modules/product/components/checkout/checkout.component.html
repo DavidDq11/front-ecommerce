@@ -1,102 +1,398 @@
-<div class="container mx-auto px-4 py-10 max-w-4xl bg-gray-50 min-h-screen">
-  <h2 class="text-4xl font-extrabold text-gray-900 mb-8 text-center">Finalizar tu Compra</h2>
-  <form [formGroup]="checkoutForm" (ngSubmit)="submitOrder()" class="space-y-8">
-    <!-- Shipping Address -->
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-      <h3 class="text-2xl font-semibold text-gray-800 mb-5">Dirección de Envío</h3>
-      <div formGroupName="shippingAddress" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+<div class="container">
+  <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Finalizar tu Compra</h2>
+
+  <!-- Progress Bar -->
+  <div class="mb-8">
+    <div class="flex justify-between items-center mb-2">
+      <div class="w-1/4">
+        <div class="text-center text-sm font-medium text-gray-700">Fecha</div>
+        <div class="step-indicator" [class.active]="currentStep >= 1" [class.inactive]="currentStep < 1" aria-label="Paso 1: Fecha">1</div>
+      </div>
+      <div class="w-1/4">
+        <div class="text-center text-sm font-medium text-gray-700">Dirección</div>
+        <div class="step-indicator" [class.active]="currentStep >= 2" [class.inactive]="currentStep < 2" aria-label="Paso 2: Dirección">2</div>
+      </div>
+      <div class="w-1/4">
+        <div class="text-center text-sm font-medium text-gray-700">Pago</div>
+        <div class="step-indicator" [class.active]="currentStep >= 3" [class.inactive]="currentStep < 3" aria-label="Paso 3: Pago">3</div>
+      </div>
+      <div class="w-1/4">
+        <div class="text-center text-sm font-medium text-gray-700">Resumen</div>
+        <div class="step-indicator" [class.active]="currentStep >= 4" [class.inactive]="currentStep < 4" aria-label="Paso 4: Resumen">4</div>
+      </div>
+    </div>
+    <div class="w-full h-1 bg-blue-200 rounded">
+      <div class="h-1 bg-blue-600 rounded" [style.width]="(currentStep / 4) * 100 + '%'" style="transition: width 0.5s ease-in-out;"></div>
+    </div>
+  </div>
+
+  <form [formGroup]="checkoutForm" class="space-y-6">
+    <!-- Step 1: Delivery Date -->
+    <div *ngIf="currentStep === 1" class="card">
+      <h3 class="text-2xl font-semibold text-gray-800 mb-4">Selecciona Fecha y Hora</h3>
+      <div class="grid grid-cols-1 gap-4">
         <div class="relative">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
-          <input formControlName="firstName" placeholder="Ej: Juan" class="w-full p-3.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-gray-50 text-gray-900 placeholder-gray-400" />
-          <div *ngIf="checkoutForm.get('shippingAddress.firstName')?.touched && checkoutForm.get('shippingAddress.firstName')?.invalid" class="text-red-600 text-xs mt-1">Por favor, ingresa tu nombre</div>
+          <label for="deliveryDate" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Entrega *</label>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <button
+              *ngFor="let date of deliveryDates"
+              type="button"
+              (click)="selectDate(date.day, date.date)"
+              class="date-button"
+              [class.active]="checkoutForm.get('shippingAddress.deliveryDate')?.value === date.fullDate"
+              [attr.aria-label]="'Seleccionar fecha ' + date.day + ' ' + date.date"
+              [attr.aria-pressed]="checkoutForm.get('shippingAddress.deliveryDate')?.value === date.fullDate"
+            >
+              {{date.day.substring(0, 3)}}<br>{{date.date}}
+            </button>
+          </div>
+          <div
+            *ngIf="checkoutForm.get('shippingAddress.deliveryDate')?.touched && checkoutForm.get('shippingAddress.deliveryDate')?.invalid"
+            class="text-red-600 text-sm mt-2"
+            role="alert"
+          >
+            Por favor, selecciona una fecha de entrega.
+          </div>
         </div>
         <div class="relative">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Apellido *</label>
-          <input formControlName="lastName" placeholder="Ej: Pérez" class="w-full p-3.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-gray-50 text-gray-900 placeholder-gray-400" />
-          <div *ngIf="checkoutForm.get('shippingAddress.lastName')?.touched && checkoutForm.get('shippingAddress.lastName')?.invalid" class="text-red-600 text-xs mt-1">Por favor, ingresa tu apellido</div>
+          <label for="deliveryTime" class="block text-sm font-medium text-gray-700 mb-1">Horario</label>
+          <div class="p-3 bg-blue-50 border border-blue-200 rounded">
+            <p class="text-sm text-gray-800">{{ formatDate(checkoutForm.get('shippingAddress.deliveryDate')?.value, 'EEEE dd') || 'Selecciona una fecha' }} de 9:00 AM - 6:00 PM</p>
+          </div>
         </div>
-        <div class="relative">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico *</label>
-          <input formControlName="email" placeholder="Ej: juan@correo.com" class="w-full p-3.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-gray-50 text-gray-900 placeholder-gray-400" />
-          <div *ngIf="checkoutForm.get('shippingAddress.email')?.touched && checkoutForm.get('shippingAddress.email')?.invalid" class="text-red-600 text-xs mt-1">Ingresa un correo válido</div>
-        </div>
-        <div class="relative">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono *</label>
-          <input formControlName="mobile" placeholder="Ej: +57 300 123 4567" class="w-full p-3.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-gray-50 text-gray-900 placeholder-gray-400" />
-          <div *ngIf="checkoutForm.get('shippingAddress.mobile')?.touched && checkoutForm.get('shippingAddress.mobile')?.invalid" class="text-red-600 text-xs mt-1">Ingresa un teléfono válido</div>
-        </div>
-        <div class="relative">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Calle *</label>
-          <input formControlName="address" placeholder="Ej: Carrera 23 #45-67" class="w-full p-3.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-gray-50 text-gray-900 placeholder-gray-400" />
-          <div *ngIf="checkoutForm.get('shippingAddress.address')?.touched && checkoutForm.get('shippingAddress.address')?.invalid" class="text-red-600 text-xs mt-1">Ingresa una dirección válida</div>
-        </div>
-        <div class="relative">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Ciudad *</label>
-          <select formControlName="city" class="w-full p-3.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-gray-50 text-gray-900">
-            <option value="Manizales">Manizales</option>
-            <option value="Villa María">Villa María</option>
-          </select>
-          <div *ngIf="checkoutForm.get('shippingAddress.city')?.touched && checkoutForm.get('shippingAddress.city')?.invalid" class="text-red-600 text-xs mt-1">Selecciona una ciudad</div>
-        </div>
-        <div class="relative">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Departamento *</label>
-          <input formControlName="state" value="Caldas" readonly class="w-full p-3.5 border border-gray-200 rounded-lg bg-gray-100 text-gray-900 cursor-not-allowed" />
-          <div *ngIf="checkoutForm.get('shippingAddress.state')?.touched && checkoutForm.get('shippingAddress.state')?.invalid" class="text-red-600 text-xs mt-1">Ingresa un departamento</div>
-        </div>
-        <div class="relative">
-          <label class="block text-sm font-medium text-gray-700 mb-1">País</label>
-          <input formControlName="country" value="Colombia" readonly class="w-full p-3.5 border border-gray-200 rounded-lg bg-gray-100 text-gray-900 cursor-not-allowed" />
-        </div>
+      </div>
+      <div class="mt-6 flex justify-end">
+        <button
+          type="button"
+          (click)="nextStep()"
+          class="primary-button"
+          [disabled]="checkoutForm.get('shippingAddress.deliveryDate')?.invalid"
+          aria-label="Continuar al siguiente paso"
+        >
+          Continuar
+        </button>
       </div>
     </div>
 
-    <!-- Billing Address -->
+    <!-- Step 2: Shipping Address -->
+    <div *ngIf="currentStep === 2" class="card">
+      <h3 class="text-2xl font-semibold text-gray-800 mb-4">Dirección de Envío</h3>
+      <div formGroupName="shippingAddress" class="grid grid-cols-1 gap-4">
+        <div class="relative">
+          <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+          <input
+            id="firstName"
+            formControlName="firstName"
+            placeholder="Ej: Juan"
+            class="input-field"
+            aria-describedby="firstNameError"
+            (input)="validateField('shippingAddress.firstName')"
+          />
+          <div
+            *ngIf="checkoutForm.get('shippingAddress.firstName')?.touched && checkoutForm.get('shippingAddress.firstName')?.invalid"
+            id="firstNameError"
+            class="text-red-600 text-sm mt-2
 
-    <!-- Payment Method -->
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-      <h3 class="text-2xl font-semibold text-gray-800 mb-5">Método de Pago</h3>
-      <select formControlName="paymentMethod" class="w-full p-3.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-gray-50 text-gray-900">
-        <option value="credit_card">Tarjeta de Crédito</option>
-        <option value="paypal">PayPal</option>
-        <option value="cash_on_delivery">Contraentrega</option>
-      </select>
-      <div *ngIf="checkoutForm.get('paymentMethod')?.touched && checkoutForm.get('paymentMethod')?.invalid" class="text-red-600 text-xs mt-1">Selecciona un método de pago</div>
+" role="alert">
+            Ingresa tu nombre
+          </div>
+        </div>
+        <div class="relative">
+          <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Apellido *</label>
+          <input
+            id="lastName"
+            formControlName="lastName"
+            placeholder="Ej: Pérez"
+            class="input-field"
+            aria-describedby="lastNameError"
+            (input)="validateField('shippingAddress.lastName')"
+          />
+          <div
+            *ngIf="checkoutForm.get('shippingAddress.lastName')?.touched && checkoutForm.get('shippingAddress.lastName')?.invalid"
+            id="lastNameError"
+            class="text-red-600 text-sm mt-2"
+            role="alert"
+          >
+            Ingresa tu apellido
+          </div>
+        </div>
+        <div class="relative">
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Correo *</label>
+          <input
+            id="email"
+            formControlName="email"
+            placeholder="Ej: juan@correo.com"
+            class="input-field"
+            aria-describedby="emailError"
+            (input)="validateField('shippingAddress.email')"
+          />
+          <div
+            *ngIf="checkoutForm.get('shippingAddress.email')?.touched && checkoutForm.get('shippingAddress.email')?.invalid"
+            id="emailError"
+            class="text-red-600 text-sm mt-2"
+            role="alert"
+          >
+            Correo inválido
+          </div>
+        </div>
+        <div class="relative">
+          <label for="mobile" class="block text-sm font-medium text-gray-700 mb-1">Teléfono *</label>
+          <input
+            id="mobile"
+            formControlName="mobile"
+            placeholder="Ej: +57 300 123 4567"
+            class="input-field"
+            aria-describedby="mobileError"
+            (input)="validateField('shippingAddress.mobile')"
+          />
+          <div
+            *ngIf="checkoutForm.get('shippingAddress.mobile')?.touched && checkoutForm.get('shippingAddress.mobile')?.invalid"
+            id="mobileError"
+            class="text-red-600 text-sm mt-2"
+            role="alert"
+          >
+            Teléfono inválido
+          </div>
+        </div>
+        <div class="relative">
+          <label for="city" class="block text-sm font-medium text-gray-700 mb-1">Ciudad *</label>
+          <div class="custom-select">
+            <button
+              type="button"
+              class="input-field flex justify-between items-center"
+              (click)="toggleDropdown('city')"
+              [attr.aria-expanded]="dropdownOpen.city"
+              aria-haspopup="listbox"
+              aria-describedby="cityError"
+            >
+              <span>{{ checkoutForm.get('shippingAddress.city')?.value || 'Selecciona una ciudad' }}</span>
+              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            <div *ngIf="dropdownOpen.city" class="dropdown-menu">
+              <button
+                *ngFor="let city of cities"
+                type="button"
+                class="dropdown-item"
+                (click)="selectOption('shippingAddress.city', city)"
+                [attr.aria-selected]="checkoutForm.get('shippingAddress.city')?.value === city"
+              >
+                {{ city }}
+              </button>
+            </div>
+          </div>
+          <div
+            *ngIf="checkoutForm.get('shippingAddress.city')?.touched && checkoutForm.get('shippingAddress.city')?.invalid"
+            id="cityError"
+            class="text-red-600 text-sm mt-2"
+            role="alert"
+          >
+            Selecciona ciudad
+          </div>
+        </div>
+        <div class="relative">
+          <label for="addressType" class="block text-sm font-medium text-gray-700 mb-1">Dirección *</label>
+          <div class="flex space-x-2">
+            <div class="custom-select w-1/3">
+              <button
+                type="button"
+                class="input-field flex justify-between items-center"
+                (click)="toggleDropdown('addressType')"
+                [attr.aria-expanded]="dropdownOpen.addressType"
+                aria-haspopup="listbox"
+                aria-describedby="addressTypeError"
+              >
+                <span>{{ checkoutForm.get('shippingAddress.addressType')?.value || 'Selecciona un tipo' }}</span>
+                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </button>
+              <div *ngIf="dropdownOpen.addressType" class="dropdown-menu">
+                <button
+                  *ngFor="let type of addressTypes"
+                  type="button"
+                  class="dropdown-item"
+                  (click)="selectOption('shippingAddress.addressType', type)"
+                  [attr.aria-selected]="checkoutForm.get('shippingAddress.addressType')?.value === type"
+                >
+                  {{ type }}
+                </button>
+              </div>
+            </div>
+            <input
+              id="address"
+              formControlName="address"
+              placeholder="Ej: 23"
+              class="w-1/3 input-field"
+              aria-describedby="addressError"
+              (input)="validateField('shippingAddress.address')"
+            />
+            <span class="flex items-center text-gray-700">#</span>
+            <input
+              id="addressNumber"
+              formControlName="addressNumber"
+              placeholder="Ej: 45-67"
+              class="w-1/3 input-field"
+              aria-describedby="addressNumberError"
+              (input)="validateField('shippingAddress.addressNumber')"
+            />
+          </div>
+          <div
+            *ngIf="checkoutForm.get('shippingAddress.addressType')?.touched && checkoutForm.get('shippingAddress.addressType')?.invalid"
+            id="addressTypeError"
+            class="text-red-600 text-sm mt-2"
+            role="alert"
+          >
+            Tipo requerido
+          </div>
+          <div
+            *ngIf="checkoutForm.get('shippingAddress.address')?.touched && checkoutForm.get('shippingAddress.address')?.invalid"
+            id="addressError"
+            class="text-red-600 text-sm mt-2"
+            role="alert"
+          >
+            Dirección requerida
+          </div>
+        </div>
+        <div class="relative">
+          <label for="aptoPisoCasa" class="block text-sm font-medium text-gray-700 mb-1">Apto / Piso</label>
+          <input
+            id="aptoPisoCasa"
+            formControlName="aptoPisoCasa"
+            placeholder="Ej: Apto 101"
+            class="input-field"
+            aria-describedby="aptoPisoCasaError"
+          />
+        </div>
+      </div>
+      <div class="mt-6 flex justify-between">
+        <button
+          type="button"
+          (click)="prevStep()"
+          class="secondary-button"
+          aria-label="Volver al paso anterior"
+        >
+          Atrás
+        </button>
+        <button
+          type="button"
+          (click)="nextStep()"
+          class="primary-button"
+          [disabled]="checkoutForm.get('shippingAddress')?.invalid"
+          aria-label="Continuar al siguiente paso"
+        >
+          Continuar
+        </button>
+      </div>
     </div>
 
-    <!-- Cart Summary -->
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-      <h3 class="text-2xl font-semibold text-gray-800 mb-5">Resumen del Carrito</h3>
-      <div *ngFor="let item of cart" class="flex items-center justify-between py-4 border-b border-gray-100">
-        <div class="flex items-center space-x-4">
+    <!-- Step 3: Payment Method -->
+    <div *ngIf="currentStep === 3" class="card">
+      <h3 class="text-2xl font-semibold text-gray-800 mb-4">Método de Pago</h3>
+      <div class="relative">
+        <label for="paymentMethod" class="block text-sm font-medium text-gray-700 mb-1">Selecciona un método *</label>
+        <div class="custom-select">
+          <button
+            type="button"
+            class="input-field flex justify-between items-center"
+            (click)="toggleDropdown('paymentMethod')"
+            [attr.aria-expanded]="dropdownOpen.paymentMethod"
+            aria-haspopup="listbox"
+            aria-describedby="paymentMethodError"
+          >
+            <span>{{ checkoutForm.get('paymentMethod')?.value ? paymentMethodLabels[checkoutForm.get('paymentMethod')?.value] : 'Selecciona un método' }}</span>
+            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div *ngIf="dropdownOpen.paymentMethod" class="dropdown-menu">
+            <button
+              *ngFor="let method of paymentMethods"
+              type="button"
+              class="dropdown-item"
+              (click)="selectOption('paymentMethod', method.value)"
+              [attr.aria-selected]="checkoutForm.get('paymentMethod')?.value === method.value"
+            >
+              {{ method.label }}
+            </button>
+          </div>
+        </div>
+        <div
+          *ngIf="checkoutForm.get('paymentMethod')?.touched && checkoutForm.get('paymentMethod')?.invalid"
+          id="paymentMethodError"
+          class="text-red-600 text-sm mt-2"
+          role="alert"
+        >
+          Selecciona un método de pago
+        </div>
+      </div>
+      <div class="mt-6 flex justify-between">
+        <button
+          type="button"
+          (click)="prevStep()"
+          class="secondary-button"
+          aria-label="Volver al paso anterior"
+        >
+          Atrás
+        </button>
+        <button
+          type="button"
+          (click)="nextStep()"
+          class="primary-button"
+          [disabled]="checkoutForm.get('paymentMethod')?.invalid"
+          aria-label="Continuar al siguiente paso"
+        >
+          Continuar
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 4: Cart Summary and Confirmation -->
+    <div *ngIf="currentStep === 4" class="card">
+      <h3 class="text-2xl font-semibold text-gray-800 mb-4">Resumen del Carrito</h3>
+      <div *ngFor="let item of cart" class="flex items-center justify-between py-3 border-b border-gray-200">
+        <div class="flex items-center space-x-3">
           <img
-            [src]="item.images && item.images[0]?.image_url || item.sizes[0]?.image_url || 'https://via.placeholder.com/80'"
+            [src]="item.images && item.images[0]?.image_url || item.sizes[0]?.image_url || 'https://via.placeholder.com/64'"
             [alt]="item.title"
-            class="w-20 h-20 object-cover rounded-lg border border-gray-200"
+            class="w-16 h-16 object-cover rounded border border-gray-200"
+            loading="lazy"
           />
           <div>
-            <span class="font-semibold text-gray-900">{{ item.title }}</span>
+            <span class="font-medium text-gray-900 text-base">{{ item.title }}</span>
             <p class="text-sm text-gray-600">{{ item.size || 'Sin tamaño' }} | {{ item.qty }} unidad{{ item.qty > 1 ? 'es' : '' }}</p>
           </div>
         </div>
-        <span class="font-semibold text-gray-900">{{ item.totalprice | currency:'COP':'symbol':'1.0-0' }}</span>
+        <span class="font-medium text-gray-900 text-base">{{ item.totalprice | currency:'COP':'symbol':'1.0-0' }}</span>
       </div>
       <div class="flex justify-between items-center mt-4">
-        <span class="text-xl font-semibold text-gray-900">Domicilio:</span>
-        <span class="text-xl font-semibold text-gray-900">{{ 6000 | currency:'COP':'symbol':'1.0-0' }}</span>
+        <span class="text-lg font-medium text-gray-900">Domicilio:</span>
+        <span class="text-lg font-medium text-gray-900">{{ 6000 | currency:'COP':'symbol':'1.0-0' }}</span>
       </div>
-      <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
-        <span class="text-xl font-semibold text-gray-900">Total:</span>
-        <span class="text-xl font-semibold text-gray-900">{{ estimatedTotal | currency:'COP':'symbol':'1.0-0' }}</span>
+      <div class="flex justify-between items-center mt-4 pt-3 border-t border-gray-200 bg-blue-50 p-3 rounded">
+        <span class="text-lg font-semibold text-gray-900">Total:</span>
+        <span class="text-lg font-semibold text-gray-900">{{ estimatedTotal | currency:'COP':'symbol':'1.0-0' }}</span>
+      </div>
+      <div class="mt-6 flex justify-between">
+        <button
+          type="button"
+          (click)="prevStep()"
+          class="secondary-button"
+          aria-label="Volver al paso anterior"
+        >
+          Atrás
+        </button>
+        <button
+          type="submit"
+          (click)="submitOrder()"
+          class="primary-button"
+          [disabled]="checkoutForm.invalid"
+          aria-label="Confirmar pedido"
+        >
+          Confirmar Pedido
+        </button>
       </div>
     </div>
-
-    <!-- Submit Button -->
-    <button
-      type="submit"
-      class="w-full bg-indigo-600 text-white py-3.5 px-6 rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200 font-semibold text-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
-      [disabled]="checkoutForm.invalid"
-    >
-      Confirmar Pedido
-    </button>
   </form>
 </div>
