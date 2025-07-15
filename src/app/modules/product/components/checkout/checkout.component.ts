@@ -5,6 +5,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { OrderData, OrderService } from 'src/app/shared/services/auth/order.service';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { addDays, format, getDay, eachDayOfInterval, isAfter, set } from 'date-fns';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-checkout',
@@ -20,13 +22,18 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   estimatedTotal = 0;
   deliveryDates: { day: string; date: number; fullDate: string }[] = [];
   currentStep = 1;
-  dropdownOpen: { [key in 'city' | 'addressType' | 'paymentMethod']: boolean } = {
+  dropdownOpen: { [key in 'city' | 'addressType' | 'paymentMethod' | 'deliveryOption']: boolean } = {
     city: false,
     addressType: false,
     paymentMethod: false,
+    deliveryOption: false,
   };
   cities = ['Manizales', 'Villa María'];
   addressTypes = ['Calle', 'Carrera', 'Avenida'];
+  deliveryOptions = [
+    { value: 'home', label: 'Recibir en Domicilio' },
+    { value: 'store', label: 'Recoger en Tienda' },
+  ];
   paymentMethods = [
     { value: 'credit_card', label: 'Tarjeta de Crédito' },
     { value: 'Nequi', label: 'Nequi' },
@@ -43,15 +50,17 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private orderService: OrderService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private http: HttpClient
   ) {
     this.checkoutForm = this.fb.group({
       shippingAddress: this.fb.group({
+        deliveryOption: ['home', Validators.required],
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
         email: ['', [Validators.required, Validators.email]],
         mobile: ['', Validators.required],
-        addressType: ['Calle', Validators.required],
+        addressType: ['Calle'],
         address: ['', Validators.required],
         addressNumber: ['', Validators.required],
         city: ['Manizales', Validators.required],
@@ -77,23 +86,25 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     });
 
     const now = new Date();
-      const cutoffTime = set(new Date(), { hours: 16, minutes: 0, seconds: 0, milliseconds: 0 });
-      const startDate = isAfter(now, cutoffTime) ? addDays(now, 1) : now;
-      const next7Days = eachDayOfInterval({ start: startDate, end: addDays(startDate, 6) });
-      const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']; // Alineamos con getDay
-      this.deliveryDates = next7Days.map(date => ({
-        day: days[getDay(date)], // getDay: 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
-        date: date.getDate(),
-        fullDate: format(date, 'yyyy-MM-dd')
-      }));
+    const cutoffTime = set(new Date(), { hours: 16, minutes: 0, seconds: 0, milliseconds: 0 });
+    const startDate = isAfter(now, cutoffTime) ? addDays(now, 1) : now;
+    const next7Days = eachDayOfInterval({ start: startDate, end: addDays(startDate, 6) });
+    const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    this.deliveryDates = next7Days.map(date => ({
+      day: days[getDay(date)],
+      date: date.getDate(),
+      fullDate: format(date, 'yyyy-MM-dd')
+    }));
   }
 
   ngOnInit() {
+    console.log('isGuest:', this.isGuest);
+    console.log('isAuthenticated:', this.authService.isAuthenticated());
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.cart = this.cartService.getCart();
     this.cartService.getTotalAmount().subscribe((subtotal) => {
       this.total = Number(subtotal.toFixed(2));
-      const shippingCost = 6000;
+      const shippingCost = this.checkoutForm.get('shippingAddress.deliveryOption')?.value === 'store' ? 0 : 6000;
       this.estimatedTotal = this.total + shippingCost;
     });
     const state = history.state;
@@ -102,6 +113,13 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       this.router.navigate(['/login'], { queryParams: { returnUrl: '/checkout' } });
       return;
     }
+    if (!this.isGuest) {
+      this.fetchUserData();
+    }
+    this.checkoutForm.get('shippingAddress.deliveryOption')?.valueChanges.subscribe(value => {
+      this.updateAddressValidators(value);
+      this.updateShippingCost();
+    });
     document.addEventListener('click', this.closeDropdowns.bind(this));
   }
 
@@ -109,7 +127,71 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     document.removeEventListener('click', this.closeDropdowns.bind(this));
   }
 
-  toggleDropdown(field: 'city' | 'addressType' | 'paymentMethod') {
+  fetchUserData() {
+    this.http.get(`${environment.baseAPIURL}me`).subscribe({
+      next: (user: any) => {
+        this.checkoutForm.get('shippingAddress')?.patchValue({
+          firstName: user.first_name || '',
+          lastName: user.last_name || '',
+          email: user.email || '',
+          mobile: user.phone || '',
+          city: user.city || 'Manizales',
+          state: user.state || 'Caldas',
+          address: user.address || '',
+          addressType: user.address ? this.guessAddressType(user.address) : 'Calle',
+        });
+      },
+      error: (error) => {
+        console.error('Error fetching user data:', error);
+      }
+    });
+  }
+
+  guessAddressType(address: string): string {
+    const lowerAddress = address.toLowerCase();
+    if (lowerAddress.includes('calle')) return 'Calle';
+    if (lowerAddress.includes('carrera')) return 'Carrera';
+    if (lowerAddress.includes('avenida')) return 'Avenida';
+    return 'Calle';
+  }
+
+  getDeliveryOptionLabel(): string {
+    const deliveryOption = this.checkoutForm.get('shippingAddress.deliveryOption')?.value;
+    return deliveryOption
+      ? this.deliveryOptions.find(opt => opt.value === deliveryOption)?.label || 'Selecciona una opción'
+      : 'Selecciona una opción';
+  }
+
+  updateAddressValidators(deliveryOption: string) {
+    const addressControls = ['addressType', 'address', 'addressNumber', 'city', 'state'];
+    addressControls.forEach(control => {
+      const formControl = this.checkoutForm.get(`shippingAddress.${control}`);
+      if (deliveryOption === 'store') {
+        formControl?.clearValidators();
+        if (control === 'city') {
+          formControl?.setValue('Manizales');
+        } else if (control === 'state') {
+          formControl?.setValue('Caldas');
+        } else if (control === 'addressType') {
+          formControl?.setValue('Calle');
+        } else if (control === 'address') {
+          formControl?.setValue('23');
+        } else if (control === 'addressNumber') {
+          formControl?.setValue('45-67');
+        }
+      } else {
+        formControl?.setValidators(Validators.required);
+      }
+      formControl?.updateValueAndValidity();
+    });
+  }
+
+  updateShippingCost() {
+    const shippingCost = this.checkoutForm.get('shippingAddress.deliveryOption')?.value === 'store' ? 0 : 6000;
+    this.estimatedTotal = this.total + shippingCost;
+  }
+
+  toggleDropdown(field: 'city' | 'addressType' | 'paymentMethod' | 'deliveryOption') {
     Object.keys(this.dropdownOpen).forEach(key => {
       if (key !== field) {
         this.dropdownOpen[key as keyof typeof this.dropdownOpen] = false;
@@ -187,7 +269,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }
 
     const orderData: OrderData = {
-      user_id: null,
+      user_id: this.isGuest ? null : this.authService.getUserData()?.id || null,
       items: this.cart.map(item => ({
         id: item.id,
         title: item.title,
@@ -195,10 +277,13 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         qty: item.qty || 1,
         totalprice: item.price * (item.qty || 1)
       })),
-      shipping_address: this.checkoutForm.get('shippingAddress')?.value,
+      shipping_address: {
+        ...this.checkoutForm.get('shippingAddress')?.value,
+        postalCode: '170001'
+      },
       billing_address: this.checkoutForm.get('billingAddress')?.value || null,
       payment_method: this.checkoutForm.get('paymentMethod')?.value,
-      total: this.total,
+      total: this.estimatedTotal,
     };
 
     this.orderService.placeOrder(orderData, this.isGuest).subscribe({

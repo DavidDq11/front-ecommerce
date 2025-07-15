@@ -79,6 +79,43 @@
       <h3 class="text-2xl font-semibold text-gray-800 mb-4">Dirección de Envío</h3>
       <div formGroupName="shippingAddress" class="grid grid-cols-1 gap-4">
         <div class="relative">
+          <label for="deliveryOption" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Entrega *</label>
+          <div class="custom-select">
+            <button
+              type="button"
+              class="input-field flex justify-between items-center"
+              (click)="toggleDropdown('deliveryOption')"
+              [attr.aria-expanded]="dropdownOpen.deliveryOption"
+              aria-haspopup="listbox"
+              aria-describedby="deliveryOptionError"
+            >
+              <span>{{ getDeliveryOptionLabel() }}</span>
+              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            <div *ngIf="dropdownOpen.deliveryOption" class="dropdown-menu">
+              <button
+                *ngFor="let option of deliveryOptions"
+                type="button"
+                class="dropdown-item"
+                (click)="selectOption('shippingAddress.deliveryOption', option.value)"
+                [attr.aria-selected]="checkoutForm.get('shippingAddress.deliveryOption')?.value === option.value"
+              >
+                {{ option.label }}
+              </button>
+            </div>
+          </div>
+          <div
+            *ngIf="checkoutForm.get('shippingAddress.deliveryOption')?.touched && checkoutForm.get('shippingAddress.deliveryOption')?.invalid"
+            id="deliveryOptionError"
+            class="text-red-600 text-sm mt-2"
+            role="alert"
+          >
+            Selecciona un tipo de entrega
+          </div>
+        </div>
+        <div class="relative" *ngIf="checkoutForm.get('shippingAddress.deliveryOption')?.value === 'home'">
           <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
           <input
             id="firstName"
@@ -91,13 +128,13 @@
           <div
             *ngIf="checkoutForm.get('shippingAddress.firstName')?.touched && checkoutForm.get('shippingAddress.firstName')?.invalid"
             id="firstNameError"
-            class="text-red-600 text-sm mt-2
-
-" role="alert">
+            class="text-red-600 text-sm mt-2"
+            role="alert"
+          >
             Ingresa tu nombre
           </div>
         </div>
-        <div class="relative">
+        <div class="relative" *ngIf="checkoutForm.get('shippingAddress.deliveryOption')?.value === 'home'">
           <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Apellido *</label>
           <input
             id="lastName"
@@ -116,7 +153,7 @@
             Ingresa tu apellido
           </div>
         </div>
-        <div class="relative">
+        <div class="relative" *ngIf="checkoutForm.get('shippingAddress.deliveryOption')?.value === 'home'">
           <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Correo *</label>
           <input
             id="email"
@@ -135,7 +172,7 @@
             Correo inválido
           </div>
         </div>
-        <div class="relative">
+        <div class="relative" *ngIf="checkoutForm.get('shippingAddress.deliveryOption')?.value === 'home'">
           <label for="mobile" class="block text-sm font-medium text-gray-700 mb-1">Teléfono *</label>
           <input
             id="mobile"
@@ -154,7 +191,7 @@
             Teléfono inválido
           </div>
         </div>
-        <div class="relative">
+        <div class="relative" *ngIf="checkoutForm.get('shippingAddress.deliveryOption')?.value === 'home'">
           <label for="city" class="block text-sm font-medium text-gray-700 mb-1">Ciudad *</label>
           <div class="custom-select">
             <button
@@ -191,7 +228,7 @@
             Selecciona ciudad
           </div>
         </div>
-        <div class="relative">
+        <div class="relative" *ngIf="checkoutForm.get('shippingAddress.deliveryOption')?.value === 'home'">
           <label for="addressType" class="block text-sm font-medium text-gray-700 mb-1">Dirección *</label>
           <div class="flex space-x-2">
             <div class="custom-select w-1/3">
@@ -255,7 +292,7 @@
             Dirección requerida
           </div>
         </div>
-        <div class="relative">
+        <div class="relative" *ngIf="checkoutForm.get('shippingAddress.deliveryOption')?.value === 'home'">
           <label for="aptoPisoCasa" class="block text-sm font-medium text-gray-700 mb-1">Apto / Piso</label>
           <input
             id="aptoPisoCasa"
@@ -264,6 +301,9 @@
             class="input-field"
             aria-describedby="aptoPisoCasaError"
           />
+        </div>
+        <div *ngIf="checkoutForm.get('shippingAddress.deliveryOption')?.value === 'store'" class="p-3 bg-blue-50 border border-blue-200 rounded">
+          <p class="text-sm text-gray-800">Recoger en: Calle 23 #45-67, Manizales, Caldas</p>
         </div>
       </div>
       <div class="mt-6 flex justify-between">
@@ -368,7 +408,7 @@
       </div>
       <div class="flex justify-between items-center mt-4">
         <span class="text-lg font-medium text-gray-900">Domicilio:</span>
-        <span class="text-lg font-medium text-gray-900">{{ 6000 | currency:'COP':'symbol':'1.0-0' }}</span>
+        <span class="text-lg font-medium text-gray-900">{{ (checkoutForm.get('shippingAddress.deliveryOption')?.value === 'store' ? 0 : 6000) | currency:'COP':'symbol':'1.0-0' }}</span>
       </div>
       <div class="flex justify-between items-center mt-4 pt-3 border-t border-gray-200 bg-blue-50 p-3 rounded">
         <span class="text-lg font-semibold text-gray-900">Total:</span>
