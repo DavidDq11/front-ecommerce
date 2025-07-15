@@ -1,0 +1,167 @@
+/* Estilos para el breadcrumb */
+nav.breadcrumb {
+  position: sticky;
+  top: 0;
+  z-index: 15000; /* Aumentado para evitar superposición */
+  background: linear-gradient(to right, #f97316, #f59e0b);
+  padding: 0.5rem 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  ol {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+  }
+
+  a,
+  span {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.6rem;
+    color: #fef3c7;
+    text-decoration: none;
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  .fa-paw {
+    color: #fef3c7;
+    margin: 0 0.5rem;
+  }
+
+  .md\:hidden {
+    flex-shrink: 0;
+    margin-left: auto;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* Ajustes para pantallas móviles (max-width: 768px) */
+@media (max-width: 768px) {
+  nav.breadcrumb {
+    position: sticky;
+    top: 0;
+    z-index: 15000;
+    padding: 0.5rem;
+  }
+
+  nav.breadcrumb ol {
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.5rem;
+    white-space: nowrap;
+  }
+
+  nav.breadcrumb li {
+    position: relative;
+    z-index: 1040;
+    flex-shrink: 0;
+    font-size: 0.85rem;
+  }
+
+  nav.breadcrumb li a,
+  nav.breadcrumb li span {
+    padding: 0.4rem 0.6rem;
+  }
+
+  nav.breadcrumb .md\:hidden {
+    display: flex !important;
+    margin-left: auto;
+  }
+
+  /* Ajustes específicos para iPhones modernos (390px a 430px) */
+  @media (min-width: 360px) and (max-width: 430px) {
+    nav.breadcrumb {
+      padding: 0.5rem;
+    }
+
+    nav.breadcrumb ol {
+      gap: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    nav.breadcrumb li a,
+    nav.breadcrumb li span {
+      padding: 0.3rem 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    nav.breadcrumb .md\:hidden {
+      padding: 0.3rem 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    /* Desactivar animaciones para mejorar rendimiento en iOS */
+    nav.breadcrumb i,
+    nav.breadcrumb a,
+    nav.breadcrumb span {
+      -webkit-animation: none;
+      animation: none;
+    }
+  }
+}
+
+/* Ajustes para tablets (min-width: 769px y max-width: 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  nav.breadcrumb {
+    padding: 0.75rem;
+  }
+
+  nav.breadcrumb ol {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 0.75rem;
+  }
+
+  nav.breadcrumb li {
+    font-size: 0.9rem;
+  }
+
+  nav.breadcrumb li a,
+  nav.breadcrumb li span {
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+/* Ajustes para pantallas grandes (min-width: 1025px) */
+@media (min-width: 1025px) {
+  nav.breadcrumb ol {
+    gap: 1rem;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow: visible;
+  }
+
+  nav.breadcrumb li {
+    font-size: 1rem;
+  }
+
+  nav.breadcrumb li a,
+  nav.breadcrumb li span {
+    padding: 0.5rem 0.75rem;
+  }
+}

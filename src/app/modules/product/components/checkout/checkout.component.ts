@@ -77,15 +77,15 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     });
 
     const now = new Date();
-    const cutoffTime = set(now, { hours: 16, minutes: 0, seconds: 0, milliseconds: 0 });
-    const startDate = isAfter(now, cutoffTime) ? addDays(now, 1) : now;
-    const next7Days = eachDayOfInterval({ start: startDate, end: addDays(startDate, 6) });
-    const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-    this.deliveryDates = next7Days.map(date => ({
-      day: days[getDay(date)],
-      date: date.getDate(),
-      fullDate: format(date, 'yyyy-MM-dd')
-    }));
+      const cutoffTime = set(new Date(), { hours: 16, minutes: 0, seconds: 0, milliseconds: 0 });
+      const startDate = isAfter(now, cutoffTime) ? addDays(now, 1) : now;
+      const next7Days = eachDayOfInterval({ start: startDate, end: addDays(startDate, 6) });
+      const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']; // Alineamos con getDay
+      this.deliveryDates = next7Days.map(date => ({
+        day: days[getDay(date)], // getDay: 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+        date: date.getDate(),
+        fullDate: format(date, 'yyyy-MM-dd')
+      }));
   }
 
   ngOnInit() {
