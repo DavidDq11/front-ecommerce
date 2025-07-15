@@ -1,15 +1,15 @@
+// src/app/shared/services/auth/auth.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { User } from 'src/app/modules/product/model/User.model';
 
-interface User {
-  id?: number;
-  name?: string;
-  email?: string;
-  token?: string;
+interface LoginResponse {
+  token: string;
+  user: User;
 }
 
 @Injectable({
@@ -19,7 +19,7 @@ export class AuthService {
   private apiUrl = environment.baseAPIURL;
   private tokenKey = 'authToken';
   private userKey = 'authUser';
-  private inactivityTimeout = 300 * 60 * 1000; // 5 hours in milliseconds
+  private inactivityTimeout = 300 * 60 * 1000; // 5 horas en milisegundos
 
   private userSubject = new BehaviorSubject<User | null>(null);
   public user$ = this.userSubject.asObservable();
@@ -55,23 +55,40 @@ export class AuthService {
   }
 
   private logoutDueToInactivity(): void {
-    // console.log('Logging out due to 5 hours of inactivity');
     this.logout();
   }
 
   register(userData: any): Observable<any> {
     return this.http.post(`${this.apiUrl}register`, userData).pipe(
       catchError(error => {
-        console.error('Registration error:', error);
+        console.error('Error de registro:', error);
         return throwError(() => error);
       })
     );
   }
 
-  login(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}login`, userData).pipe(
+  login(userData: any): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}login`, userData).pipe(
+      tap(response => {
+        const { token, user } = response;
+        if (token && user) {
+          this.setToken(token);
+          const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Usuario';
+          this.setUserData({
+            id: user.id,
+            name: fullName, // Incluimos name
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            phone: user.phone,
+            city: user.city,
+            state: user.state,
+            address: user.address
+          });
+        }
+      }),
       catchError(error => {
-        console.error('Login error:', error);
+        console.error('Error de login:', error);
         return throwError(() => error);
       })
     );
@@ -79,7 +96,7 @@ export class AuthService {
 
   setToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
-    localStorage.setItem('isLogged', 'true'); // Añadir para consistencia
+    localStorage.setItem('isLogged', 'true');
     this.resetInactivityTimer();
   }
 
@@ -98,12 +115,49 @@ export class AuthService {
     return user ? JSON.parse(user) : null;
   }
 
+  getUserDetails(): Observable<User> {
+    const token = this.getToken();
+    if (!token) return throwError(() => new Error('No token available'));
+    return this.http.get<User>(`${this.apiUrl}me`, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).pipe(
+      tap(user => {
+        // Agregar name al usuario devuelto por el endpoint
+        const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Usuario';
+        this.setUserData({ ...user, name: fullName });
+      }),
+      catchError(error => {
+        console.error('Error fetching user details:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  updateUserDetails(userData: Partial<User>): Observable<User> {
+    const token = this.getToken();
+    if (!token) return throwError(() => new Error('No token available'));
+    return this.http.put<User>(`${this.apiUrl}me`, userData, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).pipe(
+      tap(updatedUser => {
+        const currentUser = this.getUserData();
+        const fullName = `${updatedUser.first_name || ''} ${updatedUser.last_name || ''}`.trim() || 'Usuario';
+        const mergedUser = { ...currentUser, ...updatedUser, name: fullName };
+        this.setUserData(mergedUser);
+      }),
+      catchError(error => {
+        console.error('Error updating user details:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
-    localStorage.removeItem('isLogged'); // Añadir para consistencia
+    localStorage.removeItem('isLogged');
     this.userSubject.next(null);
-    this.router.navigate(['/login']).catch(err => console.error('Navigation error:', err));
+    this.router.navigate(['/login']).catch(err => console.error('Error de navegación:', err));
     if (this.inactivityTimer) {
       clearTimeout(this.inactivityTimer);
     }
@@ -114,7 +168,7 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return this.isLoggedIn(); // Alinear con isLoggedIn
+    return this.isLoggedIn();
   }
 
   googleSignIn(): Observable<any> {

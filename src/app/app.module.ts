@@ -24,6 +24,7 @@ import { CommonModule } from '@angular/common';
 import { OrderConfirmationComponent } from './modules/order-confirmation/order-confirmation.component';
 import { AboutComponent } from './core/components/about/about.component';
 import Swal from 'sweetalert2';
+import { ProfileComponent } from './modules/product/components/profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import Swal from 'sweetalert2';
     OrderConfirmationComponent,
     CartModalComponent,
     AboutComponent,
+    ProfileComponent,
   ],
   imports: [
     BrowserModule,

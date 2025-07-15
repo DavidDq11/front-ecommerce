@@ -13,6 +13,7 @@ import { TermsComponent } from './core/components/terms/terms.component';
 import { PrivacyComponent } from './core/components/privacy/privacy.component';
 import { ProductComponent } from './modules/product/components/product/product.component';
 import { AboutComponent } from './core/components/about/about.component';
+import { ProfileComponent } from './modules/product/components/profile/profile.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -27,6 +28,7 @@ const routes: Routes = [
   { path: 'terms', component: TermsComponent },
   { path: 'privacy', component: PrivacyComponent },
   { path: 'about', component: AboutComponent },
+  { path: 'profile', component: ProfileComponent, canActivate: [canActivate] },
   { path: '**', component: Page404Component, data: { message: 'Oops... This is a Bad request' } }
 ];
 
