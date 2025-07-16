@@ -20,16 +20,15 @@ export const canActivate: CanActivateFn = (route: ActivatedRouteSnapshot, state:
     return authService.getUserDetails().pipe(
       map(() => true),
       catchError(error => {
-        console.log('AuthGuard: Invalid token or session expired, redirecting to /login');
-        authService.logout(true); // Forzar logout si el token es inválido
+        console.log('AuthGuard: Invalid token, redirecting to /login');
+        authService.logout(false); // No mostrar mensaje de inactividad
         router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
         return of(false);
       })
     );
   } else {
     console.log('AuthGuard: No token found, redirecting to /login');
-    authService.logout(true); // Forzar logout para mostrar mensaje de inactividad
     router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
-    return false;
+    return false; // No llamar a logout aquí
   }
 };

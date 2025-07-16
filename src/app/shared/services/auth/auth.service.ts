@@ -108,15 +108,17 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    const token = localStorage.getItem(this.tokenKey);
-    if (!token) {
-      console.warn('Token no encontrado, posible cierre de sesión por inactividad');
-      if (!this.isLoggingOut) {
-        this.logout(true); // Forzar logout si el token no existe
+    try {
+      const token = localStorage.getItem(this.tokenKey);
+      if (!token) {
+        console.warn('Token no encontrado, posible cierre de sesión');
+        return null; // No forzar logout aquí
       }
+      return token;
+    } catch (e) {
+      console.error('Error al acceder a localStorage (posible restricción de SES):', e);
       return null;
     }
-    return token;
   }
 
   getUserData(): User | null {
@@ -138,7 +140,7 @@ export class AuthService {
       }),
       catchError(error => {
         if (error.status === 401 && !this.isLoggingOut) {
-          this.logout(true);
+          this.logout(false); // No mostrar mensaje por error 401
         }
         console.error('Error fetching user details:', error);
         return throwError(() => error);
@@ -162,7 +164,7 @@ export class AuthService {
       }),
       catchError(error => {
         if (error.status === 401 && !this.isLoggingOut) {
-          this.logout(true);
+          this.logout(false); // No mostrar mensaje por error 401
         }
         console.error('Error updating user details:', error);
         return throwError(() => error);
