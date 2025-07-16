@@ -1,44 +1,144 @@
 <!-- src/app/profile/profile.component.html -->
-<div class="container mx-auto px-4 py-8">
-  <h2 class="text-3xl font-bold text-gray-800 mb-6">Mi Perfil</h2>
-  <div *ngIf="isLoading" class="flex justify-center items-center">
+<div class="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
+  <!-- Encabezado con un diseño más moderno -->
+  <div class="bg-white shadow-lg rounded-lg p-6 mb-8">
+    <h2 class="text-3xl font-bold text-gray-900 mb-4">Mi Perfil</h2>
+    <p class="text-gray-600">Actualiza tu información personal aquí.</p>
+  </div>
+
+  <!-- Indicador de carga -->
+  <div *ngIf="isLoading" class="flex justify-center items-center py-8">
     <div class="spinner"></div>
   </div>
-  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="space-y-6">
+
+  <!-- Formulario -->
+  <form
+    [formGroup]="profileForm"
+    (ngSubmit)="onSubmit()"
+    class="bg-white shadow-lg rounded-lg p-6 space-y-6"
+    [ngClass]="{'opacity-50 pointer-events-none': isLoading}"
+  >
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Campo Nombre -->
       <div>
-        <label for="first_name" class="block text-sm font-medium text-gray-700">Nombre</label>
-        <input id="first_name" formControlName="first_name" class="mt-1 p-2 w-full border rounded-md" placeholder="Nombre" />
+        <label for="first_name" class="block text-sm font-medium text-gray-700">
+          Nombre <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="first_name"
+          formControlName="first_name"
+          class="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+          [ngClass]="{
+            'border-red-500': profileForm.get('first_name')?.invalid && profileForm.get('first_name')?.touched
+          }"
+          placeholder="Ingresa tu nombre"
+        />
+        <p
+          *ngIf="profileForm.get('first_name')?.invalid && profileForm.get('first_name')?.touched"
+          class="text-red-500 text-sm mt-1"
+        >
+          El nombre es obligatorio.
+        </p>
       </div>
+
+      <!-- Campo Apellido -->
       <div>
-        <label for="last_name" class="block text-sm font-medium text-gray-700">Apellido</label>
-        <input id="last_name" formControlName="last_name" class="mt-1 p-2 w-full border rounded-md" placeholder="Apellido" />
+        <label for="last_name" class="block text-sm font-medium text-gray-700">
+          Apellido <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="last_name"
+          formControlName="last_name"
+          class="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+          [ngClass]="{
+            'border-red-500': profileForm.get('last_name')?.invalid && profileForm.get('last_name')?.touched
+          }"
+          placeholder="Ingresa tu apellido"
+        />
+        <p
+          *ngIf="profileForm.get('last_name')?.invalid && profileForm.get('last_name')?.touched"
+          class="text-red-500 text-sm mt-1"
+        >
+          El apellido es obligatorio.
+        </p>
       </div>
     </div>
+
+    <!-- Campo Email -->
     <div>
-      <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-      <input id="email" formControlName="email" class="mt-1 p-2 w-full border rounded-md bg-gray-100" placeholder="Email" />
+      <label for="email" class="block text-sm font-medium text-gray-700">
+        Email <span class="text-red-500">*</span>
+      </label>
+      <input
+        id="email"
+        formControlName="email"
+        class="mt-1 p-3 w-full border rounded-lg bg-gray-100 cursor-not-allowed focus:ring-0"
+        placeholder="Ingresa tu email"
+        readonly
+      />
     </div>
+
+    <!-- Campo Teléfono -->
     <div>
       <label for="phone" class="block text-sm font-medium text-gray-700">Teléfono</label>
-      <input id="phone" formControlName="phone" class="mt-1 p-2 w-full border rounded-md" placeholder="Teléfono" />
+      <input
+        id="phone"
+        formControlName="phone"
+        class="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+        placeholder="Ingresa tu teléfono"
+      />
     </div>
+
+    <!-- Campo Ciudad -->
     <div>
       <label for="city" class="block text-sm font-medium text-gray-700">Ciudad</label>
-      <input id="city" formControlName="city" class="mt-1 p-2 w-full border rounded-md" placeholder="Ciudad" />
+      <input
+        id="city"
+        formControlName="city"
+        class="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+        placeholder="Ingresa tu ciudad"
+      />
     </div>
+
+    <!-- Campo Estado -->
     <div>
       <label for="state" class="block text-sm font-medium text-gray-700">Estado</label>
-      <input id="state" formControlName="state" class="mt-1 p-2 w-full border rounded-md" placeholder="Estado" />
+      <input
+        id="state"
+        formControlName="state"
+        class="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+        placeholder="Ingresa tu estado"
+      />
     </div>
+
+    <!-- Campo Dirección -->
     <div>
       <label for="address" class="block text-sm font-medium text-gray-700">Dirección</label>
-      <input id="address" formControlName="address" class="mt-1 p-2 w-full border rounded-md" placeholder="Dirección" />
+      <input
+        id="address"
+        formControlName="address"
+        class="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+        placeholder="Ingresa tu dirección"
+      />
     </div>
-    <div class="flex justify-end">
-      <button type="submit" class="bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700" [disabled]="isLoading">
-        <span *ngIf="isLoading" class="spinner"></span>
-        <span *ngIf="!isLoading">Guardar Cambios</span>
+
+    <!-- Botones -->
+    <div class="flex justify-end space-x-4">
+      <button
+        type="button"
+        class="bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400 transition-colors"
+        (click)="profileForm.reset(user)"
+        [disabled]="isLoading"
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        class="bg-orange-600 text-white py-2 px-4 rounded-lg hover:bg-orange-700 transition-colors flex items-center"
+        [disabled]="isLoading || profileForm.invalid"
+      >
+        <span *ngIf="isLoading" class="spinner mr-2"></span>
+        <span>{{ isLoading ? 'Guardando...' : 'Guardar Cambios' }}</span>
       </button>
     </div>
   </form>

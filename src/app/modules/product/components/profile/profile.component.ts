@@ -2,13 +2,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
-import Swal from 'sweetalert2';
+import Sweetalert2 from 'sweetalert2';
 import { User } from '../../model/User.model';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss']
+  styleUrls: ['./profile.component.scss'],
 })
 export class ProfileComponent implements OnInit {
   profileForm: FormGroup;
@@ -17,7 +17,7 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
   ) {
     this.profileForm = this.fb.group({
       first_name: ['', Validators.required],
@@ -26,7 +26,7 @@ export class ProfileComponent implements OnInit {
       phone: [''],
       city: [''],
       state: [''],
-      address: ['']
+      address: [''],
     });
   }
 
@@ -45,8 +45,8 @@ export class ProfileComponent implements OnInit {
       error: (error) => {
         console.error('Error loading user data:', error);
         this.isLoading = false;
-        Swal.fire('Error', 'No se pudo cargar la información del usuario.', 'error');
-      }
+        Sweetalert2.fire('Error', 'No se pudo cargar la información del usuario.', 'error');
+      },
     });
   }
 
@@ -60,16 +60,25 @@ export class ProfileComponent implements OnInit {
           this.user = updatedUser;
           this.profileForm.patchValue(updatedUser);
           this.isLoading = false;
-          Swal.fire('Éxito', 'Tu información ha sido actualizada.', 'success');
+          Sweetalert2.fire('Éxito', 'Tu información ha sido actualizada.', 'success');
         },
         error: (error) => {
           console.error('Error updating user data:', error);
           this.isLoading = false;
-          Swal.fire('Error', 'No se pudo actualizar la información.', 'error');
-        }
+          Sweetalert2.fire('Error', 'No se pudo actualizar la información.', 'error');
+        },
       });
     } else {
-      Swal.fire('Advertencia', 'Completa todos los campos requeridos.', 'warning');
+      this.profileForm.markAllAsTouched(); // Marcar todos los campos como tocados para mostrar errores
+      Sweetalert2.fire('Advertencia', 'Completa todos los campos requeridos.', 'warning');
+    }
+  }
+
+  resetForm() {
+    if (this.user) {
+      this.profileForm.patchValue(this.user);
+      this.profileForm.markAsPristine();
+      this.profileForm.markAsUntouched();
     }
   }
 }

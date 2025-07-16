@@ -86,7 +86,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     });
 
     const now = new Date();
-    const cutoffTime = set(new Date(), { hours: 16, minutes: 0, seconds: 0, milliseconds: 0 });
+    const cutoffTime = set(new Date(), { hours: 15, minutes: 0, seconds: 0, milliseconds: 0 });
     const startDate = isAfter(now, cutoffTime) ? addDays(now, 1) : now;
     const next7Days = eachDayOfInterval({ start: startDate, end: addDays(startDate, 6) });
     const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
