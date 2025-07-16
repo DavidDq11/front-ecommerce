@@ -17,7 +17,7 @@ export class CartModalComponent implements OnInit, OnDestroy {
 
   cart: Product[] = [];
   total = 0;
-  shippingCost = 6000;
+  shippingCost = 3000;
   estimatedTotal = 0;
   private subscriptions: Subscription = new Subscription();
 

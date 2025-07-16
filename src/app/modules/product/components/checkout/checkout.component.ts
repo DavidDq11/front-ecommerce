@@ -104,7 +104,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     this.cart = this.cartService.getCart();
     this.cartService.getTotalAmount().subscribe((subtotal) => {
       this.total = Number(subtotal.toFixed(2));
-      const shippingCost = this.checkoutForm.get('shippingAddress.deliveryOption')?.value === 'store' ? 0 : 6000;
+      const shippingCost = this.checkoutForm.get('shippingAddress.deliveryOption')?.value === 'store' ? 0 : 3000;
       this.estimatedTotal = this.total + shippingCost;
     });
     const state = history.state;
@@ -187,7 +187,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   }
 
   updateShippingCost() {
-    const shippingCost = this.checkoutForm.get('shippingAddress.deliveryOption')?.value === 'store' ? 0 : 6000;
+    const shippingCost = this.checkoutForm.get('shippingAddress.deliveryOption')?.value === 'store' ? 0 : 3000;
     this.estimatedTotal = this.total + shippingCost;
   }
 
