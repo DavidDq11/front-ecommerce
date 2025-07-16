@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, tap, finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { User } from 'src/app/modules/product/model/User.model';
@@ -19,12 +19,11 @@ export class AuthService {
   private apiUrl = environment.baseAPIURL;
   private tokenKey = 'authToken';
   private userKey = 'authUser';
-  private inactivityTimeout = 45 * 60 * 1000; 
-
+  private inactivityTimeout = 45 * 60 * 1000;
   private userSubject = new BehaviorSubject<User | null>(null);
   public user$ = this.userSubject.asObservable();
-
   private inactivityTimer: any;
+  private isLoggingOut = false;
 
   constructor(private http: HttpClient, private router: Router) {
     this.initializeInactivityTracking();
@@ -55,7 +54,9 @@ export class AuthService {
   }
 
   private logoutDueToInactivity(): void {
-    this.logout(true); // Indicar que el logout es por inactividad
+    if (!this.isLoggingOut) {
+      this.logout(true);
+    }
   }
 
   register(userData: any): Observable<any> {
@@ -107,7 +108,15 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    const token = localStorage.getItem(this.tokenKey);
+    if (!token) {
+      console.warn('Token no encontrado, posible cierre de sesión por inactividad');
+      if (!this.isLoggingOut) {
+        this.logout(true); // Forzar logout si el token no existe
+      }
+      return null;
+    }
+    return token;
   }
 
   getUserData(): User | null {
@@ -117,7 +126,9 @@ export class AuthService {
 
   getUserDetails(): Observable<User> {
     const token = this.getToken();
-    if (!token) return throwError(() => new Error('No token available'));
+    if (!token) {
+      return throwError(() => new Error('No token available'));
+    }
     return this.http.get<User>(`${this.apiUrl}me`, {
       headers: { Authorization: `Bearer ${token}` }
     }).pipe(
@@ -126,6 +137,9 @@ export class AuthService {
         this.setUserData({ ...user, name: fullName });
       }),
       catchError(error => {
+        if (error.status === 401 && !this.isLoggingOut) {
+          this.logout(true);
+        }
         console.error('Error fetching user details:', error);
         return throwError(() => error);
       })
@@ -134,7 +148,9 @@ export class AuthService {
 
   updateUserDetails(userData: Partial<User>): Observable<User> {
     const token = this.getToken();
-    if (!token) return throwError(() => new Error('No token available'));
+    if (!token) {
+      return throwError(() => new Error('No token available'));
+    }
     return this.http.put<User>(`${this.apiUrl}me`, userData, {
       headers: { Authorization: `Bearer ${token}` }
     }).pipe(
@@ -145,6 +161,9 @@ export class AuthService {
         this.setUserData(mergedUser);
       }),
       catchError(error => {
+        if (error.status === 401 && !this.isLoggingOut) {
+          this.logout(true);
+        }
         console.error('Error updating user details:', error);
         return throwError(() => error);
       })
@@ -152,10 +171,15 @@ export class AuthService {
   }
 
   logout(isInactivity: boolean = false): void {
+    if (this.isLoggingOut) return;
+    this.isLoggingOut = true;
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
     localStorage.removeItem('isLogged');
     this.userSubject.next(null);
+    if (this.inactivityTimer) {
+      clearTimeout(this.inactivityTimer);
+    }
     if (isInactivity) {
       Sweetalert2.fire({
         title: 'Sesión Expirada',
@@ -164,12 +188,11 @@ export class AuthService {
         confirmButtonText: 'Aceptar'
       }).then(() => {
         this.router.navigate(['/login']).catch(err => console.error('Error de navegación:', err));
+        this.isLoggingOut = false;
       });
     } else {
       this.router.navigate(['/login']).catch(err => console.error('Error de navegación:', err));
-    }
-    if (this.inactivityTimer) {
-      clearTimeout(this.inactivityTimer);
+      this.isLoggingOut = false;
     }
   }
 
