@@ -35,12 +35,12 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     { value: 'store', label: 'Recoger en Tienda' },
   ];
   paymentMethods = [
-    { value: 'credit_card', label: 'Tarjeta de Crédito' },
+    { value: 'credit_card', label: 'PSE' },
     { value: 'Nequi', label: 'Nequi' },
     { value: 'cash_on_delivery', label: 'Contraentrega' },
   ];
   paymentMethodLabels: { [key: string]: string } = {
-    credit_card: 'Tarjeta de Crédito',
+    credit_card: 'PSE',
     Nequi: 'Nequi',
     cash_on_delivery: 'Contraentrega',
   };
