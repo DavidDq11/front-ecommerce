@@ -46,6 +46,7 @@ export class ProfileComponent implements OnInit {
         console.error('Error loading user data:', error);
         this.isLoading = false;
         Sweetalert2.fire('Error', 'No se pudo cargar la información del usuario.', 'error');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       },
     });
   }
