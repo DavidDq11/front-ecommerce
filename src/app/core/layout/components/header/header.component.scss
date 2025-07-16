@@ -1,10 +1,9 @@
-/* Estilos para el header */
 header {
   position: relative;
   overflow: visible;
   padding: 0;
   margin: 0;
-  z-index: 10000; /* Coincide con app-header */
+  z-index: 10000;
 }
 
 /* Parte superior que se oculta */
@@ -69,52 +68,64 @@ header {
 
 /* Ensure mobile hamburger and cart are aligned */
 .md\:hidden.flex.items-center.gap-2 {
-  margin-left: 0.5rem; /* Small spacing from the logo */
+  margin-left: 0.5rem;
 }
 
 /* Navegación de categorías */
 nav {
   position: sticky;
   top: 0;
-  z-index: 11000; /* Mayor que el header y contenido de main */
+  z-index: 11000;
   background-color: white;
-  padding: 1rem;
+  padding: 0.5rem 1rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
+  /* CRÍTICO: Permitir que los elementos hijos puedan salir del contenedor */
+  overflow: visible !important;
+}
+
+/* Asegurar que las listas también tengan overflow visible */
+nav ul {
+  overflow: visible !important;
 }
 
 /* Asegura que el elemento padre tenga posición relativa */
 .group {
   position: relative;
+  /* CRÍTICO: Permitir que los dropdowns se muestren por fuera */
+  overflow: visible !important;
 }
 
 /* Estilo base del menú desplegable */
 .dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
   background-color: white;
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   min-width: 12rem;
-  max-height: none; /* Elimina restricciones de altura */
-  overflow: visible; /* Evita scroll */
-  z-index: 12000; /* Alto para priorizar sobre main y header */
-  display: none;
+  width: auto;
+  max-height: none;
+  overflow: visible;
+  /* CRÍTICO: Z-index muy alto para móviles y tablets */
+  z-index: 15000;
+  display: none !important;
   animation: fadeIn 0.2s ease-in-out;
+  position: absolute;
+  /* CRÍTICO: Posición fija para móviles */
+  top: 100%;
+  left: 0;
 }
 
 .dropdown-menu.show {
-  display: block;
+  display: block !important;
 }
 
 .dropdown-menu ul {
   list-style: none;
   padding: 0.5rem 0;
   margin: 0;
-  max-height: none; /* Sin límite de altura */
-  overflow: visible; /* Evita scroll */
+  max-height: none;
+  overflow: visible;
 }
 
 .dropdown-menu li:hover {
@@ -122,7 +133,7 @@ nav {
 }
 
 .dropdown-menu li {
-  padding: 0.75rem 1rem; /* Aumentado para mejor legibilidad */
+  padding: 0.75rem 1rem;
 }
 
 .dropdown-menu li a {
@@ -153,11 +164,11 @@ nav {
   border: 1px solid #e5e7eb;
   border-radius: 0.375rem;
   z-index: 13000;
-  display: none;
+  display: none !important;
 }
 
 .account-menu.show {
-  display: block;
+  display: block !important;
 }
 
 .account-menu ul {
@@ -190,6 +201,8 @@ nav {
     position: sticky;
     top: 0;
     z-index: 11000;
+    /* CRÍTICO: Mantener overflow visible en móviles */
+    overflow: visible !important;
   }
 
   .logo-container {
@@ -206,20 +219,24 @@ nav {
 
   nav ul {
     display: flex;
-    flex-direction: row; /* Mantiene disposición horizontal */
-    flex-wrap: nowrap; /* Evita que los elementos se apilen */
+    flex-direction: row;
+    flex-wrap: nowrap;
     justify-content: flex-start;
     gap: 0.5rem;
-    overflow-x: auto; /* Permite scroll horizontal si es necesario */
+    overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     padding-bottom: 0.5rem;
-    white-space: nowrap; /* Evita que los elementos se rompan en varias líneas */
+    white-space: nowrap;
+    /* CRÍTICO: Permitir que los dropdowns se muestren verticalmente */
+    overflow-y: visible !important;
   }
 
   nav li {
     position: relative;
     z-index: 1040;
-    flex-shrink: 0; /* Evita que los elementos se compriman */
+    flex-shrink: 0;
+    /* CRÍTICO: Permitir overflow visible en elementos li */
+    overflow: visible !important;
   }
 
   nav li img {
@@ -232,20 +249,29 @@ nav {
   }
 
   .dropdown-menu {
-    position: fixed; /* Usa fixed para estar por encima de todo */
-    top: 220px; /* Ajustado para la altura del header (120px logo + 70px nav) */
-    left: 0;
-    right: 0;
-    width: 100%; /* Ocupa todo el ancho de la pantalla */
-    max-height: none; /* Sin límite de altura */
-    overflow: visible; /* Evita scroll */
-    z-index: 12000; /* Por encima del header */
-    border-radius: 0; /* Sin bordes redondeados en móviles */
-    display: none;
+    /* CRÍTICO: Posición fija para móviles para evitar el scroll horizontal */
+    position: fixed !important;
+    top: auto !important;
+    left: 10px !important;
+    right: 10px !important;
+    width: calc(100% - 120px) !important;
+    max-width: 300px;
+    min-width: 150px;
+    max-height: 60vh;
+    overflow-y: auto;
+    /* CRÍTICO: Z-index muy alto para estar por encima de todo */
+    z-index: 25000 !important;
+    border-radius: 0.5rem;
+    display: none !important;
+    background-color: white;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    /* CRÍTICO: Calcular la posición dinámicamente */
+    transform: none !important;
+    margin-top: 120px !important; /* Ajustado de 10px a 20px */
   }
 
   .dropdown-menu.show {
-    display: block;
+    display: block !important;
   }
 
   .dropdown-menu ul {
@@ -261,18 +287,19 @@ nav {
 
   .account-menu {
     position: fixed;
-    top: 230px; /* Bajar un poco en móviles */
-    right: 5%;
+    top: 190px;
     left: 5%;
-    width: 90%; /* Ancho relativo */
-    max-height: 70vh; /* Limita altura para evitar solapamiento */
-    overflow-y: auto; /* Scroll vertical si es necesario */
-    z-index: 13000;
-    display: none;
+    width: 90%;
+    max-height: 70vh;
+    overflow-y: auto;
+    z-index: 26000;
+    display: none !important;
+    background-color: white;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 
   .account-menu.show {
-    display: block;
+    display: block !important;
   }
 
   .account-menu ul {
@@ -280,7 +307,7 @@ nav {
   }
 
   .account-menu li a {
-    font-size: 0.875rem; /* Ajustar tamaño de texto */
+    font-size: 0.875rem;
   }
 }
 
@@ -294,13 +321,51 @@ nav {
     height: 80px;
   }
 
+  nav {
+    overflow: visible !important;
+  }
+
+  nav ul {
+    overflow: visible !important;
+  }
+
+  .dropdown-menu {
+    /* CRÍTICO: Posición fija para tablets también */
+    position: fixed !important;
+    top: auto !important;
+    left: 20px !important;
+    right: 20px !important;
+    width: calc(100% - 120px) !important;
+    max-width: 400px;
+    min-width: 200px;
+    max-height: 70vh;
+    overflow-y: auto;
+    /* CRÍTICO: Z-index alto para tablets */
+    z-index: 24000 !important;
+    display: none !important;
+    background-color: white;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    margin-top: 120px !important; /* Ajustado de 10px a 20px */
+  }
+
+  .dropdown-menu.show {
+    display: block !important;
+  }
+
   .account-menu {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 0.5rem);
     right: 10%;
-    width: 50%; /* Ajuste para tablets */
+    width: 50%;
     max-height: 60vh;
     overflow-y: auto;
+    z-index: 23000;
+    display: none !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .account-menu.show {
+    display: block !important;
   }
 }
 
@@ -326,23 +391,49 @@ nav {
   .dropdown-menu {
     position: absolute;
     left: 0;
-    top: 100%;
-    margin-top: 0.5rem;
-    display: none;
+    top: calc(100% + 0.5rem); /* Ajustado de 0.5rem a 1rem */
+    margin-top: 0.5rem; /* Ajustado de 0.5rem a 1rem */
+    min-width: 12rem;
+    z-index: 12000;
+    display: none !important;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   }
 
   .dropdown-menu.show {
-    display: block;
+    display: block !important;
   }
 
   .group:hover .dropdown-menu {
-    display: block;
+    display: block !important;
   }
 
   .account-menu {
     position: absolute;
     right: 0;
-    top: 100%;
-    margin-top: 0.5rem;
+    top: calc(100% + 0.5rem); /* Ajustado de 0.5rem a 1rem */
+    margin-top: 0.5rem; /* Ajustado de 0.5rem a 1rem */
+    z-index: 13000;
+    display: none !important;
   }
+
+  .account-menu.show {
+    display: block !important;
+  }
+}
+
+/* CRÍTICO: Overlay para cerrar menús en móviles/tablets */
+.dropdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 20000;
+  display: none;
+}
+
+.dropdown-overlay.show {
+  display: block;
 }
