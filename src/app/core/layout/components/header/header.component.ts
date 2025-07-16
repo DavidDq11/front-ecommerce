@@ -28,10 +28,13 @@ export class HeaderComponent implements OnInit {
     this.checkUserStatus();
     this.userSubscription = this.authService.user$.subscribe(user => {
       this.userName = user?.name || null;
+      this.showAccountMenu = false; // Cerrar el menú de cuenta cuando el usuario cambie
+      if (!user) {
+        this.mobileMenuOpen = false; // Cerrar el menú móvil si no hay usuario
+      }
     });
     this.cartService.cartUpdated.subscribe(() => {
       this.cart = this.cartService.getCart();
-      // console.log('Cart updated in Header:', this.cart);
     });
   }
 
@@ -45,6 +48,8 @@ export class HeaderComponent implements OnInit {
       this.userName = user?.name || 'Usuario';
     } else {
       this.userName = null;
+      this.showAccountMenu = false; // Asegurarse de cerrar el menú de cuenta
+      this.mobileMenuOpen = false; // Asegurarse de cerrar el menú móvil
     }
   }
 
@@ -108,6 +113,7 @@ export class HeaderComponent implements OnInit {
     this.authService.logout();
     this.userName = null;
     this.showAccountMenu = false;
+    this.mobileMenuOpen = false;
   }
 
   scrollCarousel(direction: 'left' | 'right') {
@@ -122,12 +128,10 @@ export class HeaderComponent implements OnInit {
 
   openCartModal(event: Event) {
     event.stopPropagation();
-    // console.log('Opening cart modal');
     this.isCartModalOpen = true;
   }
 
   closeCartModal() {
-    // console.log('Closing cart modal');
     this.isCartModalOpen = false;
   }
 }

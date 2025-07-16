@@ -1,4 +1,3 @@
-// src/app/shared/services/auth/auth.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
@@ -6,6 +5,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { User } from 'src/app/modules/product/model/User.model';
+import Sweetalert2 from 'sweetalert2';
 
 interface LoginResponse {
   token: string;
@@ -19,7 +19,7 @@ export class AuthService {
   private apiUrl = environment.baseAPIURL;
   private tokenKey = 'authToken';
   private userKey = 'authUser';
-  private inactivityTimeout = 300 * 60 * 1000; // 5 horas en milisegundos
+  private inactivityTimeout = 45 * 60 * 1000; 
 
   private userSubject = new BehaviorSubject<User | null>(null);
   public user$ = this.userSubject.asObservable();
@@ -55,7 +55,7 @@ export class AuthService {
   }
 
   private logoutDueToInactivity(): void {
-    this.logout();
+    this.logout(true); // Indicar que el logout es por inactividad
   }
 
   register(userData: any): Observable<any> {
@@ -76,7 +76,7 @@ export class AuthService {
           const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Usuario';
           this.setUserData({
             id: user.id,
-            name: fullName, // Incluimos name
+            name: fullName,
             first_name: user.first_name,
             last_name: user.last_name,
             email: user.email,
@@ -122,7 +122,6 @@ export class AuthService {
       headers: { Authorization: `Bearer ${token}` }
     }).pipe(
       tap(user => {
-        // Agregar name al usuario devuelto por el endpoint
         const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Usuario';
         this.setUserData({ ...user, name: fullName });
       }),
@@ -152,12 +151,23 @@ export class AuthService {
     );
   }
 
-  logout(): void {
+  logout(isInactivity: boolean = false): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
     localStorage.removeItem('isLogged');
     this.userSubject.next(null);
-    this.router.navigate(['/login']).catch(err => console.error('Error de navegación:', err));
+    if (isInactivity) {
+      Sweetalert2.fire({
+        title: 'Sesión Expirada',
+        text: 'Tu sesión ha finalizado debido a inactividad. Por favor, inicia sesión nuevamente.',
+        icon: 'info',
+        confirmButtonText: 'Aceptar'
+      }).then(() => {
+        this.router.navigate(['/login']).catch(err => console.error('Error de navegación:', err));
+      });
+    } else {
+      this.router.navigate(['/login']).catch(err => console.error('Error de navegación:', err));
+    }
     if (this.inactivityTimer) {
       clearTimeout(this.inactivityTimer);
     }
