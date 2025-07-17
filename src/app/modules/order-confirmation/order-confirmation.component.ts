@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
-
 interface Order {
   order_number: string;
   status: string;
@@ -36,7 +35,7 @@ export class OrderConfirmationComponent implements OnInit {
     const state = history.state;
     this.orderNumber = state.orderNumber;
     this.isGuest = state.isGuest ?? true;
-    console.log('OrderConfirmationComponent: orderNumber=', this.orderNumber, 'isGuest=', this.isGuest); // Log para depuración
+    console.log('OrderConfirmationComponent: orderNumber=', this.orderNumber, 'isGuest=', this.isGuest);
     if (this.orderNumber) {
       this.loadOrder();
     } else {

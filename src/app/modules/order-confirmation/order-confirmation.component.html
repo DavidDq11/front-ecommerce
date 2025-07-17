@@ -1,32 +1,66 @@
-<div class="container mx-auto px-4 py-8">
-  <h2 class="text-2xl font-bold mb-4">Confirmación de Pedido</h2>
-  <div *ngIf="displayOrder; else loading">
-    <p><strong>Número de Pedido:</strong> {{ displayOrder!.order_number }}</p>
-    <p><strong>Estado:</strong> {{ displayOrder!.status }}</p>
-    <p><strong>Total:</strong> {{ displayOrder!.total | currency:'COP':'symbol':'1.0-0' }}</p>
-    <p><strong>Fecha:</strong> {{ displayOrder!.created_at | date:'medium' }}</p>
-    <div class="mb-4">
-      <h3 class="text-lg font-semibold">Artículos</h3>
-      <div *ngFor="let item of displayOrder!.items" class="flex justify-between border-b py-2">
-        <div>
-          <img
-            [src]="item.images && item.images.length > 0 ? item.images[0].image_url : item.sizes && item.sizes.length > 0 ? item.sizes[0].image_url : 'assets/placeholder.jpg'"
-            [alt]="item.title"
-            class="w-20 h-20 object-cover rounded"
-          />
-          <span>{{ item.title }} ({{ item.size || 'Sin tamaño' }})</span>
+<div class="container mx-auto px-4 py-12 max-w-3xl">
+  <div class="bg-white shadow-lg rounded-lg p-6">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Confirmación de Pedido</h2>
+    
+    <div *ngIf="displayOrder; else loading" class="space-y-6">
+      <!-- Resumen del pedido -->
+      <div class="border-b border-gray-200 pb-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <p class="text-sm text-gray-500">Número de Pedido</p>
+            <p class="text-lg font-semibold text-gray-800">{{ displayOrder!.order_number }}</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Estado</p>
+            <p class="text-lg font-semibold text-green-600">{{ displayOrder!.status }}</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Fecha</p>
+            <p class="text-lg font-semibold text-gray-800">{{ displayOrder!.created_at | date:'medium' }}</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Total</p>
+            <p class="text-lg font-bold text-gray-800">{{ displayOrder!.total | currency:'COP':'symbol':'1.0-0' }}</p>
+          </div>
         </div>
-        <span>{{ item.totalprice | currency:'COP':'symbol':'1.0-0' }}</span>
+      </div>
+
+      <!-- Lista de artículos -->
+      <div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Artículos</h3>
+        <div *ngFor="let item of displayOrder!.items" class="flex items-center justify-between border-b border-gray-200 py-4">
+          <div class="flex items-center space-x-4">
+            <img
+              [src]="item.images && item.images.length > 0 ? item.images[0].image_url : item.sizes && item.sizes.length > 0 ? item.sizes[0].image_url : 'assets/placeholder.jpg'"
+              [alt]="item.title"
+              class="w-16 h-16 object-cover rounded-lg shadow-sm"
+            />
+            <div>
+              <p class="text-gray-800 font-medium">{{ item.title }}</p>
+              <p class="text-sm text-gray-500">{{ item.size || 'Sin tamaño' }}</p>
+            </div>
+          </div>
+          <p class="text-gray-800 font-medium">{{ item.totalprice | currency:'COP':'symbol':'1.0-0' }}</p>
+        </div>
+      </div>
+
+      <!-- Botón de acción -->
+      <div class="text-center">
+        <button
+          class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105"
+          (click)="confirmationOrder()"
+        >
+          Volver al Inicio
+        </button>
       </div>
     </div>
-    <button
-      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-orange-600"
-      (click)="confirmationOrder()"
-    >
-      Volver a inicio
-    </button>
+
+    <!-- Estado de carga -->
+    <ng-template #loading>
+      <div class="flex justify-center items-center h-48">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600"></div>
+        <p class="ml-4 text-gray-600">Cargando detalles del pedido...</p>
+      </div>
+    </ng-template>
   </div>
-  <ng-template #loading>
-    <p>Cargando detalles del pedido...</p>
-  </ng-template>
 </div>
