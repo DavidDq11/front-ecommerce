@@ -13,6 +13,7 @@ export interface Product {
   stock: string;
   rating: { rate: number; count: number };
   size?: string; // Tamaño seleccionado
+  size_id?: number; // ID del tamaño seleccionado (opcional)
   qty?: number; // Cantidad en el carrito
   totalprice?: number; // Precio total (price * qty)
-} 
+}

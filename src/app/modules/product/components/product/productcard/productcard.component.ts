@@ -11,19 +11,26 @@ import { Subscription } from 'rxjs';
 })
 export class ProductcardComponent implements OnInit, OnDestroy {
   @Input() product!: Product;
-  ratingList: boolean[] = [true, true, true, true, true]; // Valor por defecto: 5 estrellas llenas
+  ratingList: boolean[] = [true, true, true, true, true];
   cart: Product[] = [];
   discount?: number;
+  selectedSizeObj?: { size_id: number; size: string; price: number; stock_quantity: number; image_url?: string };
   private subscription: Subscription = new Subscription();
 
   constructor(private cartService: CartService, private productService: ProductService) {}
 
   ngOnInit(): void {
-    // console.log('Producto recibido en Productcard a las', new Date().toLocaleString(), ':', this.product);
+    this.cart = this.cartService.getCart();
+    // Establecer un tamaño predeterminado si el producto tiene tamaños
+    if (this.product.sizes && this.product.sizes.length > 0) {
+      this.selectedSizeObj = this.product.sizes[0]; // Seleccionar el primer tamaño por defecto
+      this.product.price = this.product.sizes[0].price;
+      this.product.size = this.product.sizes[0].size;
+      this.product.size_id = this.product.sizes[0].size_id;
+    }
     this.subscription.add(
       this.cartService.cartUpdated.subscribe(cart => {
         this.cart = cart;
-        // console.log('Carrito actualizado en Productcard a las', new Date().toLocaleString(), ':', cart);
       })
     );
     this.calculateDiscount();
@@ -44,31 +51,45 @@ export class ProductcardComponent implements OnInit, OnDestroy {
 
   getRatingStar(): void {
     if (!this.product.rating || !this.product.rating.rate) {
-      // Si no hay datos de calificación, mantener el valor por defecto (5 estrellas llenas)
       this.ratingList = [true, true, true, true, true];
-      // console.log('Usando calificación por defecto (5 estrellas) para producto', this.product.id);
     } else {
       this.ratingList = this.productService.getRatingStar(this.product);
-      // console.log('ratingList para producto', this.product.id, ':', this.ratingList);
     }
   }
 
+  selectSize(size: { size_id: number; size: string; price: number; stock_quantity: number; image_url?: string }) {
+    this.selectedSizeObj = size;
+    this.product.size = size.size;
+    this.product.size_id = size.size_id;
+    this.product.price = size.price;
+    this.calculateDiscount();
+  }
+
   addToCart(product: Product) {
-    // console.log('Agregando producto desde Productcard a las', new Date().toLocaleString(), ':', product);
-    this.cartService.addToCart(product);
+    if (product.sizes && product.sizes.length > 0 && !this.selectedSizeObj) {
+      alert('Por favor, selecciona un tamaño antes de agregar al carrito.');
+      return;
+    }
+    const productToAdd: Product = {
+      ...product,
+      size: this.selectedSizeObj ? this.selectedSizeObj.size : undefined,
+      size_id: this.selectedSizeObj ? this.selectedSizeObj.size_id : undefined,
+      price: this.selectedSizeObj ? this.selectedSizeObj.price : product.price,
+      qty: 1,
+      totalprice: (this.selectedSizeObj ? this.selectedSizeObj.price : product.price) * 1
+    };
+    this.cartService.addToCart(productToAdd);
   }
 
   removeFromCart(product: Product) {
-    // console.log('Eliminando producto desde Productcard a las', new Date().toLocaleString(), ':', product);
     this.cartService.remove(product);
   }
 
   isProductInCart(product: Product): boolean {
-    return this.cartService.getCart().some((item: Product) => item.id === product.id);
+    return this.cartService.getCart().some((item: Product) => item.id === product.id && item.size === product.size);
   }
 
   onImageError(event: Event) {
     (event.target as HTMLImageElement).src = 'assets/placeholder.jpg';
-    // console.log('Imagen no encontrada, usando placeholder a las', new Date().toLocaleString());
   }
 }

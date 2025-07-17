@@ -263,19 +263,21 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   }
 
   submitOrder() {
-    if (this.checkoutForm.invalid) {
-      this.checkoutForm.markAllAsTouched();
+    console.log('Carrito antes de enviar:', this.cart);
+    if (this.cart.some(item => item.sizes && item.sizes.length > 0 && !item.size_id)) {
+      console.warn('Productos con tamaños sin size_id:', this.cart.filter(item => item.sizes && item.sizes.length > 0 && !item.size_id));
+      alert('Por favor, asegúrate de que todos los productos con tamaños tengan un tamaño seleccionado.');
       return;
     }
-
-    const orderData: OrderData = {
+    const orderData = {
       user_id: this.isGuest ? null : this.authService.getUserData()?.id || null,
       items: this.cart.map(item => ({
         id: item.id,
         title: item.title,
         price: item.price,
         qty: item.qty || 1,
-        totalprice: item.price * (item.qty || 1)
+        totalprice: item.price * (item.qty || 1),
+        size_id: item.size_id
       })),
       shipping_address: {
         ...this.checkoutForm.get('shippingAddress')?.value,
@@ -285,7 +287,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       payment_method: this.checkoutForm.get('paymentMethod')?.value,
       total: this.estimatedTotal,
     };
-
+    console.log('orderData enviado al backend:', orderData);
     this.orderService.placeOrder(orderData, this.isGuest).subscribe({
       next: (response: any) => {
         this.orderNumber = response.order.order_number;
@@ -296,7 +298,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('CheckoutComponent: Error placing order:', error);
-        alert('Error al realizar el pedido: ' + (error.statusText || 'No se pudo conectar con el servidor'));
+        alert('Error al realizar el pedido: ' + (error.error?.message || error.statusText || 'No se pudo conectar con el servidor'));
       },
     });
   }

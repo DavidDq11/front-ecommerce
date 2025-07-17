@@ -12,6 +12,7 @@ import { CartService } from 'src/app/core/services/cart.service';
 export class ProductdetailComponent implements OnInit {
   isLoading = false;
   selectedSize?: string;
+  selectedSizeObj?: { size_id: number; size: string; price: number; stock_quantity: number; image_url?: string }; // Nueva propiedad
   category!: string;
   cart: Product[] = [];
   relatedProductList: Product[] = [];
@@ -51,7 +52,6 @@ export class ProductdetailComponent implements OnInit {
     this.productService.getProduct(id).subscribe(
       (data: Product) => {
         this.isLoading = false;
-        // console.log('Producto recibido del backend:', JSON.stringify(data, null, 2));
         if (!data || Object.keys(data).length === 0) {
           console.warn('No product recibido para ID:', id);
           return;
@@ -59,7 +59,17 @@ export class ProductdetailComponent implements OnInit {
         this.product = data;
         this.images = this.transformImages(data.images || []);
         this.imageSrc = this.images.length > 0 ? this.images[0] : { image_id: 1, image_url: 'assets/placeholder.jpg' };
-        this.selectedSize = data.sizes && data.sizes.length > 0 ? data.sizes[0].size : undefined;
+        // Asignar tamaño predeterminado si existe
+        if (data.sizes && data.sizes.length > 0) {
+          this.selectedSize = data.sizes[0].size;
+          this.selectedSizeObj = data.sizes[0];
+          this.product.price = data.sizes[0].price; // Actualizar precio inicial
+          this.product.size = data.sizes[0].size; // Asignar tamaño predeterminado
+          this.product.size_id = data.sizes[0].size_id; // Asignar size_id predeterminado
+        } else {
+          this.selectedSize = undefined;
+          this.selectedSizeObj = undefined;
+        }
         this.category = data.category;
         this.title = data.title;
         this.calculateDiscount();
@@ -85,8 +95,9 @@ export class ProductdetailComponent implements OnInit {
   }
 
   calculateDiscount() {
-    if (this.product && this.product.prevprice && this.product.prevprice > 0) {
-      this.discount = Math.round(100 - (this.product.price / this.product.prevprice) * 100);
+    const currentPrice = this.selectedSizeObj?.price || this.product.price;
+    if (this.product.prevprice && this.product.prevprice > 0) {
+      this.discount = Math.round(100 - (currentPrice / this.product.prevprice) * 100);
     } else {
       this.discount = undefined;
     }
@@ -102,22 +113,41 @@ export class ProductdetailComponent implements OnInit {
 
   getRatingStar() {
     if (!this.product.rating || !this.product.rating.rate) {
-      // Si no hay datos de calificación, usar 5 estrellas llenas
       this.ratingList = [true, true, true, true, true];
-      // console.log('Usando calificación por defecto (5 estrellas llenas) para producto', this.product.id);
     } else {
       this.ratingList = this.productService.getRatingStar(this.product);
-      // console.log('ratingList para producto', this.product.id, ':', this.ratingList);
     }
   }
 
   addToCart(product: Product) {
-    if (this.selectedSize) {
-      product.size = this.selectedSize; // Usa el tamaño seleccionado por el usuario
-    } else if (product.sizes && product.sizes.length > 0) {
-      product.size = product.sizes[0].size; // Fallback al tamaño por defecto si no se selecciona
+    let productToAdd: Product;
+
+    if (product.sizes && product.sizes.length > 0) {
+      if (!this.selectedSize || !this.selectedSizeObj) {
+        alert('Por favor, selecciona un tamaño antes de agregar al carrito.');
+        return;
+      }
+      productToAdd = {
+        ...product,
+        size: this.selectedSizeObj.size,
+        size_id: this.selectedSizeObj.size_id, // Asignar el size_id
+        price: this.selectedSizeObj.price, // Usar el precio del tamaño seleccionado
+        qty: 1,
+        totalprice: this.selectedSizeObj.price
+      };
+    } else {
+      // Manejar productos sin tamaños
+      productToAdd = {
+        ...product,
+        size: undefined,
+        size_id: undefined,
+        qty: 1,
+        totalprice: product.price
+      };
     }
-    this.cartService.addToCart(product);
+
+    console.log('Producto agregado al carrito:', productToAdd); // Log para depuración
+    this.cartService.addToCart(productToAdd);
   }
 
   removeFromCart(product: Product) {
@@ -125,7 +155,7 @@ export class ProductdetailComponent implements OnInit {
   }
 
   isProductInCart(product: Product) {
-    return this.cart.some(item => item.id === product.id);
+    return this.cart.some(item => item.id === product.id && item.size === this.selectedSize);
   }
 
   relatedProducts() {
@@ -155,7 +185,11 @@ export class ProductdetailComponent implements OnInit {
 
   addSize(size: { size_id: number; size: string; price: number; stock_quantity: number; image_url?: string }) {
     this.selectedSize = size.size;
+    this.selectedSizeObj = size;
     this.product.size = size.size;
+    this.product.size_id = size.size_id; // Actualizar size_id
+    this.product.price = size.price; // Actualizar el precio del producto
+    this.calculateDiscount(); // Recalcular el descuento
   }
 
   onImage(image: { image_id: number; image_url: string }, index: number) {
@@ -168,6 +202,9 @@ export class ProductdetailComponent implements OnInit {
   }
 
   isInStock(): boolean {
+    if (this.selectedSizeObj) {
+      return this.selectedSizeObj.stock_quantity > 0;
+    }
     return this.product.stock === 'In stock';
   }
 }

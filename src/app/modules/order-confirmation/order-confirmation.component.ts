@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 
 interface Order {
@@ -35,27 +36,32 @@ export class OrderConfirmationComponent implements OnInit {
     const state = history.state;
     this.orderNumber = state.orderNumber;
     this.isGuest = state.isGuest ?? true;
+    console.log('OrderConfirmationComponent: orderNumber=', this.orderNumber, 'isGuest=', this.isGuest); // Log para depuración
     if (this.orderNumber) {
       this.loadOrder();
+    } else {
+      console.error('OrderConfirmationComponent: No order number provided');
+      alert('No se proporcionó un número de pedido válido');
+      this.router.navigate(['/']);
     }
   }
 
   loadOrder() {
-    this.http.get<Order>(`/api/orders/${this.orderNumber}`).subscribe({
+    console.log('OrderConfirmationComponent: Loading order with number:', this.orderNumber);
+    this.http.get<Order>(`${environment.baseAPIURL}orders/${this.orderNumber}`).subscribe({
       next: (order) => {
+        console.log('OrderConfirmationComponent: Order loaded:', order);
         this.order = order;
         this.displayOrder = order;
       },
       error: (error) => {
-        console.error('Error fetching order:', error);
-        alert('Error al cargar los detalles del pedido');
+        console.error('OrderConfirmationComponent: Error fetching order:', error);
+        alert(`Error al cargar los detalles del pedido: ${error.error?.message || error.statusText || 'No se pudo conectar con el servidor'}`);
       },
     });
   }
 
-  trackOrder() {
-    if (this.orderNumber) {
-      this.loadOrder();
-    }
+  confirmationOrder() {
+    this.router.navigate(['/']);
   }
 }

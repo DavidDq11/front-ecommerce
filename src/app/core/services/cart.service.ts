@@ -26,6 +26,10 @@ export class CartService {
   }
 
   addToCart(product: Product) {
+    if (product.sizes && product.sizes.length > 0 && !product.size_id) {
+      console.warn('Intentando agregar producto con tamaños sin size_id:', product);
+      return;
+    }
     const currentCart = this.cart.value;
     const existingProduct = currentCart.find(
       (item) => item.id === product.id && item.size === product.size
@@ -34,9 +38,14 @@ export class CartService {
       existingProduct.qty = (existingProduct.qty ?? 1) + 1;
       existingProduct.totalprice = existingProduct.price * existingProduct.qty;
     } else {
-      product.qty = 1;
-      product.totalprice = product.price;
-      currentCart.push(product);
+      const newProduct = {
+        ...product,
+        qty: product.qty || 1,
+        totalprice: product.price * (product.qty || 1),
+        size_id: product.size_id,
+        size: product.size
+      };
+      currentCart.push(newProduct);
     }
     this.cart.next([...currentCart]);
     this.saveCart();

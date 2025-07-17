@@ -20,12 +20,24 @@
       <span *ngFor="let ratestar of ratingList; let i = index" class="star-container">
         <i class="fas fa-star text-sm" [ngClass]="{'filled': ratestar}" aria-hidden="true"></i>
       </span>
-      <!-- <span class="ml-2 text-xs sm:text-sm text-gray-600">({{ product.rating.count || 0 }})</span> -->
     </div>
     <p class="text-xs sm:text-sm text-gray-700">
       <span class="font-bold mr-2">{{ product.price | currency:'COP':'symbol':'1.0-0' }}</span>
       <span *ngIf="product.prevprice" class="line-through mr-2 text-gray-500">{{ product.prevprice | currency:'COP':'symbol':'1.0-0' }}</span>
+      <span *ngIf="discount" class="text-red-600 font-semibold">{{ discount }}% OFF</span>
     </p>
+
+    <!-- Size Selector -->
+    <div class="flex flex-wrap gap-2 mt-2" *ngIf="product.sizes && product.sizes.length > 0">
+      <button
+        *ngFor="let size of product.sizes"
+        [ngClass]="selectedSizeObj?.size_id === size.size_id ? 'h-10 px-3 bg-teal-500 text-white rounded-lg' : 'h-10 px-3 border border-teal-500 text-teal-500 hover:bg-teal-500 hover:text-white rounded-lg transition-all duration-200'"
+        (click)="selectSize(size)"
+        [disabled]="size.stock_quantity === 0"
+      >
+        {{ size.size }}
+      </button>
+    </div>
 
     <!-- Stock badge -->
     <div class="absolute top-2 right-2 flex flex-col gap-2 items-end">
@@ -45,7 +57,8 @@
       <button
         class="px-2 py-1 bg-gray-800 text-gray-200 text-xs sm:text-sm w-full rounded mt-2"
         *ngIf="!isProductInCart(product)"
-        (click)="addToCart(product)">
+        (click)="addToCart(product)"
+        [disabled]="product.sizes && product.sizes.length > 0 && !selectedSizeObj">
         <i class="fa-solid fa-bag-shopping mr-1"></i> Agregar al carrito
       </button>
 
