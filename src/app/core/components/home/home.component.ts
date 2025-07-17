@@ -111,7 +111,6 @@ export class HomeComponent implements OnInit {
     this._productService.getByCategory(categoryPath || 'DryFood', params).subscribe(
       (response: { products: Product[], total: number }) => {
         this.isLoading = false;
-        // console.log('Datos recibidos del backend:', JSON.stringify(response.products, null, 2));
         const data = response.products;
 
         if (data.length === 0) {
@@ -119,6 +118,19 @@ export class HomeComponent implements OnInit {
           this.products = [];
           return;
         }
+
+        // Establecer tamaño predeterminado para cada producto
+        this.products = data.map(product => {
+          if (product.sizes && product.sizes.length > 0) {
+            return {
+              ...product,
+              size: product.sizes[0].size,
+              size_id: product.sizes[0].size_id,
+              price: product.sizes[0].price
+            };
+          }
+          return product;
+        });
 
         const today = new Date();
         const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
@@ -136,9 +148,8 @@ export class HomeComponent implements OnInit {
           return shuffled;
         };
 
-        const shuffledProducts = seededShuffle(data, seed);
+        const shuffledProducts = seededShuffle(this.products, seed);
         this.products = shuffledProducts.slice(0, 5);
-        // console.log('Productos seleccionados:', this.products.map(p => ({ id: p.id, title: p.title, stock: p.stock, images: p.images })));
       },
       (error) => {
         this.isLoading = false;
@@ -146,6 +157,22 @@ export class HomeComponent implements OnInit {
         console.error('HTTP Error:', error);
       }
     );
+  }
+
+  selectSize(product: Product, size: { size_id: number; size: string; price: number; stock_quantity: number; image_url?: string }) {
+    // Actualizar el producto con el tamaño seleccionado
+    const updatedProducts = this.products.map(p => {
+      if (p.id === product.id) {
+        return {
+          ...p,
+          size: size.size,
+          size_id: size.size_id,
+          price: size.price
+        };
+      }
+      return p;
+    });
+    this.products = [...updatedProducts];
   }
 
   getCategoryPath(categoryId: number | null): string {

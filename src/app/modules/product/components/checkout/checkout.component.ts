@@ -277,7 +277,9 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         price: item.price,
         qty: item.qty || 1,
         totalprice: item.price * (item.qty || 1),
-        size_id: item.size_id
+        size_id: item.size_id,
+        size: item.size,
+        images: item.images ? item.images.slice(0, 1) : []
       })),
       shipping_address: {
         ...this.checkoutForm.get('shippingAddress')?.value,

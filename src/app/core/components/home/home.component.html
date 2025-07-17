@@ -145,13 +145,24 @@
         <div class="flex flex-col justify-between p-3 sm:p-4 w-full">
           <a [routerLink]="['/categories', 'product', product.id]">
             <h5 class="mb-1 sm:mb-2 text-sm sm:text-base tracking-tight text-gray-900 line-clamp-2" *ngIf="product?.title">
-              {{product.title}}
+              {{ product.title }}
             </h5>
           </a>
           <p class="text-xs sm:text-sm text-gray-700">
             <span class="font-bold mr-2">{{ product.price | currency:'COP':'symbol':'1.0-0' }}</span>
             <span *ngIf="product.prevprice" class="line-through mr-2 text-gray-500">{{ product.prevprice | currency:'COP':'symbol':'1.0-0' }}</span>
           </p>
+          <!-- Selector de tamaños -->
+          <div class="flex flex-wrap gap-2 mt-2" *ngIf="product.sizes && product.sizes.length > 0">
+            <button
+              *ngFor="let size of product.sizes"
+              [ngClass]="product.size === size.size ? 'h-10 px-3 bg-teal-500 text-white rounded-lg' : 'h-10 px-3 border border-teal-500 text-teal-500 hover:bg-teal-500 hover:text-white rounded-lg transition-all duration-200'"
+              (click)="selectSize(product, size)"
+              [disabled]="size.stock_quantity === 0"
+            >
+              {{ size.size }}
+            </button>
+          </div>
 
           <!-- Stock badge -->
           <div class="absolute top-2 right-2 flex flex-col gap-2 items-end">
@@ -171,7 +182,8 @@
             <button
               class="px-2 py-1 bg-gray-800 text-gray-200 text-xs sm:text-sm w-full rounded mt-2"
               *ngIf="!isProductInCart(product)"
-              (click)="addToCart(product)">
+              (click)="addToCart(product)"
+              [disabled]="product.sizes && product.sizes.length > 0 && !product.size">
               <i class="fa-solid fa-bag-shopping mr-1"></i> Agregar al carrito
             </button>
 
