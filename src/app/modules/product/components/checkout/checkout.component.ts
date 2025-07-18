@@ -29,7 +29,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     deliveryOption: false,
   };
   cities = ['Manizales', 'Villa María'];
-  addressTypes = ['Calle', 'Carrera', 'Avenida'];
+  addressTypes = ['Calle', 'Carrera', 'Avenida', 'Avenida Carrera', 'Avenida Calle', 'Circular', 'Circunvalar', 'Diagonal', 'Manzana', 'Transversal'];
   deliveryOptions = [
     { value: 'home', label: 'Recibir en Domicilio' },
     { value: 'store', label: 'Recoger en Tienda' },
@@ -151,8 +151,14 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     const lowerAddress = address.toLowerCase();
     if (lowerAddress.includes('calle')) return 'Calle';
     if (lowerAddress.includes('carrera')) return 'Carrera';
-    if (lowerAddress.includes('avenida')) return 'Avenida';
-    return 'Calle';
+    if (lowerAddress.includes('avenida carrera')) return 'Avenida Carrera';
+    if (lowerAddress.includes('avenida calle')) return 'Avenida Calle';
+    if (lowerAddress.includes('circular')) return 'Circular';
+    if (lowerAddress.includes('circunvalar')) return 'Circunvalar';
+    if (lowerAddress.includes('diagonal')) return 'Diagonal';
+    if (lowerAddress.includes('manzana')) return 'Manzana';
+    if (lowerAddress.includes('transversal')) return 'Transversal';
+    return 'Dirección';
   }
 
   getDeliveryOptionLabel(): string {

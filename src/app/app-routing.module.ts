@@ -29,7 +29,7 @@ const routes: Routes = [
   { path: 'privacy', component: PrivacyComponent },
   { path: 'about', component: AboutComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [canActivate] },
-  { path: '**', component: Page404Component, data: { message: 'Oops... This is a Bad request' } }
+  { path: '**', component: Page404Component, data: { message: 'Esta página está en desarrollo' } }
 ];
 
 @NgModule({

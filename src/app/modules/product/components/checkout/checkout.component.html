@@ -230,8 +230,8 @@
         </div>
         <div class="relative" *ngIf="checkoutForm.get('shippingAddress.deliveryOption')?.value === 'home'">
           <label for="addressType" class="block text-sm font-medium text-gray-700 mb-1">Dirección *</label>
-          <div class="flex space-x-2">
-            <div class="custom-select w-1/3">
+          <div class="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
+            <div class="custom-select w-full sm:w-1/3">
               <button
                 type="button"
                 class="input-field flex justify-between items-center"
@@ -257,23 +257,29 @@
                 </button>
               </div>
             </div>
-            <input
-              id="address"
-              formControlName="address"
-              placeholder="Ej: 23"
-              class="w-1/3 input-field"
-              aria-describedby="addressError"
-              (input)="validateField('shippingAddress.address')"
-            />
-            <span class="flex items-center text-gray-700">#</span>
-            <input
-              id="addressNumber"
-              formControlName="addressNumber"
-              placeholder="Ej: 45-67"
-              class="w-1/3 input-field"
-              aria-describedby="addressNumberError"
-              (input)="validateField('shippingAddress.addressNumber')"
-            />
+            <div class="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2 sm:items-center">
+              <input
+                id="address"
+                formControlName="address"
+                placeholder="Ej: 23"
+                type="text"
+                inputmode="numeric"
+                class="input-field w-full"
+                aria-describedby="addressError"
+                (input)="validateField('shippingAddress.address')"
+              />
+              <span class="flex items-center text-gray-700 sm:self-center">#</span>
+              <input
+                id="addressNumber"
+                formControlName="addressNumber"
+                placeholder="Ej: 45-67"
+                type="text"
+                inputmode="text"
+                class="input-field w-full"
+                aria-describedby="addressNumberError"
+                (input)="validateField('shippingAddress.addressNumber')"
+              />
+            </div>
           </div>
           <div
             *ngIf="checkoutForm.get('shippingAddress.addressType')?.touched && checkoutForm.get('shippingAddress.addressType')?.invalid"
@@ -290,6 +296,14 @@
             role="alert"
           >
             Dirección requerida
+          </div>
+          <div
+            *ngIf="checkoutForm.get('shippingAddress.addressNumber')?.touched && checkoutForm.get('shippingAddress.addressNumber')?.invalid"
+            id="addressNumberError"
+            class="text-red-600 text-sm mt-2"
+            role="alert"
+          >
+            Número de dirección requerido
           </div>
         </div>
         <div class="relative" *ngIf="checkoutForm.get('shippingAddress.deliveryOption')?.value === 'home'">

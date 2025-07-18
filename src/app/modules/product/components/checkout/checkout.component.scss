@@ -58,4 +58,10 @@ input, select, button {
   .dropdown-menu {
     @apply fixed left-0 right-0 mx-4 bottom-0 rounded-t-lg max-h-[50vh];
   }
+  .input-field {
+    @apply p-4 text-base; /* Aumenta el padding y el tamaño de fuente para mejor legibilidad */
+  }
+  .custom-select button {
+    @apply p-4; /* Asegura que el selector también tenga un tamaño cómodo */
+  }
 }

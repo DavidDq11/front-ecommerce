@@ -144,6 +144,23 @@ button:hover i {
   right: 10px;
 }
 
+.product-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Asegura que el contenedor ocupe toda la altura disponible */
+}
+
+.product-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1; /* Permite que los detalles ocupen el espacio disponible */
+}
+
+.product-button-container {
+  margin-top: auto; /* Empuja el botón hacia abajo */
+}
+
 /* Estilos para el contenedor del menú */
 ul[ng-reflect-ng-class] {
   display: flex;
@@ -239,6 +256,10 @@ ul[ng-reflect-ng-class] {
   .about-us-section a {
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
+  }
+  .product-button-container button {
+    padding: 0.75rem; /* Aumenta el padding para facilitar el toque */
+    font-size: 0.875rem; /* Tamaño de fuente ajustado */
   }
 }
 
