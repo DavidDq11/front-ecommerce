@@ -8,4 +8,5 @@ export interface User {
   city?: string;
   state?: string;
   address?: string;
+  admin?: boolean;
 }

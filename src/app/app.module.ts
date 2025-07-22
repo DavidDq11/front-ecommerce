@@ -25,6 +25,8 @@ import { OrderConfirmationComponent } from './modules/order-confirmation/order-c
 import { AboutComponent } from './core/components/about/about.component';
 import Swal from 'sweetalert2';
 import { ProfileComponent } from './modules/product/components/profile/profile.component';
+import { AdminOrdersComponent } from './modules/admin-orders/admin-orders.component';
+import { AdminGuard } from './shared/services/auth/admin.guard';
 
 @NgModule({
   declarations: [
@@ -46,6 +48,7 @@ import { ProfileComponent } from './modules/product/components/profile/profile.c
     CartModalComponent,
     AboutComponent,
     ProfileComponent,
+    AdminOrdersComponent,
   ],
   imports: [
     BrowserModule,
@@ -61,7 +64,8 @@ import { ProfileComponent } from './modules/product/components/profile/profile.c
       provide: HTTP_INTERCEPTORS,
       useClass: AuthinterceptorService,
       multi: true
-    }
+    },
+    AdminGuard
   ],
   bootstrap: [AppComponent]
 })

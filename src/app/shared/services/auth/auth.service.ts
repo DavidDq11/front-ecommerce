@@ -84,7 +84,8 @@ export class AuthService {
             phone: user.phone,
             city: user.city,
             state: user.state,
-            address: user.address
+            address: user.address,
+            admin: user.admin ?? false // Asegurar que admin esté definido, con valor por defecto false
           });
         }
       }),
@@ -112,7 +113,7 @@ export class AuthService {
       const token = localStorage.getItem(this.tokenKey);
       if (!token) {
         console.warn('Token no encontrado, posible cierre de sesión');
-        return null; // No forzar logout aquí
+        return null;
       }
       return token;
     } catch (e) {
@@ -136,11 +137,15 @@ export class AuthService {
     }).pipe(
       tap(user => {
         const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Usuario';
-        this.setUserData({ ...user, name: fullName });
+        this.setUserData({
+          ...user,
+          name: fullName,
+          admin: user.admin ?? false // Asegurar que admin esté definido
+        });
       }),
       catchError(error => {
         if (error.status === 401 && !this.isLoggingOut) {
-          this.logout(false); // No mostrar mensaje por error 401
+          this.logout(false);
         }
         console.error('Error fetching user details:', error);
         return throwError(() => error);
@@ -159,12 +164,17 @@ export class AuthService {
       tap(updatedUser => {
         const currentUser = this.getUserData();
         const fullName = `${updatedUser.first_name || ''} ${updatedUser.last_name || ''}`.trim() || 'Usuario';
-        const mergedUser = { ...currentUser, ...updatedUser, name: fullName };
+        const mergedUser = {
+          ...currentUser,
+          ...updatedUser,
+          name: fullName,
+          admin: updatedUser.admin ?? false // Asegurar que admin esté definido
+        };
         this.setUserData(mergedUser);
       }),
       catchError(error => {
         if (error.status === 401 && !this.isLoggingOut) {
-          this.logout(false); // No mostrar mensaje por error 401
+          this.logout(false);
         }
         console.error('Error updating user details:', error);
         return throwError(() => error);
@@ -209,5 +219,10 @@ export class AuthService {
   googleSignIn(): Observable<any> {
     window.location.href = `${this.apiUrl}auth/google`;
     return new Observable();
+  }
+
+  isAdmin(): boolean {
+    const user = this.getUserData();
+    return user?.admin === true;
   }
 }

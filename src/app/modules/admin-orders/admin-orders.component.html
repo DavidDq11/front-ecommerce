@@ -1,0 +1,113 @@
+<div class="container mx-auto p-4">
+  <h2 class="text-2xl font-bold mb-4">Gestión de Órdenes</h2>
+  
+  <!-- Vista de la lista de órdenes -->
+  <div *ngIf="!selectedOrder; else orderDetails">
+    <div *ngIf="isLoading" class="text-center">
+      <p>Cargando órdenes...</p>
+    </div>
+
+    <div *ngIf="!isLoading && orders.length === 0" class="text-center">
+      <p>No hay órdenes disponibles.</p>
+    </div>
+
+    <div *ngIf="!isLoading && orders.length > 0" class="overflow-x-auto">
+      <table class="min-w-full bg-white border border-gray-200">
+        <thead class="bg-orange-600 text-white">
+          <tr>
+            <th class="py-2 px-4 border-b">Nº de Orden</th>
+            <th class="py-2 px-4 border-b">Usuario ID</th>
+            <th class="py-2 px-4 border-b">Total</th>
+            <th class="py-2 px-4 border-b">Estado</th>
+            <th class="py-2 px-4 border-b">Fecha de Creación</th>
+            <th class="py-2 px-4 border-b">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of orders" class="hover:bg-gray-100">
+            <td class="py-2 px-4 border-b">{{ order.order_number }}</td>
+            <td class="py-2 px-4 border-b">{{ order.user_id || 'Invitado' }}</td>
+            <td class="py-2 px-4 border-b">{{ order.total | currency:'COP' }}</td>
+            <td class="py-2 px-4 border-b">{{ order.status }}</td>
+            <td class="py-2 px-4 border-b">{{ order.created_at | date:'medium' }}</td>
+            <td class="py-2 px-4 border-b flex space-x-2">
+              <select [(ngModel)]="order.status" (ngModelChange)="updateOrderStatus(order, $event)" class="border rounded p-1">
+                <option value="pending">Pendiente</option>
+                <option value="processing">Procesando</option>
+                <option value="completed">Completada</option>
+                <option value="cancelled">Cancelada</option>
+              </select>
+              <button (click)="viewOrderDetails(order)" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Ver Detalles</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Vista de detalles de la orden -->
+  <ng-template #orderDetails>
+    <div class="bg-white shadow-lg rounded-lg p-6 max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Detalles del Pedido</h2>
+      
+      <div *ngIf="selectedOrder" class="space-y-6">
+        <!-- Resumen del pedido -->
+        <div class="border-b border-gray-200 pb-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-sm text-gray-500">Número de Pedido</p>
+              <p class="text-lg font-semibold text-gray-800">{{ selectedOrder.order_number }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500">Estado</p>
+              <p class="text-lg font-semibold text-green-600">{{ selectedOrder.status }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500">Fecha</p>
+              <p class="text-lg font-semibold text-gray-800">{{ selectedOrder.created_at | date:'medium' }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500">Total</p>
+              <p class="text-lg font-bold text-gray-800">{{ selectedOrder.total | currency:'COP':'symbol':'1.0-0' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lista de artículos -->
+        <div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-4">Artículos</h3>
+          <div *ngFor="let item of selectedOrder.items" class="flex items-center justify-between border-b border-gray-200 py-4">
+            <div class="flex items-center space-x-4">
+              <img
+                [src]="item.images && item.images.length > 0 ? item.images[0].image_url : item.sizes && item.sizes.length > 0 ? item.sizes[0].image_url : 'assets/placeholder.jpg'"
+                [alt]="item.title"
+                class="w-16 h-16 object-cover rounded-lg shadow-sm"
+              />
+              <div>
+                <p class="text-gray-800 font-medium">{{ item.title }}</p>
+                <p class="text-sm text-gray-500">{{ item.size || 'Sin tamaño' }}</p>
+              </div>
+            </div>
+            <p class="text-gray-800 font-medium">{{ item.totalprice | currency:'COP':'symbol':'1.0-0' }}</p>
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="text-center space-x-4">
+          <button
+            class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105"
+            (click)="closeOrderDetails()"
+          >
+            Volver a la Lista
+          </button>
+          <select [(ngModel)]="selectedOrder.status" (ngModelChange)="updateOrderStatus(selectedOrder, $event)" class="border rounded p-2">
+            <option value="pending">Pendiente</option>
+            <option value="processing">Procesando</option>
+            <option value="completed">Completada</option>
+            <option value="cancelled">Cancelada</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>

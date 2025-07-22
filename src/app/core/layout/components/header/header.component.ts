@@ -20,6 +20,7 @@ export class HeaderComponent implements OnInit {
   isHeaderFixedHidden = false;
   userName: string | null = null;
   isCartModalOpen = false;
+  isAdmin: boolean = false;
   private userSubscription: Subscription = new Subscription();
 
   constructor(private cartService: CartService, public authService: AuthService) {}
@@ -29,6 +30,7 @@ export class HeaderComponent implements OnInit {
     this.checkUserStatus();
     this.userSubscription = this.authService.user$.subscribe(user => {
       this.userName = user?.name || null;
+      this.isAdmin = user?.admin ?? false; // Usar ?? para manejar undefined
       this.showAccountMenu = false;
       if (!user) {
         this.mobileMenuOpen = false;
@@ -47,8 +49,10 @@ export class HeaderComponent implements OnInit {
     if (this.authService.isLoggedIn()) {
       const user = this.authService.getUserData();
       this.userName = user?.name || 'Usuario';
+      this.isAdmin = user?.admin ?? false; // Usar ?? para manejar undefined
     } else {
       this.userName = null;
+      this.isAdmin = false;
       this.showAccountMenu = false;
       this.mobileMenuOpen = false;
     }
@@ -251,10 +255,11 @@ export class HeaderComponent implements OnInit {
   logOut() {
     this.authService.logout();
     this.userName = null;
+    this.isAdmin = false; 
     this.showAccountMenu = false;
     this.mobileMenuOpen = false;
     this.activeDropdown = null;
-    this.pinnedDropdown = null; // Desfijar al cerrar sesión
+    this.pinnedDropdown = null;
   }
 
   scrollCarousel(direction: 'left' | 'right') {
