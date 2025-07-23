@@ -19,3 +19,15 @@ select:focus {
   outline: none;
   border-color: #f97316;
 }
+
+.bg-red-100 {
+  background-color: #fee2e2; /* Fondo rojo claro para órdenes canceladas */
+}
+
+.bg-green-100 {
+  background-color: #d1fae5; /* Fondo verde claro para órdenes completadas */
+}
+
+.bg-white {
+  background-color: #ffffff; /* Fondo blanco para órdenes pendientes o en procesamiento */
+}

@@ -24,7 +24,13 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let order of orders" class="hover:bg-gray-100">
+          <tr *ngFor="let order of orders" 
+              class="hover:bg-gray-100"
+              [ngClass]="{
+                'bg-red-100': order.status === 'cancelled',
+                'bg-green-100': order.status === 'completed',
+                'bg-white': order.status === 'pending' || order.status === 'processing'
+              }">
             <td class="py-2 px-4 border-b">{{ order.order_number }}</td>
             <td class="py-2 px-4 border-b">{{ order.user_id || 'Invitado' }}</td>
             <td class="py-2 px-4 border-b">{{ order.total | currency:'COP' }}</td>
@@ -42,6 +48,37 @@
           </tr>
         </tbody>
       </table>
+
+      <!-- Controles de paginación -->
+      <div class="flex justify-center items-center mt-8 mb-6 space-x-2 w-full" *ngIf="totalPages > 1">
+        <button (click)="goToFirstPage()" [disabled]="currentPage === 1" class="px-3 py-2 bg-blue-600 text-white rounded-l-full shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 disabled:bg-gray-400 disabled:cursor-not-allowed transition duration-300 transform hover:scale-105" [attr.aria-label]="'Ir a la primera página'">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+        <button (click)="previousPage()" [disabled]="currentPage === 1" class="px-4 py-2 bg-blue-600 text-white shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 disabled:bg-gray-400 disabled:cursor-not-allowed transition duration-300 transform hover:scale-105" [attr.aria-label]="'Página anterior'">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+        <div class="flex items-center space-x-2">
+          <ng-container *ngFor="let page of getPageNumbers()">
+            <button *ngIf="page" (click)="goToPage(page)" [class]="currentPage === page ? 'px-4 py-2 bg-blue-700 text-white rounded-full shadow-md' : 'px-4 py-2 bg-gray-200 text-gray-700 rounded-full shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 transition duration-200'" [attr.aria-label]="'Ir a la página ' + page">
+              {{ page }}
+            </button>
+          </ng-container>
+        </div>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="px-4 py-2 bg-blue-600 text-white shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 disabled:bg-gray-400 disabled:cursor-not-allowed transition duration-300 transform hover:scale-105" [attr.aria-label]="'Página siguiente'">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+        <button (click)="goToLastPage()" [disabled]="currentPage === totalPages" class="px-3 py-2 bg-blue-600 text-white rounded-r-full shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 disabled:bg-gray-400 disabled:cursor-not-allowed transition duration-300 transform hover:scale-105" [attr.aria-label]="'Ir a la última página'">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414zm6 0a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L14.586 10l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+      </div>
     </div>
   </div>
 

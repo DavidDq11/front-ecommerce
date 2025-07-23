@@ -37,6 +37,10 @@ export class AdminOrdersComponent implements OnInit {
   selectedOrder: Order | null = null;
   apiUrl = environment.baseAPIURL;
   isLoading = false;
+  currentPage = 1;
+  pageSize = 10; // Número de órdenes por página
+  totalItems = 0;
+  totalPages = 1;
 
   constructor(private http: HttpClient, private authService: AuthService, private router: Router) {}
 
@@ -55,8 +59,9 @@ export class AdminOrdersComponent implements OnInit {
     this.loadOrders();
   }
 
-  loadOrders(): void {
+  loadOrders(page: number = 1): void {
     this.isLoading = true;
+    this.currentPage = page;
     const token = this.authService.getToken();
     if (!token) {
       Sweetalert2.fire({
@@ -69,13 +74,20 @@ export class AdminOrdersComponent implements OnInit {
       });
       return;
     }
-    this.http.get<Order[]>(`${this.apiUrl}orders`, {
-      headers: { Authorization: `Bearer ${token}` }
+
+    const offset = (this.currentPage - 1) * this.pageSize;
+    const params = { limit: this.pageSize, offset };
+
+    this.http.get<{ orders: Order[], total: number, totalPages: number }>(`${this.apiUrl}orders`, {
+      headers: { Authorization: `Bearer ${token}` },
+      params
     }).pipe(
       finalize(() => this.isLoading = false)
     ).subscribe({
-      next: (orders) => {
-        this.orders = orders;
+      next: (response) => {
+        this.orders = response.orders;
+        this.totalItems = response.total;
+        this.totalPages = response.totalPages;
       },
       error: (error) => {
         Sweetalert2.fire({
@@ -162,5 +174,51 @@ export class AdminOrdersComponent implements OnInit {
 
   closeOrderDetails(): void {
     this.selectedOrder = null;
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.loadOrders(this.currentPage - 1);
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.loadOrders(this.currentPage + 1);
+    }
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.loadOrders(page);
+    }
+  }
+
+  goToFirstPage(): void {
+    if (this.currentPage !== 1) {
+      this.loadOrders(1);
+    }
+  }
+
+  goToLastPage(): void {
+    if (this.currentPage !== this.totalPages) {
+      this.loadOrders(this.totalPages);
+    }
+  }
+
+  getPageNumbers(): number[] {
+    const pages = [];
+    const maxPagesToShow = 5;
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(this.totalPages, startPage + maxPagesToShow - 1);
+
+    if (endPage - startPage < maxPagesToShow - 1) {
+      startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
   }
 }
