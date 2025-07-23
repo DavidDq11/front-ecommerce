@@ -20,6 +20,8 @@
             <th class="py-2 px-4 border-b">Total</th>
             <th class="py-2 px-4 border-b">Estado</th>
             <th class="py-2 px-4 border-b">Fecha de Creación</th>
+            <th class="py-2 px-4 border-b">Dirección de Envío</th>
+            <th class="py-2 px-4 border-b">Método de Pago</th>
             <th class="py-2 px-4 border-b">Acciones</th>
           </tr>
         </thead>
@@ -36,6 +38,8 @@
             <td class="py-2 px-4 border-b">{{ order.total | currency:'COP' }}</td>
             <td class="py-2 px-4 border-b">{{ order.status }}</td>
             <td class="py-2 px-4 border-b">{{ order.created_at | date:'medium' }}</td>
+            <td class="py-2 px-4 border-b">{{ getFullShippingAddress(order.shipping_address) }}</td>
+            <td class="py-2 px-4 border-b">{{ getPaymentMethodLabel(order.payment_method) }}</td>
             <td class="py-2 px-4 border-b flex space-x-2">
               <select [(ngModel)]="order.status" (ngModelChange)="updateOrderStatus(order, $event)" class="border rounded p-1">
                 <option value="pending">Pendiente</option>
@@ -106,6 +110,16 @@
             <div>
               <p class="text-sm text-gray-500">Total</p>
               <p class="text-lg font-bold text-gray-800">{{ selectedOrder.total | currency:'COP':'symbol':'1.0-0' }}</p>
+            </div>
+            <!-- Nueva sección: Dirección de envío -->
+            <div>
+              <p class="text-sm text-gray-500">Dirección de Envío</p>
+              <p class="text-lg font-semibold text-gray-800">{{ getFullShippingAddress(selectedOrder.shipping_address) }}</p>
+            </div>
+            <!-- Nueva sección: Método de pago -->
+            <div>
+              <p class="text-sm text-gray-500">Método de Pago</p>
+              <p class="text-lg font-semibold text-gray-800">{{ getPaymentMethodLabel(selectedOrder.payment_method) }}</p>
             </div>
           </div>
         </div>

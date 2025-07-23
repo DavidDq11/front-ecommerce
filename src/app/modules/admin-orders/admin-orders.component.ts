@@ -17,7 +17,22 @@ interface Order {
     images?: Array<{ image_id: number; image_url: string }>;
     sizes?: Array<{ size_id: number; size: string; price: number; stock_quantity: number; image_url?: string }>;
   }>;
-  shipping_address: any;
+  shipping_address: {
+    deliveryOption: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    mobile?: string;
+    addressType?: string;
+    address?: string;
+    addressNumber?: string;
+    aptoPisoCasa?: string;
+    city: string;
+    state: string;
+    country: string;
+    postalCode?: string;
+    deliveryDate: string;
+  };
   billing_address: any | null;
   payment_method: string;
   total: number;
@@ -38,9 +53,15 @@ export class AdminOrdersComponent implements OnInit {
   apiUrl = environment.baseAPIURL;
   isLoading = false;
   currentPage = 1;
-  pageSize = 10; // Número de órdenes por página
+  pageSize = 10;
   totalItems = 0;
   totalPages = 1;
+
+  private paymentMethodLabels: { [key: string]: string } = {
+    credit_card: 'PSE',
+    Nequi: 'Nequi',
+    cash_on_delivery: 'Contraentrega',
+  };
 
   constructor(private http: HttpClient, private authService: AuthService, private router: Router) {}
 
@@ -123,7 +144,14 @@ export class AdminOrdersComponent implements OnInit {
           icon: 'success',
           confirmButtonText: 'Aceptar'
         });
+        // Actualizar el estado en el objeto de la orden
         order.status = status;
+        // Actualizar el estado en la lista de órdenes
+        const orderIndex = this.orders.findIndex(o => o.order_number === order.order_number);
+        if (orderIndex !== -1) {
+          this.orders[orderIndex].status = status;
+        }
+        // Actualizar el estado en selectedOrder si está en la vista de detalles
         if (this.selectedOrder && this.selectedOrder.order_number === order.order_number) {
           this.selectedOrder.status = status;
         }
@@ -174,6 +202,27 @@ export class AdminOrdersComponent implements OnInit {
 
   closeOrderDetails(): void {
     this.selectedOrder = null;
+  }
+
+  getFullShippingAddress(shippingAddress: Order['shipping_address']): string {
+    if (shippingAddress.deliveryOption === 'store') {
+      return 'Recoger en tienda: Calle 23 #45-67, Manizales, Caldas';
+    }
+    const parts = [
+      shippingAddress.addressType,
+      shippingAddress.address,
+      shippingAddress.addressNumber ? `#${shippingAddress.addressNumber}` : '',
+      shippingAddress.aptoPisoCasa ? `, ${shippingAddress.aptoPisoCasa}` : '',
+      shippingAddress.city,
+      shippingAddress.state,
+      shippingAddress.country,
+      shippingAddress.postalCode ? `, ${shippingAddress.postalCode}` : '',
+    ].filter(part => part);
+    return parts.join(' ');
+  }
+
+  getPaymentMethodLabel(paymentMethod: string): string {
+    return this.paymentMethodLabels[paymentMethod] || paymentMethod;
   }
 
   previousPage(): void {

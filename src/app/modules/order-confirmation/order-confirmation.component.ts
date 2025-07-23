@@ -16,6 +16,23 @@ interface Order {
     images?: Array<{ image_id: number; image_url: string }>;
     sizes?: Array<{ size_id: number; size: string; price: number; stock_quantity: number; image_url?: string }>;
   }>;
+  shipping_address: {
+    deliveryOption: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    mobile?: string;
+    addressType?: string;
+    address?: string;
+    addressNumber?: string;
+    aptoPisoCasa?: string;
+    city: string;
+    state: string;
+    country: string;
+    postalCode?: string;
+    deliveryDate: string;
+  };
+  payment_method: string;
 }
 
 @Component({
@@ -28,6 +45,13 @@ export class OrderConfirmationComponent implements OnInit {
   displayOrder: Order | null = null;
   orderNumber: string | null = null;
   isGuest: boolean = true;
+
+  // Mapeo de métodos de pago a etiquetas legibles
+  private paymentMethodLabels: { [key: string]: string } = {
+    credit_card: 'PSE',
+    Nequi: 'Nequi',
+    cash_on_delivery: 'Contraentrega',
+  };
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -58,6 +82,28 @@ export class OrderConfirmationComponent implements OnInit {
         alert(`Error al cargar los detalles del pedido: ${error.error?.message || error.statusText || 'No se pudo conectar con el servidor'}`);
       },
     });
+  }
+
+  // Formatear la dirección de envío completa
+  getFullShippingAddress(shippingAddress: Order['shipping_address']): string {
+    if (shippingAddress.deliveryOption === 'store') {
+      return 'Recoger en tienda: Calle 23 #45-67, Manizales, Caldas';
+    }
+    const parts = [
+      shippingAddress.addressType,
+      shippingAddress.address,
+      shippingAddress.addressNumber ? `#${shippingAddress.addressNumber}` : '',
+      shippingAddress.aptoPisoCasa ? `, ${shippingAddress.aptoPisoCasa}` : '',
+      shippingAddress.city,
+      shippingAddress.state,
+      shippingAddress.country,
+    ].filter(part => part); // Filtra partes vacías
+    return parts.join(' ');
+  }
+
+  // Obtener etiqueta legible del método de pago
+  getPaymentMethodLabel(paymentMethod: string): string {
+    return this.paymentMethodLabels[paymentMethod] || paymentMethod;
   }
 
   confirmationOrder() {
