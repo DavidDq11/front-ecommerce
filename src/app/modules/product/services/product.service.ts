@@ -10,6 +10,7 @@ import { RawBrand } from '../model/Brand.model';
 })
 export class ProductService {
   private url = environment.baseAPIURL + 'product';
+  private searchUrl = environment.baseAPIURL + 'search';
   products = new BehaviorSubject<Product[]>([]);
   ratingList: boolean[] = [];
 
@@ -100,9 +101,17 @@ export class ProductService {
   }
 
   search(query: string): Observable<Product[]> {
-    return this.http.get<Product[]>(this.url + 's', {
-      params: new HttpParams().set('q', query)
-    });
+    if (!query || query.trim() === '') {
+      return of([]);
+    }
+    return this.http.get<Product[]>(this.searchUrl, {
+      params: new HttpParams().set('q', query.trim())
+    }).pipe(
+      catchError(error => {
+        console.error('Error en búsqueda:', error);
+        return of([]);
+      })
+    );
   }
 
   getBrandName(brandId: number): Observable<string> {

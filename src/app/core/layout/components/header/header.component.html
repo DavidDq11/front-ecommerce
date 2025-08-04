@@ -70,13 +70,7 @@
       <div class="md:hidden w-full" [ngClass]="{'hidden': !mobileMenuOpen}">
         <div class="flex flex-col items-center gap-3 py-3 bg-orange-900">
           <div class="relative w-11/12">
-            <div class="flex w-full border-2 border-yellow-300 bg-white rounded-full overflow-hidden shadow-sm">
-              <span class="flex items-center px-2 text-orange-900">
-                <i class="fa-solid fa-search text-lg"></i>
-              </span>
-              <input type="search" placeholder="¿Qué necesita tu mascota?"
-                class="w-full py-2 px-1 text-orange-900 outline-none text-xs" />
-            </div>
+            <app-search></app-search>
           </div>
           <div class="relative flex items-center cursor-pointer group hover:text-yellow-300"
             (click)="toggleAccountMenu()">
@@ -120,15 +114,8 @@
 
       <!-- Desktop navigation -->
       <div class="hidden md:flex items-center gap-4">
-        <div class="relative">
-          <div
-            class="flex w-96 border-2 border-yellow-300 bg-white rounded-full overflow-hidden shadow-md transition-all duration-300 hover:shadow-yellow-300/30">
-            <span class="flex items-center px-3 text-orange-900">
-              <i class="fa-solid fa-search"></i>
-            </span>
-            <input type="search" placeholder="¿Qué necesita tu mascota?"
-              class="w-full py-2 px-1 text-orange-900 outline-none" />
-          </div>
+        <div class="relative w-96">
+          <app-search></app-search>
         </div>
         <div class="flex items-center gap-4">
           <div class="relative flex items-center cursor-pointer group hover:text-yellow-300 transition-colors"

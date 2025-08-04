@@ -1,28 +1,54 @@
-<div class="flex w-full">
-    <span
-        class="input-group-text flex items-center whitespace-nowrap rounded bg-white px-3 py-1.5 text-center text-base font-normal text-neutral-700 dark:text-neutral-200"
-        id="basic-addon2"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          class="h-5 w-5"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </span>
-      <input
-        type="search"
-        name="seach"
-        placeholder="Search products..."
-        aria-label="Search"
-        class="relative m-0 block w-[1px] min-w-0 flex-auto focus:z-[3] p-2 md:p-3 outline-none rounded w-full"
-        (keydown)="onKey($event,search)"
-        #search
+<div class="relative w-full">
+  <div class="flex items-center bg-white rounded-full shadow-sm border border-gray-300 focus-within:ring-2 focus-within:ring-orange-500 transition-all duration-200">
+    <i class="fa-solid fa-magnifying-glass text-gray-500 pl-4"></i>
+    <input
+      [formControl]="searchControl"
+      type="text"
+      placeholder="Busca productos para tus mascotas..."
+      class="w-full py-2 px-3 text-gray-700 bg-transparent focus:outline-none"
+      aria-label="Busca productos para tus mascotas"
+    />
+    <button
+      *ngIf="searchControl.value"
+      (click)="clearSearch()"
+      class="pr-4 text-gray-500 hover:text-gray-700 focus:outline-none"
+      aria-label="Limpiar búsqueda"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <!-- Lista de sugerencias -->
+  <ul
+    *ngIf="suggestions.length > 0"
+    class="suggestions-list absolute w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 z-1000 max-h-96 overflow-y-auto"
+  >
+    <li
+      *ngFor="let product of suggestions"
+      (click)="selectSuggestion(product)"
+      class="flex items-center p-3 hover:bg-gray-100 cursor-pointer border-b last:border-b-0"
+    >
+      <img
+        [src]="product.images && product.images.length > 0 ? product.images[0].image_url : 'assets/placeholder.jpg'"
+        [alt]="product.title"
+        class="w-12 h-12 object-contain rounded mr-3"
+        (error)="onImageError($event)"
       />
-</div>  
+      <div class="flex-1">
+        <p class="text-sm font-medium text-gray-900 line-clamp-1">{{ product.title }}</p>
+        <p class="text-xs text-gray-600">{{ product.animal_category || product.category }}</p>
+        <p class="text-sm font-bold text-gray-800">
+          {{ (product.sizes && product.sizes.length > 0 ? product.sizes[0].price : product.price) | currency:'COP':'symbol':'1.0-0' }}
+        </p>
+      </div>
+    </li>
+  </ul>
+
+  <!-- Estado de carga -->
+  <div
+    *ngIf="isLoading"
+    class="absolute w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 z-1000 p-3 text-center"
+  >
+    <p class="text-sm text-gray-500">Cargando...</p>
+  </div>
+</div>

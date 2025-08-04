@@ -14,7 +14,7 @@ export class HeaderComponent implements OnInit {
   mobileMenuOpen = false;
   showAccountMenu = false;
   activeDropdown: string | null = null;
-  pinnedDropdown: string | null = null; // Nueva variable para rastrear el menú fijado por clic
+  pinnedDropdown: string | null = null;
   cart: Product[] = [];
   isHeaderTopHidden = false;
   isHeaderFixedHidden = false;
@@ -30,7 +30,7 @@ export class HeaderComponent implements OnInit {
     this.checkUserStatus();
     this.userSubscription = this.authService.user$.subscribe(user => {
       this.userName = user?.name || null;
-      this.isAdmin = user?.admin ?? false; // Usar ?? para manejar undefined
+      this.isAdmin = user?.admin ?? false;
       this.showAccountMenu = false;
       if (!user) {
         this.mobileMenuOpen = false;
@@ -49,7 +49,7 @@ export class HeaderComponent implements OnInit {
     if (this.authService.isLoggedIn()) {
       const user = this.authService.getUserData();
       this.userName = user?.name || 'Usuario';
-      this.isAdmin = user?.admin ?? false; // Usar ?? para manejar undefined
+      this.isAdmin = user?.admin ?? false;
     } else {
       this.userName = null;
       this.isAdmin = false;
@@ -71,7 +71,7 @@ export class HeaderComponent implements OnInit {
     this.showAccountMenu = !this.showAccountMenu;
     if (this.showAccountMenu) {
       this.activeDropdown = null;
-      this.pinnedDropdown = null; // Cerrar cualquier menú desplegable al abrir el menú de cuenta
+      this.pinnedDropdown = null;
       if (window.innerWidth <= 768) {
         this.mobileMenuOpen = true;
       }
@@ -87,24 +87,21 @@ export class HeaderComponent implements OnInit {
     }
 
     if (window.innerWidth > 1024) {
-      // En pantallas grandes: fijar el menú al hacer clic
       if (this.pinnedDropdown === category) {
-        this.pinnedDropdown = null; // Desfijar si se hace clic en el mismo menú
+        this.pinnedDropdown = null;
         this.activeDropdown = null;
       } else {
-        this.pinnedDropdown = category; // Fijar el nuevo menú
+        this.pinnedDropdown = category;
         this.activeDropdown = category;
         this.showAccountMenu = false;
       }
     } else {
-      // En móviles y tablets: comportamiento existente
       if (this.activeDropdown === category) {
         this.activeDropdown = null;
       } else {
         this.activeDropdown = category;
         this.showAccountMenu = false;
       }
-      // Posicionar el dropdown correctamente según el tamaño de pantalla
       setTimeout(() => {
         this.positionDropdown(category, event);
       }, 10);
@@ -116,7 +113,6 @@ export class HeaderComponent implements OnInit {
       const dropdownMenu = document.querySelector('.dropdown-menu.show') as HTMLElement;
       if (dropdownMenu) {
         if (window.innerWidth <= 768) {
-          // Para móviles: posición fija centrada
           const navHeight = document.querySelector('nav')?.offsetHeight || 0;
           const headerHeight = document.querySelector('header')?.offsetHeight || 0;
           
@@ -129,16 +125,13 @@ export class HeaderComponent implements OnInit {
           dropdownMenu.style.margin = '0 auto';
           dropdownMenu.style.zIndex = '25000';
           
-          // Centrar horizontalmente
           const screenWidth = window.innerWidth;
-          const dropdownWidth = 300; // max-width
+          const dropdownWidth = 300;
           const leftPosition = (screenWidth - dropdownWidth) / 2;
           dropdownMenu.style.left = `${Math.max(10, leftPosition)}px`;
           dropdownMenu.style.right = 'auto';
           dropdownMenu.style.width = `${Math.min(300, screenWidth - 20)}px`;
-          
         } else {
-          // Para tablets: posición fija mejorada
           const navHeight = document.querySelector('nav')?.offsetHeight || 0;
           const headerHeight = document.querySelector('header')?.offsetHeight || 0;
           
@@ -151,9 +144,8 @@ export class HeaderComponent implements OnInit {
           dropdownMenu.style.margin = '0 auto';
           dropdownMenu.style.zIndex = '24000';
           
-          // Centrar horizontalmente para tablets
           const screenWidth = window.innerWidth;
-          const dropdownWidth = 400; // max-width
+          const dropdownWidth = 400;
           const leftPosition = (screenWidth - dropdownWidth) / 2;
           dropdownMenu.style.left = `${Math.max(20, leftPosition)}px`;
           dropdownMenu.style.right = 'auto';
@@ -165,13 +157,11 @@ export class HeaderComponent implements OnInit {
 
   onMouseEnter(category: string) {
     if (window.innerWidth > 1024) {
-      // En pantallas grandes: mostrar el menú solo si no hay un menú fijado
       if (!this.pinnedDropdown) {
         this.activeDropdown = category;
         this.showAccountMenu = false;
       }
     } else if (window.innerWidth > 768) {
-      // En tablets: comportamiento existente
       this.activeDropdown = category;
       this.showAccountMenu = false;
     }
@@ -179,12 +169,10 @@ export class HeaderComponent implements OnInit {
 
   onMouseLeave() {
     if (window.innerWidth > 1024) {
-      // En pantallas grandes: cerrar el menú solo si no está fijado
       if (!this.pinnedDropdown) {
         this.activeDropdown = null;
       }
     } else if (window.innerWidth > 768) {
-      // En tablets: comportamiento existente
       this.activeDropdown = null;
     }
   }
@@ -193,21 +181,18 @@ export class HeaderComponent implements OnInit {
   onDocumentClick(event: Event) {
     const target = event.target as HTMLElement;
     
-    // Cerrar dropdowns si se hace clic fuera en pantallas grandes
     if (window.innerWidth > 1024) {
-      if (!target.closest('.group') && !target.closest('.dropdown-menu')) {
+      if (!target.closest('.group') && !target.closest('.dropdown-menu') && !target.closest('.suggestions-list')) {
         this.activeDropdown = null;
-        this.pinnedDropdown = null; // Desfijar el menú al hacer clic fuera
+        this.pinnedDropdown = null;
       }
     } else {
-      // Comportamiento existente para móviles y tablets
-      if (!target.closest('.group') && !target.closest('.dropdown-menu')) {
+      if (!target.closest('.group') && !target.closest('.dropdown-menu') && !target.closest('.suggestions-list')) {
         this.activeDropdown = null;
       }
     }
     
-    // Cerrar menú de cuenta si se hace clic fuera
-    if (!target.closest('.group') && !target.closest('.account-menu')) {
+    if (!target.closest('.group') && !target.closest('.account-menu') && !target.closest('.suggestions-list')) {
       this.showAccountMenu = false;
     }
   }
@@ -216,26 +201,22 @@ export class HeaderComponent implements OnInit {
   onTouchStart(event: Event) {
     const target = event.target as HTMLElement;
     
-    // Cerrar dropdowns si se toca fuera
-    if (!target.closest('.group') && !target.closest('.dropdown-menu')) {
+    if (!target.closest('.group') && !target.closest('.dropdown-menu') && !target.closest('.suggestions-list')) {
       this.activeDropdown = null;
-      this.pinnedDropdown = null; // Desfijar el menú al tocar fuera
+      this.pinnedDropdown = null;
     }
     
-    // Cerrar menú de cuenta si se toca fuera
-    if (!target.closest('.group') && !target.closest('.account-menu')) {
+    if (!target.closest('.group') && !target.closest('.account-menu') && !target.closest('.suggestions-list')) {
       this.showAccountMenu = false;
     }
   }
 
   @HostListener('window:resize', ['$event'])
   onWindowResize() {
-    // Cerrar todos los menús al cambiar el tamaño de ventana
     this.activeDropdown = null;
-    this.pinnedDropdown = null; // Desfijar al cambiar el tamaño
+    this.pinnedDropdown = null;
     this.showAccountMenu = false;
     
-    // Ajustar posición de dropdowns si están abiertos
     if (this.activeDropdown) {
       setTimeout(() => {
         this.positionDropdown(this.activeDropdown!);
@@ -245,17 +226,16 @@ export class HeaderComponent implements OnInit {
 
   @HostListener('window:scroll', ['$event'])
   onWindowScroll() {
-    // Cerrar dropdowns al hacer scroll en móviles/tablets
     if (window.innerWidth <= 1024 && this.activeDropdown) {
       this.activeDropdown = null;
-      this.pinnedDropdown = null; // Desfijar al hacer scroll
+      this.pinnedDropdown = null;
     }
   }
 
   logOut() {
     this.authService.logout();
     this.userName = null;
-    this.isAdmin = false; 
+    this.isAdmin = false;
     this.showAccountMenu = false;
     this.mobileMenuOpen = false;
     this.activeDropdown = null;
@@ -275,9 +255,8 @@ export class HeaderComponent implements OnInit {
   openCartModal(event: Event) {
     event.stopPropagation();
     this.isCartModalOpen = true;
-    // Cerrar otros menús al abrir el carrito
     this.activeDropdown = null;
-    this.pinnedDropdown = null; // Desfijar al abrir el carrito
+    this.pinnedDropdown = null;
     this.showAccountMenu = false;
   }
 

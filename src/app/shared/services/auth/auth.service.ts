@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
-import { catchError, tap, finalize } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { User } from 'src/app/modules/product/model/User.model';
@@ -19,17 +19,29 @@ export class AuthService {
   private apiUrl = environment.baseAPIURL;
   private tokenKey = 'authToken';
   private userKey = 'authUser';
-  private inactivityTimeout = 45 * 60 * 1000;
+  private lastActivityKey = 'lastActivity';
+  private inactivityTimeout = 45 * 60 * 1000; // 45 minutos
   private userSubject = new BehaviorSubject<User | null>(null);
   public user$ = this.userSubject.asObservable();
   private inactivityTimer: any;
   private isLoggingOut = false;
 
   constructor(private http: HttpClient, private router: Router) {
+    this.checkSessionOnLoad();
     this.initializeInactivityTracking();
     const storedUser = this.getUserData();
     if (storedUser && typeof storedUser === 'object') {
       this.userSubject.next(storedUser);
+    }
+  }
+
+  private checkSessionOnLoad(): void {
+    const lastActivity = localStorage.getItem(this.lastActivityKey);
+    if (lastActivity) {
+      const timeElapsed = Date.now() - parseInt(lastActivity, 10);
+      if (timeElapsed > this.inactivityTimeout) {
+        this.logout(true);
+      }
     }
   }
 
@@ -42,6 +54,7 @@ export class AuthService {
     if (this.inactivityTimer) {
       clearTimeout(this.inactivityTimer);
     }
+    localStorage.setItem(this.lastActivityKey, Date.now().toString());
     this.inactivityTimer = setTimeout(() => {
       this.logoutDueToInactivity();
     }, this.inactivityTimeout);
@@ -85,7 +98,7 @@ export class AuthService {
             city: user.city,
             state: user.state,
             address: user.address,
-            admin: user.admin ?? false // Asegurar que admin esté definido, con valor por defecto false
+            admin: user.admin ?? false
           });
         }
       }),
@@ -99,12 +112,14 @@ export class AuthService {
   setToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
     localStorage.setItem('isLogged', 'true');
+    localStorage.setItem(this.lastActivityKey, Date.now().toString());
     this.resetInactivityTimer();
   }
 
   setUserData(user: User): void {
     localStorage.setItem(this.userKey, JSON.stringify(user));
     this.userSubject.next(user);
+    localStorage.setItem(this.lastActivityKey, Date.now().toString());
     this.resetInactivityTimer();
   }
 
@@ -115,9 +130,14 @@ export class AuthService {
         console.warn('Token no encontrado, posible cierre de sesión');
         return null;
       }
+      const lastActivity = localStorage.getItem(this.lastActivityKey);
+      if (lastActivity && Date.now() - parseInt(lastActivity, 10) > this.inactivityTimeout) {
+        this.logout(true);
+        return null;
+      }
       return token;
     } catch (e) {
-      console.error('Error al acceder a localStorage (posible restricción de SES):', e);
+      console.error('Error al acceder a localStorage:', e);
       return null;
     }
   }
@@ -140,7 +160,7 @@ export class AuthService {
         this.setUserData({
           ...user,
           name: fullName,
-          admin: user.admin ?? false // Asegurar que admin esté definido
+          admin: user.admin ?? false
         });
       }),
       catchError(error => {
@@ -168,7 +188,7 @@ export class AuthService {
           ...currentUser,
           ...updatedUser,
           name: fullName,
-          admin: updatedUser.admin ?? false // Asegurar que admin esté definido
+          admin: updatedUser.admin ?? false
         };
         this.setUserData(mergedUser);
       }),
@@ -188,6 +208,7 @@ export class AuthService {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
     localStorage.removeItem('isLogged');
+    localStorage.removeItem(this.lastActivityKey);
     this.userSubject.next(null);
     if (this.inactivityTimer) {
       clearTimeout(this.inactivityTimer);
