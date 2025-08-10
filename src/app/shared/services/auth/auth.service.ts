@@ -35,12 +35,21 @@ export class AuthService {
     }
   }
 
+  /**
+   * Verifica al cargar si la sesión ha expirado por inactividad.
+   * Solo lo hace si hay un token y la bandera isLogged en true.
+   */
   private checkSessionOnLoad(): void {
-    const lastActivity = localStorage.getItem(this.lastActivityKey);
-    if (lastActivity) {
-      const timeElapsed = Date.now() - parseInt(lastActivity, 10);
-      if (timeElapsed > this.inactivityTimeout) {
-        this.logout(true);
+    const token = localStorage.getItem(this.tokenKey);
+    const isLogged = localStorage.getItem('isLogged');
+
+    if (token && isLogged === 'true') {
+      const lastActivity = localStorage.getItem(this.lastActivityKey);
+      if (lastActivity) {
+        const timeElapsed = Date.now() - parseInt(lastActivity, 10);
+        if (timeElapsed > this.inactivityTimeout) {
+          this.logout(true);
+        }
       }
     }
   }
@@ -54,7 +63,9 @@ export class AuthService {
     if (this.inactivityTimer) {
       clearTimeout(this.inactivityTimer);
     }
-    localStorage.setItem(this.lastActivityKey, Date.now().toString());
+    if (localStorage.getItem('isLogged') === 'true') {
+      localStorage.setItem(this.lastActivityKey, Date.now().toString());
+    }
     this.inactivityTimer = setTimeout(() => {
       this.logoutDueToInactivity();
     }, this.inactivityTimeout);
@@ -67,7 +78,7 @@ export class AuthService {
   }
 
   private logoutDueToInactivity(): void {
-    if (!this.isLoggingOut) {
+    if (!this.isLoggingOut && localStorage.getItem('isLogged') === 'true') {
       this.logout(true);
     }
   }
@@ -126,10 +137,12 @@ export class AuthService {
   getToken(): string | null {
     try {
       const token = localStorage.getItem(this.tokenKey);
-      if (!token) {
-        console.warn('Token no encontrado, posible cierre de sesión');
+      const isLogged = localStorage.getItem('isLogged');
+
+      if (!token || isLogged !== 'true') {
         return null;
       }
+
       const lastActivity = localStorage.getItem(this.lastActivityKey);
       if (lastActivity && Date.now() - parseInt(lastActivity, 10) > this.inactivityTimeout) {
         this.logout(true);
