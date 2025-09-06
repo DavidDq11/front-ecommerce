@@ -1,23 +1,19 @@
-// Ajustes para la transición de las imágenes
 img {
-  display: block; // Evita espacios extra debajo de las imágenes
+  display: block;
 }
 
-// Hover effect para el botón de wishlist
 button:hover i {
-  color: #9333ea; // Color púrpura para hover, acorde al tema
+  color: #9333ea;
 }
 
 .app-carousel .z-30 {
-  z-index: 10; // Menor que el dropdown-menu
+  z-index: 10;
 }
 
-// Sombra de texto para títulos elegantes
 .text-shadow-sm {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-// Categories Section Styling
 .categories {
   .category-item {
     text-decoration: none;
@@ -25,11 +21,11 @@ button:hover i {
     transition: color 0.3s ease;
 
     &:hover {
-      color: #9333ea; // Purple hover color to match the theme
+      color: #9333ea;
     }
 
     .icon-wrapper {
-      background-color: #e5e7eb; // Light gray background
+      background-color: #e5e7eb;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -40,7 +36,7 @@ button:hover i {
   .categories-section {
     position: relative;
     overflow: hidden;
-    padding-top: 1rem; // Reducido de py-8 a py-4
+    padding-top: 1rem;
     padding-bottom: 1rem;
   }
 
@@ -49,31 +45,28 @@ button:hover i {
   }
 }
 
-// Brands Section Styling
 .brands-section {
   position: relative;
   overflow: hidden;
-  padding-top: 1rem; // Reducido de py-8 a py-4
+  padding-top: 1rem;
   padding-bottom: 1rem;
 }
 
 .brands-container {
   display: flex;
-  flex-wrap: nowrap; // Prevent wrapping to keep items in a single row
-  overflow-x: auto; // Enable horizontal scrolling
-  scroll-behavior: smooth; // Smooth scrolling
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scroll-behavior: smooth;
   gap: 1.5rem;
   padding: 1rem;
-  scrollbar-width: none; // Firefox: Hide scrollbar
-  -ms-overflow-style: none; // IE and Edge: Hide scrollbar
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-// Webkit browsers: Hide scrollbar
 .brands-container::-webkit-scrollbar {
   display: none;
 }
 
-// Snap scrolling for better UX
 .brands-container.snap-x {
   scroll-snap-type: x mandatory;
 }
@@ -83,15 +76,15 @@ button:hover i {
   color: inherit;
   transition: all 0.3s ease;
   cursor: pointer;
-  flex: 0 0 auto; // Prevent items from shrinking
-  width: calc((100% - 9rem) / 7); // Show up to 7 brands, accounting for 1.5rem gap
-  min-width: 80px; // Minimum width for small screens
-  max-width: 120px; // Maximum width for consistency
-  scroll-snap-align: center; // Center items when scrolling
+  flex: 0 0 auto;
+  width: calc((100% - 9rem) / 7);
+  min-width: 80px;
+  max-width: 120px;
+  scroll-snap-align: center;
 }
 
 .brand-item:hover {
-  color: #9333ea; // Purple hover color to match the theme
+  color: #9333ea;
 }
 
 .brand-item .brand-wrapper {
@@ -103,7 +96,7 @@ button:hover i {
 }
 
 .brand-item.brand-selected .brand-wrapper {
-  box-shadow: 0 0 0 3px #9333ea; // Purple border for selected brand
+  box-shadow: 0 0 0 3px #9333ea;
 }
 
 .brand-item:hover .brand-wrapper {
@@ -114,7 +107,6 @@ button:hover i {
   text-align: center;
 }
 
-// Navigation Buttons
 .brand-nav-button {
   position: absolute;
   top: 50%;
@@ -151,34 +143,32 @@ button:hover i {
 .product-container {
   display: flex;
   flex-direction: column;
-  height: 100%; // Asegura que el contenedor ocupe toda la altura disponible
+  height: 100%;
 }
 
 .product-details {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  flex-grow: 1; // Permite que los detalles ocupen el espacio disponible
+  flex-grow: 1;
 }
 
 .product-button-container {
-  margin-top: auto; // Empuja el botón hacia abajo
+  margin-top: auto;
 }
 
-// Estilos para el selector de tamaños
 .product-details .flex-wrap {
-  gap: 0.5rem; // Espaciado entre botones de tamaño
-  margin-bottom: 0.75rem; // Espaciado inferior antes del botón
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .product-details button {
-  padding: 0.5rem 1rem; // Ajuste de padding para botones de tamaño
-  font-size: 0.875rem; // Tamaño de fuente para botones de tamaño
-  min-width: 2.5rem; // Ancho mínimo para consistencia
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  min-width: 2.5rem;
   text-align: center;
 }
 
-// Estilos para el contenedor del menú
 ul[ng-reflect-ng-class] {
   display: flex;
   justify-content: center;
@@ -188,7 +178,6 @@ ul[ng-reflect-ng-class] {
   flex-wrap: wrap;
 }
 
-// Estilos para el dropdown-menu
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -203,7 +192,7 @@ ul[ng-reflect-ng-class] {
 }
 
 .dropdown-menu.show {
-  display: block; // Asegura que se muestre cuando tiene la clase show
+  display: block;
 }
 
 .dropdown-menu ul {
@@ -222,15 +211,14 @@ ul[ng-reflect-ng-class] {
   background-color: #f7f7f7;
 }
 
-// About Us Section
 .about-us-section {
-  background-color: #f9fafb; // Fondo gris claro, consistente con bg-gray-50
-  padding-top: 1.5rem; // Reducido de py-10 a py-6
+  background-color: #f9fafb;
+  padding-top: 1.5rem;
   padding-bottom: 1.5rem;
 }
 
 .about-us-section .bg-teal-500 {
-  background-color: #14b8a6; // Color teal para el compromiso de entrega
+  background-color: #14b8a6;
 }
 
 .about-us-section .text-teal-500 {
@@ -257,16 +245,16 @@ ul[ng-reflect-ng-class] {
 
 @media (min-width: 768px) {
   .about-us-section .grid {
-    grid-template-columns: repeat(3, 1fr); // Tres columnas en escritorio
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media (max-width: 640px) {
   .about-us-section h3 {
-    font-size: 1.5rem; // Tamaño de fuente más pequeño en móviles
+    font-size: 1.5rem;
   }
   .about-us-section p {
-    font-size: 0.875rem; // Texto más pequeño en móviles
+    font-size: 0.875rem;
     line-height: 1.25rem;
   }
   .about-us-section .bg-teal-500 {
@@ -277,49 +265,48 @@ ul[ng-reflect-ng-class] {
     font-size: 0.875rem;
   }
   .product-button-container button {
-    padding: 0.75rem; // Aumenta el padding para facilitar el toque
-    font-size: 0.875rem; // Tamaño de fuente ajustado
+    padding: 0.75rem;
+    font-size: 0.875rem;
   }
   .product-details .flex-wrap {
-    gap: 0.25rem; // Espaciado más ajustado en móviles
+    gap: 0.25rem;
   }
   .product-details button {
-    padding: 0.25rem 0.5rem; // Padding más pequeño en móviles
-    font-size: 0.75rem; // Fuente más pequeña en móviles
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
   }
 }
 
-// Ajustes para pantallas pequeñas
 @media (max-width: 640px) {
   .categories-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); // Tamaño mínimo reducido a 90px
-    gap: 0.5rem; // Reducir el espaciado entre elementos
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 0.5rem;
     padding: 1rem;
     justify-items: center;
   }
 
   .category-item {
     width: 100%;
-    max-width: 8rem; // Reducir el tamaño máximo para mejor ajuste
+    max-width: 8rem;
     text-align: center;
   }
 
   .category-item .icon-wrapper {
-    width: 3rem; // Reducir el tamaño del ícono
+    width: 3rem;
     height: 3rem;
     transition: all 0.3s ease;
   }
 
   .category-item span {
-    font-size: 0.7rem; // Reducir el tamaño de fuente para mejor ajuste
+    font-size: 0.7rem;
     padding: 0 0.25rem;
     white-space: normal;
-    line-height: 1.2; // Ajustar la altura de línea para mejor legibilidad
+    line-height: 1.2;
   }
 
   .brand-item {
-    width: 80px; // Mantener el ancho mínimo
+    width: 80px;
     min-width: 80px;
   }
 
@@ -341,7 +328,7 @@ ul[ng-reflect-ng-class] {
 
   .dropdown-menu {
     position: fixed;
-    top: 60px; // Ajusta según la altura del header
+    top: 60px;
     left: 0;
     right: 0;
     width: 100%;
@@ -365,10 +352,9 @@ ul[ng-reflect-ng-class] {
   }
 }
 
-// Ajustes específicos para 430x932 (iPhone 16 Plus vertical)
 @media (max-width: 430px) and (max-height: 932px) {
   .categories-container {
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); // Ajuste más fino
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
     gap: 0.4rem;
   }
 
@@ -382,34 +368,32 @@ ul[ng-reflect-ng-class] {
   }
 }
 
-// Ajustes para el rango intermedio (641px a 767px)
 @media (min-width: 641px) and (max-width: 767px) {
   .categories-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); // Más espacio por columna
-    gap: 1rem; // Mayor espaciado
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
     padding: 1rem;
     justify-items: center;
   }
 
   .category-item {
     width: 100%;
-    max-width: 130px; // Tamaño máximo ajustado
+    max-width: 130px;
     text-align: center;
   }
 
   .category-item .icon-wrapper {
-    width: 5rem; // Tamaño intermedio
+    width: 5rem;
     height: 5rem;
   }
 
   .category-item span {
-    font-size: 0.9rem; // Tamaño de fuente intermedio
+    font-size: 0.9rem;
     padding: 0 0.25rem;
   }
 }
 
-// Ajustes para tablets (641px a 1024px)
 @media (min-width: 641px) and (max-width: 1024px) {
   .categories-container {
     display: flex;
@@ -437,58 +421,56 @@ ul[ng-reflect-ng-class] {
   }
 
   .brand-item .brand-wrapper img {
-    padding: 0.5rem; // Reduce el padding para que la imagen ocupe más espacio
+    padding: 0.5rem;
   }
 
   .brand-item span {
-    font-size: 0.875rem; // Aumenta de 0.75rem a 0.875rem para mejor legibilidad
+    font-size: 0.875rem;
   }
   .product-details .flex-wrap {
-    gap: 0.5rem; // Espaciado ajustado para tablets
+    gap: 0.5rem;
   }
   .product-details button {
-    padding: 0.5rem 1rem; // Padding ajustado para tablets
-    font-size: 0.875rem; // Fuente ajustada para tablets
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
   }
 }
 
-// New Arrivals Section Styling
 article {
-  margin-top: 0.75rem; // Reducido de my-5 a my-3
+  margin-top: 0.75rem;
   margin-bottom: 0.75rem;
 
   &.my-5.md\:my-8 {
-    margin-top: 1rem; // Reducido de my-8 a my-4 en md
+    margin-top: 1rem;
     margin-bottom: 1rem;
   }
 
   .flex.items-center.justify-center.gap-3.mb-6 {
-    margin-bottom: 1.5rem; // Reducido de mb-6 a mb-4
+    margin-bottom: 1.5rem;
   }
 }
 
-// News Section
 .news-section {
   .news-item {
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
     &:hover {
       box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+      transform: translateY(-4px);
     }
     h4 {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      // Eliminamos line-clamp para mostrar todo el título
+      font-size: 1.25rem; /* Aumentamos ligeramente el tamaño del título */
+      margin-bottom: 0.5rem;
     }
     p {
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      // Eliminamos line-clamp para mostrar todo el resumen
+      font-size: 1rem; /* Aumentamos ligeramente el tamaño del texto */
+      line-height: 1.5; /* Mejoramos la separación entre líneas */
+    }
+    img {
+      width: 100%;
+      height: 16rem; /* Ajustamos a h-64 */
+      object-fit: cover;
     }
   }
 
@@ -496,11 +478,23 @@ article {
     .grid {
       grid-template-columns: 1fr;
     }
+    .news-item img {
+      height: 14rem; /* Reducimos un poco en móviles para mantener proporción */
+    }
+    .news-item h4 {
+      font-size: 1rem;
+    }
+    .news-item p {
+      font-size: 0.9rem;
+    }
   }
 
   @media (min-width: 641px) and (max-width: 1024px) {
     .grid {
-      grid-template-columns: 1fr 1fr; // Two columns on medium screens
+      grid-template-columns: 1fr 1fr;
+    }
+    .news-item img {
+      height: 15rem; /* Ajuste intermedio para tablets */
     }
   }
 }

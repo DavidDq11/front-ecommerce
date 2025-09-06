@@ -1,11 +1,20 @@
 import { Component, OnInit } from '@angular/core';
+import { faBone, faFish, faCookieBite, faPaw, faTag, faSyringe } from '@fortawesome/free-solid-svg-icons';
 import { Product } from 'src/app/modules/product/model';
 import { ProductService } from 'src/app/modules/product/services/product.service';
 import { CartService } from 'src/app/core/services/cart.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
+import { Title, Meta } from '@angular/platform-browser';
 import { Brand, RawBrand } from 'src/app/modules/product/model/Brand.model';
+
+interface NewsItem {
+  id: number;
+  title: string;
+  summary: string;
+  image: string; // Imagen requerida para cada noticia
+}
 
 @Component({
   selector: 'app-home',
@@ -13,13 +22,20 @@ import { Brand, RawBrand } from 'src/app/modules/product/model/Brand.model';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  faBone = faBone;
+  faFish = faFish;
+  faCookieBite = faCookieBite;
+  faPaw = faPaw;
+  faTag = faTag;
+  faSyringe = faSyringe;
+
   products: Product[] = [];
   brands: Brand[] = [];
   skeletons: number[] = [...new Array(6)];
   error!: string;
   isLoading = false;
   images: string[] = [
-    'assets/banner/banner1.jpg',
+    'assets/banner/banner1.png',
     'assets/banner/banner2.jpg',
     'assets/banner/banner3.jpg'
   ];
@@ -28,13 +44,30 @@ export class HomeComponent implements OnInit {
     { id: 1, name: 'Alimentos Secos', icon: 'fa-bone', path: '/categories/DryFood' },
     { id: 2, name: 'Alimentos Húmedos', icon: 'fa-fish', path: '/categories/WetFood' },
     { id: 3, name: 'Snacks', icon: 'fa-cookie-bite', path: '/categories/Snacks' },
-    { id: 4, name: 'Arena para Gatos', icon: 'fa-paw', path: '/categories/Litter' }
+    { id: 4, name: 'Arena para Gatos', icon: 'fa-paw', path: '/categories/Litter' },
+    { id: 5, name: 'Accesorios', icon: 'fa-tag', path: '/categories/Accessories' },
+    { id: 6, name: 'Productos Veterinarios', icon: 'fa-syringe', path: '/categories/Veterinary' }
   ];
 
-  newsItems = [
-    { title: 'Nueva línea de alimentos orgánicos', summary: 'Descubre nuestra nueva gama de productos naturales para tus mascotas.', link: '#' },
-    { title: 'Evento de adopción este fin de semana', summary: 'Únete a nosotros para encontrar un nuevo amigo peludo.', link: '#' },
-    { title: 'Consejos para el cuidado de gatos', summary: 'Aprende cómo mantener a tu gato feliz y saludable.', link: '#' }
+  newsItems: NewsItem[] = [
+    {
+      id: 1,
+      title: '¡Cuidamos a tu Mascota! Consultas Veterinarias en Tienda o a Domicilio',
+      summary: 'Visítanos en nuestro punto físico en Manizales o agenda una consulta veterinaria a domicilio. Nuestros expertos están listos para mantener a tus mascotas sanas y felices. ¡Contáctanos hoy!',
+      image: 'assets/news/veterinary-consultation.jpg'
+    },
+    {
+      id: 2,
+      title: '¡Productos para Mascotas en tu Puerta el Mismo Día!',
+      summary: 'Pide alimentos, accesorios, o medicamentos antes de las 3 p.m. y recíbelos hoy mismo en cualquier parte de Manizales. ¡Compra ahora y consiente a tu mascota!',
+      image: 'assets/news/delivery.jpg'
+    },
+    {
+      id: 3,
+      title: '¡Nuevos Medicamentos y Vitaminas para tus Mascotas!',
+      summary: 'Explora nuestra gama de medicamentos y vitaminas de alta calidad para perros, gatos y ganado. Fortalece su salud con productos confiables. ¡Pídelos hoy en Domipets!',
+      image: 'assets/news/medicines-vitamins.jpg'
+    }
   ];
 
   selectedCategoryId: number | null = null;
@@ -45,10 +78,55 @@ export class HomeComponent implements OnInit {
     private _productService: ProductService,
     private cartService: CartService,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private titleService: Title,
+    private metaService: Meta
   ) {}
 
   ngOnInit(): void {
+    this.titleService.setTitle('Domipets - Tienda de Productos para Mascotas y Ganado');
+    this.metaService.updateTag({
+      name: 'description',
+      content: 'Explora nuestra amplia gama de alimentos, accesorios, medicamentos veterinarios y consultas veterinarias en Manizales y Villa María. ¡Entregas rápidas el mismo día!'
+    });
+    this.metaService.updateTag({
+      name: 'keywords',
+      content: 'mascotas, ganado, alimentos secos, accesorios, medicamentos veterinarios, consultas veterinarias, domicilios Manizales, Villa María'
+    });
+
+    const schema = {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'Domipets - Inicio',
+      description: 'Explora nuestros productos y servicios para mascotas y ganado, incluyendo consultas veterinarias, entregas rápidas y medicamentos en Manizales.',
+      url: 'https://www.domipets.com.co/',
+      hasPart: this.categories.map(category => ({
+        '@type': 'Collection',
+        name: category.name,
+        url: `https://www.domipets.com.co${category.path}`
+      })),
+      mainEntity: {
+        '@type': 'NewsArticle',
+        headline: 'Noticias de Domipets',
+        description: 'Descubre nuestras consultas veterinarias, entregas rápidas en Manizales y nuevos medicamentos para tus mascotas.',
+        publisher: {
+          '@type': 'Organization',
+          name: 'Domipets',
+          logo: {
+            '@type': 'ImageObject',
+            url: 'https://www.domipets.com.co/assets/logo.png'
+          }
+        },
+        articleSection: this.newsItems.map(item => ({
+          '@type': 'Article',
+          headline: item.title,
+          description: item.summary,
+          image: `https://www.domipets.com.co/${item.image}`
+        }))
+      }
+    };
+    this.metaService.addTag({ name: 'application/ld+json', content: JSON.stringify(schema) });
+
     this.fetchBrands();
     this.newArrivalProducts();
     this.validateImages();
@@ -62,13 +140,11 @@ export class HomeComponent implements OnInit {
           name: brand.name,
           image: brand.image || undefined
         }));
-        // console.log('Marcas obtenidas:', this.brands);
         this.brands.forEach(brand => {
           if (brand.image) {
             const img = new Image();
             img.src = brand.image;
-            img.onload = () => 
-              // console.log(`Imagen cargada exitosamente: ${brand.image}`);
+            img.onload = () => {};
             img.onerror = (error) => console.error(`Error al cargar imagen: ${brand.image}`, error);
           }
         });
@@ -84,7 +160,6 @@ export class HomeComponent implements OnInit {
     this.selectedBrandId = this.selectedBrandId === brandId ? null : brandId;
     this.selectedBrandName = this.selectedBrandId ? brandName : null;
     this.selectedCategoryId = null;
-    // console.log('Seleccionando marca:', brandId, brandName);
     this.router.navigate([`/brands/${this.selectedBrandId}`]);
   }
 
@@ -100,7 +175,7 @@ export class HomeComponent implements OnInit {
   newArrivalProducts() {
     this.isLoading = true;
     const params: any = {
-      limit: 50,
+      limit: 5,
       offset: 0
     };
     const categoryPath = this.getCategoryPath(this.selectedCategoryId);
@@ -119,7 +194,6 @@ export class HomeComponent implements OnInit {
           return;
         }
 
-        // Establecer tamaño predeterminado para cada producto
         this.products = data.map(product => {
           if (product.sizes && product.sizes.length > 0) {
             return {
@@ -160,7 +234,6 @@ export class HomeComponent implements OnInit {
   }
 
   selectSize(product: Product, size: { size_id: number; size: string; price: number; stock_quantity: number; image_url?: string }) {
-    // Actualizar el producto con el tamaño seleccionado
     const updatedProducts = this.products.map(p => {
       if (p.id === product.id) {
         return {
@@ -180,7 +253,9 @@ export class HomeComponent implements OnInit {
       1: 'DryFood',
       2: 'WetFood',
       3: 'Snacks',
-      4: 'Litter'
+      4: 'Litter',
+      5: 'Accessories',
+      6: 'Veterinary'
     };
     return categoryId && categoryMap[categoryId] ? categoryMap[categoryId] : 'DryFood';
   }
@@ -201,28 +276,22 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  validateImages() {
-    // console.log('Validating images:', this.images);
-  }
+  validateImages() {}
 
   onImageError(event: Event) {
     (event.target as HTMLImageElement).src = 'assets/placeholder.jpg';
-    // console.log('Error cargando imagen:', (event.target as HTMLImageElement).src);
   }
 
   onBrandImageError(event: Event) {
     const imgElement = event.target as HTMLImageElement;
     imgElement.src = 'assets/placeholder.jpg';
-    // console.log('Error cargando imagen de marca:', imgElement.src);
   }
 
   addToCart(product: Product) {
-    // console.log('Agregando producto desde Home:', JSON.stringify(product, null, 2));
     this.cartService.addToCart(product);
   }
 
   removeFromCart(product: Product) {
-    // console.log('Eliminando producto desde Home:', product);
     this.cartService.remove(product);
   }
 

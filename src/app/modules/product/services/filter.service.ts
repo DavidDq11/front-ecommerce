@@ -12,23 +12,23 @@ export class FilterService {
     { id: 1, label: 'Alimentos Secos', value: 'DryFood', checked: false },
     { id: 2, label: 'Alimentos Húmedos', value: 'WetFood', checked: false },
     { id: 3, label: 'Snacks', value: 'Snacks', checked: false },
-    { id: 4, label: 'Arena para Gatos', value: 'Litter', checked: false }
+    { id: 4, label: 'Arena para Gatos', value: 'Litter', checked: false },
+    { id: 5, label: 'Accesorios', value: 'Accessories', checked: false }, // Nuevo
+    { id: 6, label: 'Productos Veterinarios', value: 'Veterinary', checked: false } // Nuevo
   ]);
-  private originalProducts: Product[] = []; // Almacenar productos originales
+  private originalProducts: Product[] = [];
 
   constructor(private productService: ProductService) {}
 
   setAllProducts(products: Product[]) {
-    this.originalProducts = [...products]; // Guardar copia de los productos originales
-    this.filteredProducts.next([...products]); // Inicializar productos filtrados
+    this.originalProducts = [...products];
+    this.filteredProducts.next([...products]);
   }
 
   applyPriceFilter(minPrice: number, maxPrice: number) {
-    // Filtrar los productos originales según el rango de precios
     const filtered = this.originalProducts.filter(product => 
       product.price >= minPrice && product.price <= maxPrice
     );
     this.filteredProducts.next(filtered);
-    // console.log('Productos filtrados por precio:', filtered.length);
   }
 }

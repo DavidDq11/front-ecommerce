@@ -143,7 +143,7 @@
 
         <!-- Product Details -->
         <div class="flex flex-col justify-between flex-grow p-3 sm:p-4 w-full">
-          <div> <!-- Contenedor para los detalles del producto -->
+          <div>
             <a [routerLink]="['/categories', 'product', product.id]">
               <h5 class="mb-1 sm:mb-2 text-sm sm:text-base tracking-tight text-gray-900 line-clamp-2" *ngIf="product?.title">
                 {{ product.title }}
@@ -168,7 +168,7 @@
           </div>
 
           <!-- Botón de Agregar o Eliminar del Carrito -->
-          <div class="mt-auto"> <!-- Esto empuja el botón hacia abajo -->
+          <div class="mt-auto">
             <ng-container *ngIf="product.stock === 'In stock'">
               <button
                 class="px-2 py-1 bg-gray-800 text-gray-200 text-xs sm:text-sm w-full rounded"
@@ -197,19 +197,36 @@
   </article>
 
   <!-- News Section -->
-  <article class="my-8 bg-gradient-to-b from-orange-100 to-white p-6 rounded-lg shadow-md">
-    <div class="flex items-center justify-center gap-3 mb-6">
-      <i class="fa-solid fa-newspaper text-orange-600 text-3xl"></i>
-      <h3 class="text-2xl sm:text-3xl font-bold text-gray-800">Noticias Importantes</h3>
-      <i class="fa-solid fa-paw text-orange-600 text-3xl"></i>
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div *ngFor="let news of newsItems" class="bg-white p-4 rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300">
-        <h4 class="text-lg font-semibold text-gray-900 mb-2">{{ news.title }}</h4>
-        <p class="text-sm text-gray-600 mb-4">{{ news.summary }}</p>
-        <a href="{{ news.link }}" target="_blank" class="text-orange-600 hover:text-purple-600 text-sm font-medium">Leer más</a>
+  <section class="news-section py-8 bg-gradient-to-b from-orange-100 to-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-center gap-3 mb-6">
+        <i class="fa-solid fa-newspaper text-orange-600 text-3xl"></i>
+        <h3 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-800 bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent">
+          Noticias <span class="text-orange-600">Importantes</span>
+        </h3>
+        <i class="fa-solid fa-paw text-orange-600 text-3xl"></i>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+          *ngFor="let news of newsItems"
+          class="news-item bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
+          [attr.aria-label]="news.title"
+        >
+          <img
+            [src]="news.image"
+            [alt]="news.title"
+            class="w-full64 object-cover"
+          />
+          <div class="p-4">
+            <h4 class="text-lg sm:text-xl font-semibold text-gray-900">
+              {{ news.title }} <!-- Eliminamos line-clamp-2 para mostrar todo el título -->
+            </h4>
+            <p class="mt-2 text-sm sm:text-base text-gray-600">
+              {{ news.summary }} <!-- Eliminamos line-clamp-3 para mostrar todo el resumen -->
+            </p>
+          </div>
+        </div>
       </div>
     </div>
-  </article>
+  </section>
 </section>

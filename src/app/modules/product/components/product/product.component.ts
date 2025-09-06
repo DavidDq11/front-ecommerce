@@ -56,7 +56,7 @@ export class ProductComponent implements OnInit, OnDestroy {
       }
 
       this.selectedFilter.categoryId.next(this.category ? this.getCategoryIdFromLabel(this.category) : null);
-      this.getProducts(this.category, this.brandId, this.currentPage); // Siempre cargar productos
+      this.getProducts(this.category, this.brandId, this.currentPage);
     });
   }
 
@@ -109,8 +109,8 @@ export class ProductComponent implements OnInit, OnDestroy {
   private updateQueryParams(changes: { [key: string]: any }) {
     const queryParams = { ...this.route.snapshot.queryParams, ...changes };
     this.router.navigate([], { relativeTo: this.route, queryParams });
-    this.currentPage = Number(changes['page']) || this.currentPage; // Actualizar currentPage
-    this.getProducts(this.category, this.brandId, this.currentPage); // Recargar productos
+    this.currentPage = Number(changes['page']) || this.currentPage;
+    this.getProducts(this.category, this.brandId, this.currentPage);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     console.log('QueryParams actualizados:', queryParams);
   }
@@ -122,6 +122,8 @@ export class ProductComponent implements OnInit, OnDestroy {
       'WetFood': 2,
       'Snacks': 3,
       'Litter': 4,
+      'Accessories': 5, // Nuevo
+      'Veterinary': 6, // Nuevo
       'Pet Food': 1,
       'Wet Food': 2,
       'Pet Treats': 3

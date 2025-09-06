@@ -12,13 +12,15 @@ export class FilterComponent implements OnInit, OnDestroy {
   @Output() onFilter = new EventEmitter<boolean>();
   @Output() categoryChange = new EventEmitter<number | null>();
   @Output() priceChange = new EventEmitter<{ minPrice: number, maxPrice: number }>();
-  @Output() closeModal = new EventEmitter<void>(); // New event for closing the modal
+  @Output() closeModal = new EventEmitter<void>();
 
   filterCategories = [
     { id: 1, label: 'Alimentos Secos', value: 'DryFood', checked: false },
     { id: 2, label: 'Alimentos Húmedos', value: 'WetFood', checked: false },
     { id: 3, label: 'Snacks', value: 'Snacks', checked: false },
-    { id: 4, label: 'Arena para Gatos', value: 'Litter', checked: false }
+    { id: 4, label: 'Arena para Gatos', value: 'Litter', checked: false },
+    { id: 5, label: 'Accesorios', value: 'Accessories', checked: false }, // Nuevo
+    { id: 6, label: 'Productos Veterinarios', value: 'Veterinary', checked: false } // Nuevo
   ];
   subsFilterList!: Subscription;
   categorySub!: Subscription;
@@ -54,17 +56,17 @@ export class FilterComponent implements OnInit, OnDestroy {
   applyFilter(value: number, type: string) {
     if (type === 'category') {
       this.categoryChange.emit(value);
-      this.closeModal.emit(); // Close modal when applying a filter
+      this.closeModal.emit();
     }
   }
 
   onPriceFilter(event: { minPrice: number, maxPrice: number }) {
     this.priceChange.emit(event);
-    this.closeModal.emit(); // Close modal when applying a price filter
+    this.closeModal.emit();
   }
 
   onClose() {
-    this.closeModal.emit(); // Emit closeModal event instead of onFilter
+    this.closeModal.emit();
   }
 
   ngOnDestroy(): void {
@@ -77,7 +79,9 @@ export class FilterComponent implements OnInit, OnDestroy {
       'DryFood': 1,
       'WetFood': 2,
       'Snacks': 3,
-      'Litter': 4
+      'Litter': 4,
+      'Accessories': 5, // Nuevo
+      'Veterinary': 6 // Nuevo
     };
     return typeMap[category as keyof typeof typeMap] || null;
   }

@@ -5,20 +5,18 @@ import { ProductComponent } from './components/product/product.component';
 
 const routes: Routes = [
   {
-    path:'',
-    children:[
-      {
-        path:':category',
-        component:ProductComponent,
-      },
-      {
-        path:'product/:id',
-        component:ProductdetailComponent,
-      }
+    path: '',
+    children: [
+      { path: 'DryFood', component: ProductComponent, data: { category: 'DryFood' } },
+      { path: 'WetFood', component: ProductComponent, data: { category: 'WetFood' } },
+      { path: 'Snacks', component: ProductComponent, data: { category: 'Snacks' } },
+      { path: 'Litter', component: ProductComponent, data: { category: 'Litter' } },
+      { path: 'Accessories', component: ProductComponent, data: { category: 'Accessories' } }, // Nuevo
+      { path: 'Veterinary', component: ProductComponent, data: { category: 'Veterinary' } }, // Nuevo
+      { path: ':category', component: ProductComponent }, // Mantener ruta dinámica como fallback
+      { path: 'product/:id', component: ProductdetailComponent }
     ]
-  },
-  
-
+  }
 ];
 
 @NgModule({
