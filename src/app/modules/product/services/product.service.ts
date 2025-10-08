@@ -28,24 +28,36 @@ export class ProductService {
 
   getByCategory(category: string, params: any = {}): Observable<{ products: Product[], total: number, totalPages: number }> {
     let httpParams = new HttpParams();
-    // console.log('Parámetros recibidos en getByCategory:', params, 'category:', category);
-
-    // Solo incluir parámetros válidos y excluir category si brand_id está presente
+    const categoryMapping: { [key: string]: { category?: string, type?: string } } = {
+      'alimento': { type: 'Alimentos' },
+      'snacks': { category: 'Snacks' },
+      'juguetes': { type: 'Juguete' },
+      'jaulas': { category: 'Accesorios' },
+      'cuidado': { category: 'Productos Veterinarios' }
+    };
     for (const key in params) {
       if (params.hasOwnProperty(key) && params[key] !== undefined && params[key] !== null && params[key] !== '' && !(key === 'category' && params.brand_id)) {
         httpParams = httpParams.set(key, params[key].toString());
       }
     }
-
-    // console.log('Parámetros enviados al backend:', httpParams.toString());
-
+    if (category && category !== '') {
+      const mapped = categoryMapping[category.toLowerCase()];
+      if (mapped) {
+        if (mapped.category) {
+          httpParams = httpParams.set('category', mapped.category);
+        } else if (mapped.type) {
+          httpParams = httpParams.set('type', mapped.type);
+        }
+      } else {
+        httpParams = httpParams.set('category', category);
+      }
+    }
     if (params.brand_id) {
       return this.http.get<{ products: Product[], total: number, totalPages: number }>(
         `${this.url}s/${params.brand_id}`,
         { params: httpParams }
       ).pipe(
         map(response => {
-          // console.log('Respuesta para brand_id:', response);
           return response;
         }),
         catchError(error => {
@@ -54,17 +66,11 @@ export class ProductService {
         })
       );
     }
-
-    if (category && category !== '') {
-      httpParams = httpParams.set('category', category);
-    }
-
     return this.http.get<{ products: Product[], total: number, totalPages: number }>(
       this.url + 's',
       { params: httpParams }
     ).pipe(
       map(response => {
-        // console.log('Respuesta para categoría:', response);
         return response;
       }),
       catchError(error => {
@@ -141,4 +147,6 @@ export class ProductService {
     };
     return categoryMap[category as keyof typeof categoryMap] || category;
   }
+
+  
 }

@@ -7,13 +7,14 @@ const routes: Routes = [
   {
     path: '',
     children: [
+      { path: ':animal_category/:category', component: ProductComponent },
       { path: 'DryFood', component: ProductComponent, data: { category: 'DryFood' } },
       { path: 'WetFood', component: ProductComponent, data: { category: 'WetFood' } },
       { path: 'Snacks', component: ProductComponent, data: { category: 'Snacks' } },
       { path: 'Litter', component: ProductComponent, data: { category: 'Litter' } },
-      { path: 'Accessories', component: ProductComponent, data: { category: 'Accessories' } }, // Nuevo
-      { path: 'Veterinary', component: ProductComponent, data: { category: 'Veterinary' } }, // Nuevo
-      { path: ':category', component: ProductComponent }, // Mantener ruta dinámica como fallback
+      { path: 'Accessories', component: ProductComponent, data: { category: 'Accessories' } },
+      { path: 'Veterinary', component: ProductComponent, data: { category: 'Veterinary' } },
+      { path: ':category', component: ProductComponent },
       { path: 'product/:id', component: ProductdetailComponent }
     ]
   }
