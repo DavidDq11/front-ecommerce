@@ -2,9 +2,9 @@ export interface Product {
   id: number;
   title: string;
   description: string;
-  category: string;
-  type: string;
-  animal_category: string;
+  category: 'Alimentos Secos' | 'Alimentos Húmedos' | 'Snacks' | 'Arena para Gatos' | 'Accesorios' | 'Productos Veterinarios';
+  type: 'Alimentos' | 'Snack' | 'Juguete' | 'Cuidado' | 'Arena';
+  animal_category: 'Perro' | 'Gato' | 'Hámster' | 'Pájaro' | 'Caballo' | 'Vaca' | 'Otros';
   brand?: string;
   sizes: { size_id: number; size: string; price: number; stock_quantity: number; image_url?: string }[];
   images: { image_id: number; image_url: string }[];
@@ -12,8 +12,8 @@ export interface Product {
   prevprice?: number;
   stock: string;
   rating: { rate: number; count: number };
-  size?: string; // Tamaño seleccionado
-  size_id?: number; // ID del tamaño seleccionado (opcional)
-  qty?: number; // Cantidad en el carrito
-  totalprice?: number; // Precio total (price * qty)
+  size?: string;
+  size_id?: number;
+  qty?: number;
+  totalprice?: number;
 }

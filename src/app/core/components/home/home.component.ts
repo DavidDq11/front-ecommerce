@@ -13,7 +13,7 @@ interface NewsItem {
   id: number;
   title: string;
   summary: string;
-  image: string; // Imagen requerida para cada noticia
+  image: string;
 }
 
 @Component({
@@ -41,12 +41,12 @@ export class HomeComponent implements OnInit {
   ];
 
   categories = [
-    { id: 1, name: 'Alimentos Secos', icon: 'fa-bone', path: '/categories/DryFood' },
-    { id: 2, name: 'Alimentos Húmedos', icon: 'fa-fish', path: '/categories/WetFood' },
+    { id: 1, name: 'Alimentos Secos', icon: 'fa-bone', path: '/categories/Alimentos Secos' },
+    { id: 2, name: 'Alimentos Húmedos', icon: 'fa-fish', path: '/categories/Alimentos Húmedos' },
     { id: 3, name: 'Snacks', icon: 'fa-cookie-bite', path: '/categories/Snacks' },
-    { id: 4, name: 'Arena para Gatos', icon: 'fa-paw', path: '/categories/Litter' },
-    { id: 5, name: 'Accesorios', icon: 'fa-tag', path: '/categories/Accessories' },
-    { id: 6, name: 'Productos Veterinarios', icon: 'fa-syringe', path: '/categories/Veterinary' }
+    { id: 4, name: 'Arena para Gatos', icon: 'fa-paw', path: '/categories/Arena para Gatos' },
+    { id: 5, name: 'Accesorios', icon: 'fa-tag', path: '/categories/Accesorios' },
+    { id: 6, name: 'Productos Veterinarios', icon: 'fa-syringe', path: '/categories/Productos Veterinarios' }
   ];
 
   newsItems: NewsItem[] = [
@@ -167,8 +167,8 @@ export class HomeComponent implements OnInit {
     this.selectedCategoryId = categoryId;
     this.selectedBrandId = null;
     this.selectedBrandName = null;
-    const categoryPath = this.getCategoryPath(categoryId);
-    this.router.navigate([`/categories/${categoryPath}`], { queryParams: { category: categoryPath } });
+    const category = this.categories.find(c => c.id === categoryId)?.name || 'Alimentos Secos';
+    this.router.navigate([`/categories/${category}`]);
     this.newArrivalProducts();
   }
 
@@ -178,12 +178,12 @@ export class HomeComponent implements OnInit {
       limit: 5,
       offset: 0
     };
-    const categoryPath = this.getCategoryPath(this.selectedCategoryId);
-    if (categoryPath) {
-      params.category = categoryPath;
+    const category = this.categories.find(c => c.id === this.selectedCategoryId)?.name;
+    if (category) {
+      params.category = category;
     }
 
-    this._productService.getByCategory(categoryPath || 'DryFood', params).subscribe(
+    this._productService.getByCategory(category || 'Alimentos Secos', params).subscribe(
       (response: { products: Product[], total: number }) => {
         this.isLoading = false;
         const data = response.products;
@@ -250,14 +250,14 @@ export class HomeComponent implements OnInit {
 
   getCategoryPath(categoryId: number | null): string {
     const categoryMap: Record<number, string> = {
-      1: 'DryFood',
-      2: 'WetFood',
+      1: 'Alimentos Secos',
+      2: 'Alimentos Húmedos',
       3: 'Snacks',
-      4: 'Litter',
-      5: 'Accessories',
-      6: 'Veterinary'
+      4: 'Arena para Gatos',
+      5: 'Accesorios',
+      6: 'Productos Veterinarios'
     };
-    return categoryId && categoryMap[categoryId] ? categoryMap[categoryId] : 'DryFood';
+    return categoryId && categoryMap[categoryId] ? categoryMap[categoryId] : 'Alimentos Secos';
   }
 
   getProductImageUrl(product: Product): string {

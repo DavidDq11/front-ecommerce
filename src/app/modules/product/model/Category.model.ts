@@ -1,13 +1,13 @@
-
+import { Product } from './Product.model';
 export interface Category {
-    id:number;
-    title:string;
-    products:string[];
+  id: number;
+  title: string;
+  products: string[];
 }
 
 export interface CategoryFilter {
   id: number;
   label: string;
-  value: string; // Cambiado de `string | number` a `string`
+  value: Product['category']; // Usar el tipo de unión literal de Product
   checked: boolean;
 }
