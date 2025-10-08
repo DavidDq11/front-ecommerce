@@ -14,7 +14,7 @@ interface ValidValues {
 @Component({
   selector: 'app-breadcrumb',
   templateUrl: './breadcrumb.component.html',
-  styleUrls: ['./breadcrumb.component.scss']
+  styleUrls: ['./breadcrumb.component.css']
 })
 export class BreadcrumbComponent implements OnInit {
   breadcrumbList: { path: string; label: string }[] = [];
