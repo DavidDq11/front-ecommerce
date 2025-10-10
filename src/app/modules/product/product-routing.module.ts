@@ -7,6 +7,7 @@ const routes: Routes = [
   {
     path: '',
     children: [
+      { path: 'product/:id', component: ProductdetailComponent }, // Mover esta ruta al principio
       { path: ':animal_category/:category', component: ProductComponent },
       { path: 'DryFood', component: ProductComponent, data: { category: 'DryFood' } },
       { path: 'WetFood', component: ProductComponent, data: { category: 'WetFood' } },
@@ -14,8 +15,7 @@ const routes: Routes = [
       { path: 'Litter', component: ProductComponent, data: { category: 'Litter' } },
       { path: 'Accessories', component: ProductComponent, data: { category: 'Accessories' } },
       { path: 'Veterinary', component: ProductComponent, data: { category: 'Veterinary' } },
-      { path: ':category', component: ProductComponent },
-      { path: 'product/:id', component: ProductdetailComponent }
+      { path: ':category', component: ProductComponent }, // Mover esta ruta al final
     ]
   }
 ];
@@ -24,5 +24,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-
 export class ProductRoutingModule { }
