@@ -54,19 +54,19 @@ export class HomeComponent implements OnInit {
       id: 1,
       title: '¡Cuidamos a tu Mascota! Consultas Veterinarias en Tienda o a Domicilio',
       summary: 'Visítanos en nuestro punto físico en Manizales o agenda una consulta veterinaria a domicilio. Nuestros expertos están listos para mantener a tus mascotas sanas y felices. ¡Contáctanos hoy!',
-      image: 'assets/news/veterinary-consultation.jpg'
+      image: 'assets/images/Veterinario.webp'
     },
     {
       id: 2,
       title: '¡Productos para Mascotas en tu Puerta el Mismo Día!',
       summary: 'Pide alimentos, accesorios, o medicamentos antes de las 3 p.m. y recíbelos hoy mismo en cualquier parte de Manizales. ¡Compra ahora y consiente a tu mascota!',
-      image: 'assets/news/delivery.jpg'
+      image: 'assets/images/Domicilio.webp'
     },
     {
       id: 3,
       title: '¡Nuevos Medicamentos y Vitaminas para tus Mascotas!',
       summary: 'Explora nuestra gama de medicamentos y vitaminas de alta calidad para perros, gatos y ganado. Fortalece su salud con productos confiables. ¡Pídelos hoy en Domipets!',
-      image: 'assets/news/medicines-vitamins.jpg'
+      image: 'assets/images/Medicamentos.webp'
     }
   ];
 

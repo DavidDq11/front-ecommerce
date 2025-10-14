@@ -212,11 +212,15 @@
           class="news-item bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
           [attr.aria-label]="news.title"
         >
-          <img
-            [src]="news.image"
-            [alt]="news.title"
-            class="w-full64 object-cover"
-          />
+          <div class="w-full h-64 sm:h-72 md:h-80 overflow-hidden rounded-t-lg">
+            <img
+              [src]="news.image"
+              [alt]="news.title"
+              class="w-full h-full object-cover object-center block transition-transform duration-500 hover:scale-105"
+              style="object-position: center 65%; /* Cambia 45% a 65% o más */"
+              (error)="onImageError($event)"
+            />
+          </div>
           <div class="p-4">
             <h4 class="text-lg sm:text-xl font-semibold text-gray-900">
               {{ news.title }} <!-- Eliminamos line-clamp-2 para mostrar todo el título -->
