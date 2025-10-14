@@ -1,4 +1,3 @@
-// src/app/modules/product/services/filter.service.ts
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
@@ -23,7 +22,7 @@ export class FilterService {
         const filterList: CategoryFilter[] = response.categories.map((category, index) => ({
           id: index + 1,
           label: category,
-          value: category as Product['category'], // Convertir al tipo de unión literal
+          value: category as Product['category'],
           checked: false
         }));
         this.filterList.next(filterList);
@@ -37,7 +36,7 @@ export class FilterService {
           'Arena para Gatos',
           'Accesorios',
           'Productos Veterinarios'
-        ] as const; // Inferir tipos literales
+        ] as const;
         const filterList: CategoryFilter[] = fallbackCategories.map((category, index) => ({
           id: index + 1,
           label: category,
@@ -49,23 +48,29 @@ export class FilterService {
     );
   }
 
-  setAllProducts(products: Product[]): void {
+  setAllProducts(products: Product[], selectedCategory: string | null = null): void {
     this.originalProducts = [...products];
+    const normalizedSelectedCategory = selectedCategory ? selectedCategory.toLowerCase().trim() : null;
+    const filterList = this.filterList.getValue().map(filter => ({
+      ...filter,
+      checked: normalizedSelectedCategory ? filter.value.toLowerCase().trim() === normalizedSelectedCategory : false
+    }));
+    this.filterList.next(filterList);
     this.applyFilters();
   }
 
   applyFilters(): void {
-    const selectedCategories = this.filterList.value.filter(f => f.checked).map(f => f.value);
+    const selectedCategories = this.filterList.getValue().filter(f => f.checked).map(f => f.value);
     const filtered = this.originalProducts.filter(product => 
-      selectedCategories.length === 0 || selectedCategories.includes(product.category)
+      selectedCategories.length === 0 ? true : selectedCategories.includes(product.category)
     );
     this.filteredProducts.next(filtered);
   }
 
   applyPriceFilter(minPrice: number, maxPrice: number): void {
-    const selectedCategories = this.filterList.value.filter(f => f.checked).map(f => f.value);
+    const selectedCategories = this.filterList.getValue().filter(f => f.checked).map(f => f.value);
     const filtered = this.originalProducts.filter(product => 
-      (selectedCategories.length === 0 || selectedCategories.includes(product.category)) &&
+      (selectedCategories.length === 0 ? true : selectedCategories.includes(product.category)) &&
       product.price >= minPrice && product.price <= maxPrice
     );
     this.filteredProducts.next(filtered);

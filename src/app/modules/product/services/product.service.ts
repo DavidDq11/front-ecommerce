@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, map, of, throwError } from 'rxjs';
-import { Product} from '../model';
+import { Product } from '../model';
 import { RawBrand } from '../model/Brand.model';
 
 @Injectable({
@@ -36,7 +36,7 @@ export class ProductService {
       'cuidado': { category: 'Productos Veterinarios' }
     };
     for (const key in params) {
-      if (params.hasOwnProperty(key) && params[key] !== undefined && params[key] !== null && params[key] !== '' && !(key === 'category' && params.brand_id)) {
+      if (params.hasOwnProperty(key) && params[key] !== undefined && params[key] !== null && params[key] !== '') {
         httpParams = httpParams.set(key, params[key].toString());
       }
     }
@@ -52,29 +52,15 @@ export class ProductService {
         httpParams = httpParams.set('category', category);
       }
     }
-    if (params.brand_id) {
-      return this.http.get<{ products: Product[], total: number, totalPages: number }>(
-        `${this.url}s/${params.brand_id}`,
-        { params: httpParams }
-      ).pipe(
-        map(response => {
-          return response;
-        }),
-        catchError(error => {
-          console.error('Error en getByCategory (brand_id):', error);
-          return throwError(() => new Error(error.message));
-        })
-      );
-    }
     return this.http.get<{ products: Product[], total: number, totalPages: number }>(
-      this.url + 's',
+      this.url + 's', // Siempre usa /products
       { params: httpParams }
     ).pipe(
       map(response => {
         return response;
       }),
       catchError(error => {
-        console.error('Error en getByCategory (categoría):', error);
+        console.error('Error en getByCategory:', error);
         return throwError(() => new Error(error.message));
       })
     );
@@ -147,6 +133,4 @@ export class ProductService {
     };
     return categoryMap[category as keyof typeof categoryMap] || category;
   }
-
-  
 }

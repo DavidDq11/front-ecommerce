@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Product } from '../../model';
 import { FilterService } from '../../services/filter.service';
 import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-product',
@@ -40,71 +41,124 @@ export class ProductComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.subscribeToFilteredProducts();
-    combineLatest([this.route.params, this.route.queryParams]).subscribe(([params, queryParams]) => {
-      console.log('Parámetros de la ruta:', params, 'QueryParams:', queryParams);
-      this.animalCategory = params['animal_category'] || null;
-      this.category = params['category'] || queryParams['category'] || null;
-      this.brandId = params['brand_id'] ? Number(params['brand_id']) : queryParams['brand_id'] ? Number(queryParams['brand_id']) : null;
-      this.currentPage = Number(queryParams['page']) || 1;
+    combineLatest([
+      this.route.params.pipe(
+        distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr))
+      ),
+      this.route.queryParams.pipe(
+        distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr))
+      ),
+      this.route.data
+    ]).subscribe(([params, queryParams, data]) => {
 
-      if (this.brandId) {
-        this.productService.getBrandName(this.brandId).subscribe({
-          next: (name) => (this.selectedBrandName = name),
-          error: () => (this.selectedBrandName = 'Marca desconocida'),
-        });
-      } else {
-        this.selectedBrandName = null;
+      // Extraer category de params, queryParams o data
+      const newCategory = params['category'] ? params['category'].trim() : 
+                         queryParams['category'] ? queryParams['category'].trim() : 
+                         data['category'] ? data['category'].trim() : null;
+      const newAnimalCategory = params['animal_category'] ? params['animal_category'].trim() : null;
+      const newBrandId = params['brand_id'] ? Number(params['brand_id']) : null;
+      const newPage = Number(queryParams['page']) || 1;
+      if (
+        newCategory !== this.category ||
+        newAnimalCategory !== this.animalCategory ||
+        newBrandId !== this.brandId ||
+        newPage !== this.currentPage
+      ) {
+        this.category = newCategory;
+        this.animalCategory = newAnimalCategory;
+        this.brandId = newBrandId;
+        this.currentPage = newPage;
+        this.pagedProducts = []; // Resetear pagedProducts
+
+        // Resetear filterList antes de actualizar
+        const filterList = this.filterService.filterList.getValue().map(filter => ({
+          ...filter,
+          checked: false
+        }));
+        if (this.category) {
+          const normalizedCategory = this.category.toLowerCase().trim();
+          const updatedFilterList = filterList.map(filter => ({
+            ...filter,
+            checked: filter.value.toLowerCase().trim() === normalizedCategory
+          }));
+          this.filterService.filterList.next(updatedFilterList);
+        } else {
+          this.filterService.filterList.next(filterList);
+        }
+
+        if (this.brandId) {
+          this.productService.getBrandName(this.brandId).subscribe({
+            next: (name) => {
+              this.selectedBrandName = name;
+            },
+            error: () => {
+              this.selectedBrandName = 'Marca desconocida';
+              console.error('ngOnInit - error al cargar brandName');
+            },
+          });
+        } else {
+          this.selectedBrandName = null;
+        }
+
+        this.selectedFilter.categoryId.next(this.category ? this.getCategoryIdFromLabel(this.category) : null);
+        this.getProducts(this.animalCategory, this.category, this.brandId, this.currentPage);
       }
-
-      this.selectedFilter.categoryId.next(this.category ? this.getCategoryIdFromLabel(this.category) : null);
-      this.getProducts(this.animalCategory, this.category, this.brandId, this.currentPage);
     });
   }
 
   subscribeToFilteredProducts() {
     this.subsFilterProducts = this.filterService.filteredProducts.subscribe((data) => {
       this.pagedProducts = [...data];
-      console.log('Productos filtrados actualizados (página', this.currentPage, '):', this.pagedProducts.length);
     });
   }
 
   getProducts(animalCategory: string | null, category: string | null, brandId: number | null, page: number) {
     this.isLoading = true;
     this.error = null;
+    this.pagedProducts = []; // Resetear pagedProducts
     const offset = (page - 1) * this.pageSize;
     const params: any = { limit: this.pageSize, offset };
 
     if (animalCategory) {
-      // Capitalizar la primera letra para coincidir con el backend
       params.animal_category = animalCategory.charAt(0).toUpperCase() + animalCategory.slice(1).toLowerCase();
     }
-    if (brandId) params.brand_id = brandId;
+    if (brandId) {
+      params.brand_id = brandId;
+    }
 
-    console.log('Solicitando productos con params:', params, 'category:', category);
     this.productService.getByCategory(category || '', params).subscribe({
       next: (response) => {
         this.isLoading = false;
         this.pagedProducts = response.products || [];
         this.totalItems = response.total || 0;
         this.totalPages = response.totalPages || 1;
-        this.filterService.setAllProducts(this.pagedProducts);
-        console.log('Productos cargados para página', this.currentPage, ':', this.pagedProducts.length, 'Total páginas:', this.totalPages);
+        this.filterService.setAllProducts([...this.pagedProducts], category); // Pasar una copia de pagedProducts
+        
       },
       error: (error) => {
         this.isLoading = false;
         this.error = error.message || 'Error al cargar productos';
-        console.error('Error al cargar productos:', error);
+        console.error('getProducts - error al cargar productos:', error);
       },
     });
   }
 
   onCategoryFilter(categoryId: number | null) {
-    const category = categoryId ? this.filterService.filterList.getValue().find((item) => item.id === categoryId)?.value || null : null;
+    const filterList = this.filterService.filterList.getValue();
+    const category = categoryId ? filterList.find((item) => item.id === categoryId)?.value || null : null;
+    const updatedFilterList = filterList.map(filter => ({
+      ...filter,
+      checked: filter.id === categoryId
+    }));
+    this.filterService.filterList.next(updatedFilterList);
+    this.category = category; // Actualizar categoría inmediatamente
+    this.pagedProducts = []; // Resetear pagedProducts
+    this.currentPage = 1; // Resetear a la primera página
     this.router.navigate([`/categories/${this.animalCategory || ''}/${category || ''}`], {
       queryParams: { page: 1 },
       queryParamsHandling: 'merge',
     });
-    console.log('Filtro de categoría aplicado:', category);
+    this.getProducts(this.animalCategory, category, this.brandId, 1); // Forzar recarga de productos
     this.showFilterModal = false;
   }
 
@@ -119,24 +173,26 @@ export class ProductComponent implements OnInit, OnDestroy {
     this.currentPage = Number(changes['page']) || this.currentPage;
     this.getProducts(this.animalCategory, this.category, this.brandId, this.currentPage);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    console.log('QueryParams actualizados:', queryParams);
   }
 
   private getCategoryIdFromLabel(category: string | null): number | null {
     if (!category) return null;
     const typeMap = {
-      alimento: 1,
-      DryFood: 1,
-      WetFood: 2,
-      Snacks: 3,
-      Litter: 4,
-      Accessories: 5,
-      Veterinary: 6,
-      'Pet Food': 1,
-      'Wet Food': 2,
-      'Pet Treats': 3,
+      'alimentos secos': 1,
+      'alimentos húmedos': 2,
+      snacks: 3,
+      'arena para gatos': 4,
+      accesorios: 5,
+      'productos veterinarios': 6,
+      // Mapeos para rutas estáticas antiguas
+      dryfood: 1,
+      wetfood: 2,
+      litter: 4,
+      accessories: 5,
+      veterinary: 6,
     };
-    return typeMap[category as keyof typeof typeMap] || null;
+    const categoryId = typeMap[category.toLowerCase().trim() as keyof typeof typeMap] || null;
+    return categoryId;
   }
 
   onFilter(value: boolean) {
