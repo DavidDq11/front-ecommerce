@@ -74,6 +74,8 @@ export class HomeComponent implements OnInit {
   selectedBrandId: number | null = null;
   selectedBrandName: string | null = null;
 
+  private customBrandOrder: number[] = [38, 37, 195, 77, 63, 65, 66, 61, 80, 31, 49, 51, 81, 82, 83]; // Ajusta según tus prioridades
+
   constructor(
     private _productService: ProductService,
     private cartService: CartService,
@@ -140,6 +142,23 @@ export class HomeComponent implements OnInit {
           name: brand.name,
           image: brand.image || undefined
         }));
+
+        // Reordenar marcas según customBrandOrder
+        this.brands.sort((a, b) => {
+          const aIndex = this.customBrandOrder.indexOf(a.id);
+          const bIndex = this.customBrandOrder.indexOf(b.id);
+
+          if (aIndex !== -1 && bIndex !== -1) {
+            return aIndex - bIndex; // Ordena según el índice en customBrandOrder
+          } else if (aIndex !== -1) {
+            return -1; // a va primero si está en customBrandOrder
+          } else if (bIndex !== -1) {
+            return 1; // b va primero si está en customBrandOrder
+          } else {
+            return a.name.localeCompare(b.name); // Orden alfabético para las demás
+          }
+        });
+
         this.brands.forEach(brand => {
           if (brand.image) {
             const img = new Image();
