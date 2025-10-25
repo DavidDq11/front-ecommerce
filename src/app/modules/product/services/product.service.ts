@@ -92,13 +92,15 @@ export class ProductService {
     return this.http.get<Product>(`${this.url}/${id}`);
   }
 
+  // En product.service.ts
   search(query: string): Observable<Product[]> {
     if (!query || query.trim() === '') {
       return of([]);
     }
-    return this.http.get<Product[]>(this.searchUrl, {
-      params: new HttpParams().set('q', query.trim())
-    }).pipe(
+    const httpParams = new HttpParams()
+      .set('q', query.trim())
+      .set('limit', '25'); // Añadir explícitamente limit=25
+    return this.http.get<Product[]>(this.searchUrl, { params: httpParams }).pipe(
       catchError(error => {
         console.error('Error en búsqueda:', error);
         return of([]);

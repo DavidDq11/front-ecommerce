@@ -41,7 +41,7 @@ throw new Error('Method not implemented.');
       takeUntil(this.destroy$)
     ).subscribe({
       next: (products: Product[]) => {
-        this.suggestions = products.slice(0, 5); // Limitar a 5 sugerencias
+        this.suggestions = products.slice(0, 25); 
         this.isLoading = false;
       },
       error: (error) => {
