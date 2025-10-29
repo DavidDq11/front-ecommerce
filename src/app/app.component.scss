@@ -26,3 +26,107 @@ app-header {
     padding-top: 210px; /* Reducido de 320px */
   }
 }
+
+/* === BOTÓN WHATSAPP CON TOOLTIP === */
+.whatsapp-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.whatsapp-btn {
+  width: 60px;
+  height: 60px;
+  background-color: #25d366;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  border: 3px solid white;
+  position: relative;
+
+  &:hover {
+    transform: scale(1.1);
+    background-color: #128c7e;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  &:hover + .whatsapp-tooltip {
+    opacity: 1;
+    transform: translateX(-100%) translateY(-50%) scale(1);
+    visibility: visible;
+  }
+
+  i {
+    animation: pulse 2s infinite;
+  }
+}
+
+/* Tooltip flotante */
+.whatsapp-tooltip {
+  position: absolute;
+  top: 50%;
+  right: 80px;
+  transform: translateY(-50%) scale(0.9);
+  background-color: #1a1a1a;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+  /* Flechita */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    margin-top: -6px;
+    border: 6px solid transparent;
+    border-left-color: #1a1a1a;
+  }
+}
+
+/* Animación de pulso */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .whatsapp-container {
+    bottom: 15px;
+    right: 15px;
+  }
+
+  .whatsapp-btn {
+    width: 55px;
+    height: 55px;
+    font-size: 28px;
+  }
+
+  .whatsapp-tooltip {
+    display: none; /* Se oculta en móvil para no estorbar */
+  }
+}
+
+@media (max-width: 480px) {
+  .whatsapp-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 26px;
+  }
+}
