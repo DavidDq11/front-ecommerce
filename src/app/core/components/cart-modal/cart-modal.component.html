@@ -6,10 +6,12 @@
         <i class="fa-solid fa-times"></i>
       </button>
     </div>
+
     <div class="modal-body">
       <div *ngIf="cart.length === 0" class="empty-cart">
         <p>Tu carrito está vacío.</p>
       </div>
+
       <div *ngFor="let item of cart" class="cart-item">
         <img
           [src]="item.images && item.images.length > 0 ? item.images[0].image_url : item.sizes && item.sizes.length > 0 ? item.sizes[0].image_url : 'assets/placeholder.jpg'"
@@ -30,13 +32,63 @@
         </div>
       </div>
     </div>
+
     <div class="modal-footer">
+      <!-- BUSCADOR DE BARRIO -->
+      <div class="shipping-selector" *ngIf="cart.length > 0">
+        <label>Barrio de entrega</label>
+
+        <!-- Input de búsqueda -->
+        <div class="search-input-container">
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (input)="filterNeighborhoods()"
+            placeholder="Escribe tu barrio..."
+            class="search-input"
+            autocomplete="off"
+          />
+          <i class="fa-solid fa-search search-icon"></i>
+        </div>
+
+        <!-- Lista de resultados -->
+        <div class="results-list" *ngIf="filteredNeighborhoods.length > 0">
+          <div
+            *ngFor="let n of filteredNeighborhoods"
+            class="result-item"
+            (click)="selectNeighborhood(n)"
+            [class.selected]="selectedNeighborhood?.name === n.name"
+          >
+            <div class="neighborhood-name">{{ n.name }}</div>
+            <div class="neighborhood-price">+ {{ n.shipping | currency:'COP':'symbol':'1.0-0' }}</div>
+          </div>
+        </div>
+
+        <!-- Sin resultados -->
+        <div class="no-results" *ngIf="searchTerm && filteredNeighborhoods.length === 0">
+          No se encontró el barrio
+        </div>
+
+        <!-- Barrio seleccionado -->
+        <div class="selected-info" *ngIf="selectedNeighborhood">
+          <i class="fa-solid fa-check-circle"></i>
+          Entrega en: <strong>{{ selectedNeighborhood.name }}</strong>
+          <small>(+{{ selectedNeighborhood.shipping | currency:'COP':'symbol':'1.0-0' }})</small>
+        </div>
+      </div>
+
+      <!-- TOTALES -->
       <div class="totals">
         <p>Subtotal: {{ total | currency:'COP':'symbol':'1.0-0' }}</p>
         <p>Valor de domicilio: {{ shippingCost | currency:'COP':'symbol':'1.0-0' }}</p>
         <p><strong>Total Estimado: {{ estimatedTotal | currency:'COP':'symbol':'1.0-0' }}</strong></p>
       </div>
-      <button class="checkout-button" (click)="goToCheckout()" [disabled]="cart.length === 0">
+
+      <button
+        class="checkout-button"
+        (click)="goToCheckout()"
+        [disabled]="cart.length === 0 || !selectedNeighborhood"
+      >
         Realizar Pedido
       </button>
     </div>

@@ -159,3 +159,126 @@
     }
   }
 }
+
+/* === ESTILOS DEL BUSCADOR DE BARRIOS === */
+.shipping-selector {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.shipping-selector label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #1e3a8a;
+  font-size: 1rem;
+}
+
+.search-input-container {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 14px 40px 14px 16px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: white;
+  color: #1f2937;
+  transition: all 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: #1e3a8a;
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.15);
+  }
+
+  &::placeholder {
+    color: #9ca3af;
+  }
+}
+
+.search-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  font-size: 1.1rem;
+  pointer-events: none;
+}
+
+.results-list {
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-top: 4px;
+  z-index: 10;
+}
+
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border-bottom: 1px solid #f3f4f6;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background-color: #f8fafc;
+  }
+
+  &.selected {
+    background-color: #eef2ff;
+    color: #1e3a8a;
+    font-weight: 600;
+  }
+}
+
+.neighborhood-name {
+  font-size: 0.95rem;
+  color: #1f2937;
+}
+
+.neighborhood-price {
+  font-size: 0.9rem;
+  color: #059669;
+  font-weight: 600;
+}
+
+.no-results {
+  padding: 16px;
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+  background: #f9fafb;
+  border-radius: 8px;
+  margin-top: 4px;
+}
+
+.selected-info {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #166534;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  i {
+    color: #16a34a;
+  }
+}
