@@ -71,65 +71,59 @@ header {
   margin-left: 0.5rem;
 }
 
-/* Navegación de categorías */
+/* Navegación de categorías - CORREGIDO */
 nav {
   position: sticky;
   top: 0;
   z-index: 11000;
   background-color: white;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0; /* Cambiado para mejor scroll */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
-  /* CRÍTICO: Permitir que los elementos hijos puedan salir del contenedor */
-  overflow: visible !important;
+  /* CRÍTICO: Permitir scroll horizontal */
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Asegurar que las listas también tengan overflow visible */
+/* Contenedor principal del menú de categorías */
 nav ul {
-  overflow: visible !important;
-}
-
-/* Scroll horizontal para el menú de categorías */
-nav ul {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 0.5rem;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  gap: 1rem !important;
   
-  /* CRÍTICO: Habilitar scroll horizontal */
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
-  scrollbar-width: none; /* Ocultar scrollbar en Firefox */
-  -ms-overflow-style: none; /* Ocultar scrollbar en IE/Edge */
+  /* CRÍTICO: Propiedades para scroll horizontal */
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   
   /* Evitar que el contenido se rompa */
-  white-space: nowrap;
-  flex-wrap: nowrap;
+  white-space: nowrap !important;
   
-  /* Padding para mejor UX en móviles */
-  padding-bottom: 0.5rem;
-  scroll-behavior: smooth;
-  padding-left: 2rem;
-  padding-right: 2rem;
+  /* Padding para mejor UX */
+  padding: 0.5rem 1rem !important;
+  margin: 0 !important;
+  
+  /* Ancho mínimo para asegurar scroll */
+  min-width: max-content;
 }
 
-/* Ocultar scrollbar en Chrome, Safari y Opera */
+/* Ocultar scrollbar en todos los navegadores */
 nav ul::-webkit-scrollbar {
-  display: none;
+  display: none !important;
 }
 
-/* Indicador visual de que hay más contenido */
-nav::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 30px;
-  background: linear-gradient(to right, transparent, white);
-  pointer-events: none;
+/* Asegurar que los items no se reduzcan */
+nav li {
+  flex-shrink: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  white-space: nowrap !important;
 }
 
 /* Asegura que el elemento padre tenga posición relativa */
@@ -244,12 +238,10 @@ nav::after {
     position: sticky;
     top: 0;
     z-index: 11000;
-    /* CRÍTICO: Mantener overflow visible en móviles */
-    overflow: visible !important;
-  }
-
-  nav::after {
-    display: block;
+    /* CRÍTICO: Scroll horizontal en móviles */
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding: 0.5rem 0;
   }
 
   .logo-container {
@@ -265,25 +257,23 @@ nav::after {
   }
 
   nav ul {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    gap: 0.5rem;
-    overflow-x: auto;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    gap: 1rem !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 0.5rem;
-    white-space: nowrap;
-    /* CRÍTICO: Permitir que los dropdowns se muestren verticalmente */
-    overflow-y: visible !important;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding: 0.5rem 1rem !important;
+    white-space: nowrap !important;
+    min-width: max-content;
   }
 
   nav li {
     position: relative;
     z-index: 1040;
-    flex-shrink: 0;
+    flex-shrink: 0 !important;
     /* CRÍTICO: Permitir overflow visible en elementos li */
     overflow: visible !important;
   }
@@ -316,7 +306,7 @@ nav::after {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     /* CRÍTICO: Calcular la posición dinámicamente */
     transform: none !important;
-    margin-top: 120px !important; /* Ajustado de 10px a 20px */
+    margin-top: 120px !important;
   }
 
   .dropdown-menu.show {
@@ -371,18 +361,17 @@ nav::after {
   }
 
   nav {
-    overflow: visible !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding: 0.5rem 0;
   }
 
   nav ul {
-    overflow: visible !important;
-    justify-content: center;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  nav::after {
-    display: none;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    justify-content: flex-start !important;
+    padding: 0.5rem 1rem !important;
+    min-width: max-content;
   }
 
   .dropdown-menu {
@@ -401,7 +390,7 @@ nav::after {
     display: none !important;
     background-color: white;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    margin-top: 120px !important; /* Ajustado de 10px a 20px */
+    margin-top: 120px !important;
   }
 
   .dropdown-menu.show {
@@ -427,17 +416,17 @@ nav::after {
 
 /* Ajustes para pantallas grandes (min-width: 1025px) */
 @media (min-width: 1025px) {
+  nav {
+    overflow: visible !important;
+  }
+
   nav ul {
     gap: 1.5rem;
     flex-wrap: wrap;
     justify-content: center;
-    overflow: visible;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  nav::after {
-    display: none;
+    overflow: visible !important;
+    padding: 0.5rem 0 !important;
+    min-width: auto;
   }
 
   nav li img {
@@ -453,8 +442,8 @@ nav::after {
   .dropdown-menu {
     position: absolute;
     left: 0;
-    top: calc(100% + 0.5rem); /* Ajustado de 0.5rem a 1rem */
-    margin-top: 0.5rem; /* Ajustado de 0.5rem a 1rem */
+    top: calc(100% + 0.5rem);
+    margin-top: 0.5rem;
     min-width: 12rem;
     z-index: 12000;
     display: none !important;
@@ -473,8 +462,8 @@ nav::after {
   .account-menu {
     position: absolute;
     right: 0;
-    top: calc(100% + 0.5rem); /* Ajustado de 0.5rem a 1rem */
-    margin-top: 0.5rem; /* Ajustado de 0.5rem a 1rem */
+    top: calc(100% + 0.5rem);
+    margin-top: 0.5rem;
     z-index: 13000;
     display: none !important;
   }
@@ -498,4 +487,171 @@ nav::after {
 
 .dropdown-overlay.show {
   display: block;
+}
+
+// ... (mantén todo el CSS anterior y agrega esto al final)
+
+/* Indicadores visuales de scroll */
+.scroll-indicator {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  
+  i {
+    color: #ea580c;
+    font-size: 12px;
+  }
+  
+  @media (max-width: 768px) {
+    display: flex;
+  }
+}
+
+.left-indicator {
+  left: 8px;
+}
+
+.right-indicator {
+  right: 8px;
+}
+
+/* Mostrar indicadores cuando hay scroll disponible */
+nav.scrollable-left .left-indicator,
+nav.scrollable-right .right-indicator {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Efecto de gradiente en los bordes para indicar más contenido */
+nav {
+  position: relative;
+  
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 30px;
+    z-index: 50;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  &::before {
+    left: 0;
+    background: linear-gradient(to right, white, transparent);
+  }
+  
+  &::after {
+    right: 0;
+    background: linear-gradient(to left, white, transparent);
+  }
+}
+
+/* Mostrar gradientes cuando hay scroll */
+nav.scrollable-left::before {
+  opacity: 1;
+}
+
+nav.scrollable-right::after {
+  opacity: 1;
+}
+
+/* Animación sutil para llamar la atención */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.scroll-indicator.pulse {
+  animation: pulse-glow 2s infinite;
+  background: rgba(234, 88, 12, 0.1);
+  border: 1px solid rgba(234, 88, 12, 0.3);
+  
+  i {
+    color: #ea580c;
+  }
+}
+
+/* Efecto hover en los indicadores */
+.scroll-indicator:hover {
+  background: #ea580c;
+  transform: translateY(-50%) scale(1.1);
+  
+  i {
+    color: white;
+  }
+}
+
+/* Mensaje tooltip para nuevos usuarios */
+.scroll-hint {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ea580c;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  white-space: nowrap;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 4px solid #ea580c;
+  }
+}
+
+nav.show-scroll-hint .scroll-hint {
+  opacity: 1;
+}
+
+/* Mejoras de accesibilidad */
+nav ul:focus-within {
+  outline: 2px solid #ea580c;
+  outline-offset: 2px;
+}
+
+/* Mejoras SEO - Estructura semántica */
+header[role="banner"] {
+  display: block;
+}
+
+nav[role="navigation"] {
+  display: block;
+}
+
+/* Microdatos para SEO */
+.logo-container {
+  position: relative;
+}
+
+.logo-container::after {
+  content: '';
+  display: none;
 }

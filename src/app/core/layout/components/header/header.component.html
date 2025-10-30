@@ -1,25 +1,25 @@
-<header class="bg-orange-600 text-white relative z-200 overflow-visible">
+<header class="bg-orange-600 text-white relative z-200 overflow-visible" role="banner">
   <!-- Top bar -->
   <div
     class="header-top flex flex-col md:flex-row justify-between items-center py-1 px-2 md:py-1 md:px-4 border-b border-orange-800 space-y-1 md:space-y-0"
     [ngClass]="{'hidden': isHeaderTopHidden}">
     <div class="flex flex-wrap justify-center md:justify-start items-center gap-1 text-xs">
       <div class="flex items-center px-1 py-0.5 rounded-full bg-orange-800 bg-opacity-80 shadow-sm">
-        <i class="fa-solid fa-shield-alt mr-1 text-yellow-300"></i>
+        <i class="fa-solid fa-shield-alt mr-1 text-yellow-300" aria-hidden="true"></i>
         <span class="font-medium text-[10px]">Compras seguras</span>
       </div>
       <div class="flex items-center px-1 py-0.5 rounded-full bg-orange-800 bg-opacity-80 shadow-sm">
-        <i class="fa-solid fa-money-bill-transfer mr-1 text-yellow-300"></i>
+        <i class="fa-solid fa-money-bill-transfer mr-1 text-yellow-300" aria-hidden="true"></i>
         <span class="font-medium text-[10px]">Pago contra entrega</span>
       </div>
       <div class="flex items-center px-1 py-0.5 rounded-full bg-orange-800 bg-opacity-80 shadow-sm">
-        <i class="fa-solid fa-truck-fast mr-1 text-yellow-300"></i>
+        <i class="fa-solid fa-truck-fast mr-1 text-yellow-300" aria-hidden="true"></i>
         <span class="font-medium text-[10px]">Entrega mismo día</span>
       </div>
     </div>
     <div class="flex items-center gap-1">
       <div class="flex items-center px-1 py-0.5 rounded-full bg-orange-800 bg-opacity-80 shadow-sm">
-        <i class="fa-solid fa-phone mr-1 text-yellow-300"></i>
+        <i class="fa-solid fa-phone mr-1 text-yellow-300" aria-hidden="true"></i>
         <span class="font-medium text-[10px]">Llámanos</span>
         <span class="ml-1 font-bold text-yellow-300 text-[10px]">3016650526</span>
       </div>
@@ -27,23 +27,23 @@
         <a href="https://tiktok.com/@domipets636" 
            target="_blank" 
            rel="noopener noreferrer"
-           aria-label="TikTok"
+           aria-label="Síguenos en TikTok"
            class="p-1 bg-white bg-opacity-20 rounded-full hover:bg-yellow-300 hover:text-orange-900 transition-colors">
-          <i class="fa-brands fa-tiktok text-xs"></i>
+          <i class="fa-brands fa-tiktok text-xs" aria-hidden="true"></i>
         </a>
         <a href="https://www.facebook.com/profile.php?id=61577026983860" 
            target="_blank" 
            rel="noopener noreferrer"
-           aria-label="Facebook"
+           aria-label="Síguenos en Facebook"
            class="p-1 bg-white bg-opacity-20 rounded-full hover:bg-yellow-300 hover:text-orange-900 transition-colors">
-          <i class="fa-brands fa-facebook-f text-xs"></i>
+          <i class="fa-brands fa-facebook-f text-xs" aria-hidden="true"></i>
         </a>
         <a href="https://instagram.com/domipetstiendaveterinaria" 
            target="_blank" 
            rel="noopener noreferrer"
-           aria-label="Instagram"
+           aria-label="Síguenos en Instagram"
            class="p-1 bg-white bg-opacity-20 rounded-full hover:bg-yellow-300 hover:text-orange-900 transition-colors">
-          <i class="fa-brands fa-instagram text-xs"></i>
+          <i class="fa-brands fa-instagram text-xs" aria-hidden="true"></i>
         </a>
       </div>
     </div>
@@ -53,21 +53,31 @@
   <div class="header-fixed" [ngClass]="{'hidden': isHeaderFixedHidden}">
     <div class="flex flex-col md:flex-row items-center justify-between py-2 px-2 md:py-3 md:px-4">
       <div class="flex items-center justify-between w-full md:w-auto">
-        <a routerLink="/" class="flex items-center cursor-pointer">
+        <a routerLink="/" class="flex items-center cursor-pointer" aria-label="DOMIPETS - Inicio">
           <div class="logo-container">
-            <img src="https://res.cloudinary.com/dgtukxydi/image/upload/v1757113148/Blanco_02_itshur.png" alt="DOMIPETS Logo" class="logo-image">
+            <img src="https://res.cloudinary.com/dgtukxydi/image/upload/v1757113148/Blanco_02_itshur.png" 
+                 alt="DOMIPETS - Tienda veterinaria especializada en alimentos y accesorios para mascotas" 
+                 class="logo-image"
+                 width="260" 
+                 height="260">
           </div>
         </a>
         <div class="md:hidden flex items-center gap-2">
-          <button class="text-white focus:outline-none p-1 rounded-full bg-orange-800 bg-opacity-80 hover:bg-yellow-300 hover:text-orange-900 transition-colors" (click)="toggleMobileMenu()">
-            <i class="fa-solid fa-bars text-xl"></i>
+          <button class="text-white focus:outline-none p-1 rounded-full bg-orange-800 bg-opacity-80 hover:bg-yellow-300 hover:text-orange-900 transition-colors" 
+                  (click)="toggleMobileMenu()"
+                  aria-label="Menú principal"
+                  [attr.aria-expanded]="mobileMenuOpen">
+            <i class="fa-solid fa-bars text-xl" aria-hidden="true"></i>
           </button>
           <div class="relative">
-            <button (click)="openCartModal($event)" class="p-2 bg-orange-800 rounded-full shadow-sm hover:shadow-yellow-300/30 transition-all">
-              <i class="fa-solid fa-shopping-bag text-yellow-300 text-lg"></i>
+            <button (click)="openCartModal($event)" 
+                    class="p-2 bg-orange-800 rounded-full shadow-sm hover:shadow-yellow-300/30 transition-all"
+                    aria-label="Carrito de compras">
+              <i class="fa-solid fa-shopping-bag text-yellow-300 text-lg" aria-hidden="true"></i>
             </button>
             <span *ngIf="cart && cart.length > 0"
-              class="absolute inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-orange-900 bg-yellow-300 rounded-full -top-1 -right-1 border-2 border-orange-800 animate-bounce">
+              class="absolute inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-orange-900 bg-yellow-300 rounded-full -top-1 -right-1 border-2 border-orange-800 animate-bounce"
+              aria-live="polite">
               {{cart.length}}
             </span>
             <app-cart-modal [isOpen]="isCartModalOpen" (close)="closeCartModal()"></app-cart-modal>
@@ -76,7 +86,7 @@
       </div>
 
       <!-- Mobile menu -->
-      <div class="md:hidden w-full" [ngClass]="{'hidden': !mobileMenuOpen}">
+      <div class="md:hidden w-full" [ngClass]="{'hidden': !mobileMenuOpen}" role="navigation" aria-label="Menú móvil">
         <div class="flex flex-col items-center gap-3 py-3 bg-orange-900">
           <div class="relative w-11/12">
             <app-search></app-search>
@@ -84,10 +94,10 @@
           <div class="relative flex items-center cursor-pointer group hover:text-yellow-300"
             (click)="toggleAccountMenu()">
             <span class="flex items-center gap-2">
-              <i class="fa-solid fa-paw text-yellow-300 animate-bounce"></i>
+              <i class="fa-solid fa-paw text-yellow-300 animate-bounce" aria-hidden="true"></i>
               <span class="text-xs">{{ userName ? userName : 'Ingresar' }}</span>
             </span>
-            <i class="fa-solid fa-chevron-down ml-1 text-xs"></i>
+            <i class="fa-solid fa-chevron-down ml-1 text-xs" aria-hidden="true"></i>
             <div class="account-menu" [ngClass]="{'show': showAccountMenu}">
               <ul class="py-2 bg-white rounded-md shadow-sm w-90% mx-auto">
                 <ng-container *ngIf="!userName; else userMenu">
@@ -130,10 +140,10 @@
           <div class="relative flex items-center cursor-pointer group hover:text-yellow-300 transition-colors"
             (click)="toggleAccountMenu()">
             <span class="flex items-center gap-2">
-              <i class="fa-solid fa-paw text-yellow-300 animate-bounce"></i>
+              <i class="fa-solid fa-paw text-yellow-300 animate-bounce" aria-hidden="true"></i>
               <span>{{ userName ? userName : 'Ingresar' }}</span>
             </span>
-            <i class="fa-solid fa-chevron-down ml-2"></i>
+            <i class="fa-solid fa-chevron-down ml-2" aria-hidden="true"></i>
             <div
               class="account-menu absolute right-0 mt-2 w-64 bg-white shadow-md rounded-md border border-gray-200 z-50"
               [ngClass]="{'show': showAccountMenu}">
@@ -167,11 +177,14 @@
             </div>
           </div>
           <div class="relative">
-            <button (click)="openCartModal($event)" class="bg-orange-800 p-3 rounded-full shadow-md hover:shadow-yellow-300/30 transition-all duration-300">
-              <i class="fa-solid fa-shopping-bag text-yellow-300"></i>
+            <button (click)="openCartModal($event)" 
+                    class="bg-orange-800 p-3 rounded-full shadow-md hover:shadow-yellow-300/30 transition-all duration-300"
+                    aria-label="Carrito de compras">
+              <i class="fa-solid fa-shopping-bag text-yellow-300" aria-hidden="true"></i>
             </button>
             <span *ngIf="cart && cart.length > 0"
-              class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-orange-900 bg-yellow-300 rounded-full -top-2 -right-2 border-2 border-orange-800 animate-bounce">
+              class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-orange-900 bg-yellow-300 rounded-full -top-2 -right-2 border-2 border-orange-800 animate-bounce"
+              aria-live="polite">
               {{cart.length}}
             </span>
             <app-cart-modal [isOpen]="isCartModalOpen" (close)="closeCartModal()"></app-cart-modal>
@@ -182,106 +195,228 @@
   </div>
 
   <!-- Category navigation -->
-  <nav class="bg-white text-orange-900 py-2 px-2 shadow-sm sticky top-0 z-1000 h-12 relative">
-    <!-- Botón izquierdo -->
-    <button class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 p-1 rounded-r-lg shadow-md z-10 md:hidden"
-            (click)="scrollMenu('left')">
-      <i class="fa-solid fa-chevron-left text-orange-600"></i>
-    </button>
+  <nav class="bg-white text-orange-900 py-2 px-2 shadow-sm sticky top-0 z-1000 h-12 relative" 
+       role="navigation" 
+       aria-label="Categorías de mascotas">
     
-    <!-- Botón derecho -->
-    <button class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 p-1 rounded-l-lg shadow-md z-10 md:hidden"
-            (click)="scrollMenu('right')">
-      <i class="fa-solid fa-chevron-right text-orange-600"></i>
-    </button>
+    <!-- Indicadores visuales de scroll -->
+    <div class="scroll-indicator left-indicator" aria-hidden="true">
+      <i class="fa-solid fa-chevron-left"></i>
+    </div>
+    <div class="scroll-indicator right-indicator" aria-hidden="true">
+      <i class="fa-solid fa-chevron-right"></i>
+    </div>
 
-    <ul #categoryMenu class="flex flex-row justify-start items-center gap-2 md:gap-4 overflow-x-auto md:overflow-visible whitespace-nowrap scroll-smooth px-4 md:px-0">
+    <ul #categoryMenu 
+        class="flex flex-row justify-start items-center gap-2 md:gap-4 overflow-x-auto md:overflow-visible whitespace-nowrap scroll-smooth px-4 md:px-0"
+        (scroll)="onCategoryScroll()">
+      
       <!-- Perro -->
-      <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('dog')" (mouseenter)="onMouseEnter('dog')" (mouseleave)="onMouseLeave()" [ngClass]="{'active': activeDropdown === 'dog'}">
+      <li class="flex items-center font-medium group relative flex-shrink-0" 
+          (click)="toggleDropdown('dog')" 
+          (mouseenter)="onMouseEnter('dog')" 
+          (mouseleave)="onMouseLeave()" 
+          [ngClass]="{'active': activeDropdown === 'dog'}">
         <div class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-orange-600 to-orange-400 group-hover:w-full transition-all duration-300 md:block hidden"></div>
-        <img src="assets/icon/dog.png" alt="Perro" class="w-6 h-6 md:w-8 md:h-8 mr-0 transition-transform duration-300 group-hover:scale-110" style="max-width: 1.5rem; max-height: 1.5rem; object-fit: contain;">
-        <a class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-0.5 text-xs md:text-sm"> Perro 
-          <i class="fa-solid fa-chevron-down ml-0.5 text-2xs md:text-xs transform transition-transform duration-300 group-hover:rotate-180"></i>
+        <img src="assets/icon/dog.png" 
+             alt="Productos para perros - Alimento, snacks y juguetes" 
+             class="w-6 h-6 md:w-8 md:h-8 mr-0 transition-transform duration-300 group-hover:scale-110" 
+             style="max-width: 1.5rem; max-height: 1.5rem; object-fit: contain;"
+             width="24" 
+             height="24">
+        <a class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-0.5 text-xs md:text-sm" 
+           aria-haspopup="true" 
+           [attr.aria-expanded]="activeDropdown === 'dog'">
+          Perro 
+          <i class="fa-solid fa-chevron-down ml-0.5 text-2xs md:text-xs transform transition-transform duration-300 group-hover:rotate-180" aria-hidden="true"></i>
         </a>
-        <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'dog'}">
+        <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'dog'}" role="menu">
           <ul class="py-2 bg-white rounded-lg shadow-lg">
-            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/perro/alimento" class="text-orange-900 hover:text-orange-600 text-sm">Alimento</a>
+            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" role="none">
+              <a routerLink="/categories/perro/alimento" 
+                 class="text-orange-900 hover:text-orange-600 text-sm" 
+                 role="menuitem">Alimento para perros</a>
             </li>
-            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/perro/snacks" class="text-orange-900 hover:text-orange-600 text-sm">Snacks</a>
+            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" role="none">
+              <a routerLink="/categories/perro/snacks" 
+                 class="text-orange-900 hover:text-orange-600 text-sm" 
+                 role="menuitem">Snacks para perros</a>
             </li>
-            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/perro/juguetes" class="text-orange-900 hover:text-orange-600 text-sm">Juguetes</a>
+            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" role="none">
+              <a routerLink="/categories/perro/juguetes" 
+                 class="text-orange-900 hover:text-orange-600 text-sm" 
+                 role="menuitem">Juguetes para perros</a>
             </li>
           </ul>
         </div>
       </li>
+      
       <!-- Gato -->
-      <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('cat')" (mouseenter)="onMouseEnter('cat')" (mouseleave)="onMouseLeave()" [ngClass]="{'active': activeDropdown === 'cat'}">
+      <li class="flex items-center font-medium group relative flex-shrink-0" 
+          (click)="toggleDropdown('cat')" 
+          (mouseenter)="onMouseEnter('cat')" 
+          (mouseleave)="onMouseLeave()" 
+          [ngClass]="{'active': activeDropdown === 'cat'}">
         <div class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-orange-600 to-orange-400 group-hover:w-full transition-all duration-300 md:block hidden"></div>
-        <img src="assets/icon/cat.png" alt="Gato" class="w-6 h-6 md:w-8 md:h-8 mr-0 transition-transform duration-300 group-hover:scale-110" style="max-width: 1.5rem; max-height: 1.5rem; object-fit: contain;">
-        <a class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-0.5 text-xs md:text-sm"> Gato 
-          <i class="fa-solid fa-chevron-down ml-0.5 text-2xs md:text-xs transform transition-transform duration-300 group-hover:rotate-180"></i>
+        <img src="assets/icon/cat.png" 
+             alt="Productos para gatos - Alimento especializado" 
+             class="w-6 h-6 md:w-8 md:h-8 mr-0 transition-transform duration-300 group-hover:scale-110" 
+             style="max-width: 1.5rem; max-height: 1.5rem; object-fit: contain;"
+             width="24" 
+             height="24">
+        <a class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-0.5 text-xs md:text-sm"
+           aria-haspopup="true" 
+           [attr.aria-expanded]="activeDropdown === 'cat'">
+          Gato 
+          <i class="fa-solid fa-chevron-down ml-0.5 text-2xs md:text-xs transform transition-transform duration-300 group-hover:rotate-180" aria-hidden="true"></i>
         </a>
-        <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'cat'}">
+        <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'cat'}" role="menu">
           <ul class="py-2 bg-white rounded-lg shadow-lg">
-            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/gato/alimento" class="text-orange-900 hover:text-orange-600 text-sm">Alimento</a>
+            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" role="none">
+              <a routerLink="/categories/gato/alimento" 
+                 class="text-orange-900 hover:text-orange-600 text-sm" 
+                 role="menuitem">Alimento para gatos</a>
             </li>
           </ul>
         </div>
       </li>
+      
       <!-- Caballo -->
-      <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('horse')" (mouseenter)="onMouseEnter('horse')" (mouseleave)="onMouseLeave()" [ngClass]="{'active': activeDropdown === 'horse'}">
+      <li class="flex items-center font-medium group relative flex-shrink-0" 
+          (click)="toggleDropdown('horse')" 
+          (mouseenter)="onMouseEnter('horse')" 
+          (mouseleave)="onMouseLeave()" 
+          [ngClass]="{'active': activeDropdown === 'horse'}">
         <div class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-orange-600 to-orange-400 group-hover:w-full transition-all duration-300 md:block hidden"></div>
-        <img src="assets/icon/horse.png" alt="Caballo" class="w-6 h-6 md:w-8 md:h-8 mr-0 transition-transform duration-300 group-hover:scale-110" style="max-width: 1.5rem; max-height: 1.5rem; object-fit: contain;">
-        <a class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-0.5 text-xs md:text-sm"> Caballo 
-          <i class="fa-solid fa-chevron-down ml-0.5 text-2xs md:text-xs transform transition-transform duration-300 group-hover:rotate-180"></i>
+        <img src="assets/icon/horse.png" 
+             alt="Productos para caballos - Alimento y accesorios equinos" 
+             class="w-6 h-6 md:w-8 md:h-8 mr-0 transition-transform duration-300 group-hover:scale-110" 
+             style="max-width: 1.5rem; max-height: 1.5rem; object-fit: contain;"
+             width="24" 
+             height="24">
+        <a class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-0.5 text-xs md:text-sm"
+           aria-haspopup="true" 
+           [attr.aria-expanded]="activeDropdown === 'horse'">
+          Caballo 
+          <i class="fa-solid fa-chevron-down ml-0.5 text-2xs md:text-xs transform transition-transform duration-300 group-hover:rotate-180" aria-hidden="true"></i>
         </a>
-        <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'horse'}">
+        <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'horse'}" role="menu">
           <ul class="py-2 bg-white rounded-lg shadow-lg">
-            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/caballo/alimento" class="text-orange-900 hover:text-orange-600 text-sm">Alimento</a>
+            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" role="none">
+              <a routerLink="/categories/caballo/alimento" 
+                 class="text-orange-900 hover:text-orange-600 text-sm" 
+                 role="menuitem">Alimento para caballos</a>
             </li>
-            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/caballo/accesorios" class="text-orange-900 hover:text-orange-600 text-sm">Accesorios</a>
+            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" role="none">
+              <a routerLink="/categories/caballo/accesorios" 
+                 class="text-orange-900 hover:text-orange-600 text-sm" 
+                 role="menuitem">Accesorios para caballos</a>
             </li>
           </ul>
         </div>
       </li>
+      
       <!-- Pájaros -->
-      <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('bird')" (mouseenter)="onMouseEnter('bird')" (mouseleave)="onMouseLeave()" [ngClass]="{'active': activeDropdown === 'bird'}">
+      <li class="flex items-center font-medium group relative flex-shrink-0" 
+          (click)="toggleDropdown('bird')" 
+          (mouseenter)="onMouseEnter('bird')" 
+          (mouseleave)="onMouseLeave()" 
+          [ngClass]="{'active': activeDropdown === 'bird'}">
         <div class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-orange-600 to-orange-400 group-hover:w-full transition-all duration-300 md:block hidden"></div>
-        <img src="assets/icon/bird.png" alt="Pájaros" class="w-6 h-6 md:w-8 md:h-8 mr-0 transition-transform duration-300 group-hover:scale-110" style="max-width: 1.5rem; max-height: 1.5rem; object-fit: contain;">
-        <a class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-0.5 text-xs md:text-sm"> Pájaros 
-          <i class="fa-solid fa-chevron-down ml-0.5 text-2xs md:text-xs transform transition-transform duration-300 group-hover:rotate-180"></i>
+        <img src="assets/icon/bird.png" 
+             alt="Productos para pájaros - Alimento y jaulas" 
+             class="w-6 h-6 md:w-8 md:h-8 mr-0 transition-transform duration-300 group-hover:scale-110" 
+             style="max-width: 1.5rem; max-height: 1.5rem; object-fit: contain;"
+             width="24" 
+             height="24">
+        <a class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-0.5 text-xs md:text-sm"
+           aria-haspopup="true" 
+           [attr.aria-expanded]="activeDropdown === 'bird'">
+          Pájaros 
+          <i class="fa-solid fa-chevron-down ml-0.5 text-2xs md:text-xs transform transition-transform duration-300 group-hover:rotate-180" aria-hidden="true"></i>
         </a>
-        <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'bird'}">
+        <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'bird'}" role="menu">
           <ul class="py-2 bg-white rounded-lg shadow-lg">
-            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/pajaros/alimento" class="text-orange-900 hover:text-orange-600 text-sm">Alimento</a>
+            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" role="none">
+              <a routerLink="/categories/pajaros/alimento" 
+                 class="text-orange-900 hover:text-orange-600 text-sm" 
+                 role="menuitem">Alimento para pájaros</a>
             </li>
-            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/pajaros/jaulas" class="text-orange-900 hover:text-orange-600 text-sm">Jaulas</a>
+            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" role="none">
+              <a routerLink="/categories/pajaros/jaulas" 
+                 class="text-orange-900 hover:text-orange-600 text-sm" 
+                 role="menuitem">Jaulas para pájaros</a>
             </li>
           </ul>
         </div>
       </li>
+      
       <!-- Vaca -->
-      <li class="flex items-center font-medium group relative flex-shrink-0" (click)="toggleDropdown('cow')" (mouseenter)="onMouseEnter('cow')" (mouseleave)="onMouseLeave()" [ngClass]="{'active': activeDropdown === 'cow'}">
+      <li class="flex items-center font-medium group relative flex-shrink-0" 
+          (click)="toggleDropdown('cow')" 
+          (mouseenter)="onMouseEnter('cow')" 
+          (mouseleave)="onMouseLeave()" 
+          [ngClass]="{'active': activeDropdown === 'cow'}">
         <div class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-orange-600 to-orange-400 group-hover:w-full transition-all duration-300 md:block hidden"></div>
-        <img src="assets/icon/cow.png" alt="Vaca" class="w-6 h-6 md:w-8 md:h-8 mr-0 transition-transform duration-300 group-hover:scale-110" style="max-width: 1.5rem; max-height: 1.5rem; object-fit: contain;">
-        <a class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-0.5 text-xs md:text-sm"> Vaca 
-          <i class="fa-solid fa-chevron-down ml-0.5 text-2xs md:text-xs transform transition-transform duration-300 group-hover:rotate-180"></i>
+        <img src="assets/icon/cow.png" 
+             alt="Productos para vacas - Alimento y cuidado bovino" 
+             class="w-6 h-6 md:w-8 md:h-8 mr-0 transition-transform duration-300 group-hover:scale-110" 
+             style="max-width: 1.5rem; max-height: 1.5rem; object-fit: contain;"
+             width="24" 
+             height="24">
+        <a class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-0.5 text-xs md:text-sm"
+           aria-haspopup="true" 
+           [attr.aria-expanded]="activeDropdown === 'cow'">
+          Vaca 
+          <i class="fa-solid fa-chevron-down ml-0.5 text-2xs md:text-xs transform transition-transform duration-300 group-hover:rotate-180" aria-hidden="true"></i>
         </a>
-        <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'cow'}">
+        <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'cow'}" role="menu">
           <ul class="py-2 bg-white rounded-lg shadow-lg">
-            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/vaca/alimento" class="text-orange-900 hover:text-orange-600 text-sm">Alimento</a>
+            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" role="none">
+              <a routerLink="/categories/vaca/alimento" 
+                 class="text-orange-900 hover:text-orange-600 text-sm" 
+                 role="menuitem">Alimento para vacas</a>
             </li>
-            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <a routerLink="/categories/vaca/cuidado" class="text-orange-900 hover:text-orange-600 text-sm">Cuidado</a>
+            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" role="none">
+              <a routerLink="/categories/vaca/cuidado" 
+                 class="text-orange-900 hover:text-orange-600 text-sm" 
+                 role="menuitem">Cuidado para vacas</a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <!-- Más animales (puedes agregar más aquí) -->
+      <!-- Conejo -->
+      <li class="flex items-center font-medium group relative flex-shrink-0" 
+          (click)="toggleDropdown('rabbit')" 
+          (mouseenter)="onMouseEnter('rabbit')" 
+          (mouseleave)="onMouseLeave()" 
+          [ngClass]="{'active': activeDropdown === 'rabbit'}">
+        <div class="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-orange-600 to-orange-400 group-hover:w-full transition-all duration-300 md:block hidden"></div>
+        <img src="assets/icon/rabbit.png" 
+             alt="Productos para conejos - Alimento y accesorios" 
+             class="w-6 h-6 md:w-8 md:h-8 mr-0 transition-transform duration-300 group-hover:scale-110" 
+             style="max-width: 1.5rem; max-height: 1.5rem; object-fit: contain;"
+             width="24" 
+             height="24">
+        <a class="group-hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-0.5 text-xs md:text-sm"
+           aria-haspopup="true" 
+           [attr.aria-expanded]="activeDropdown === 'rabbit'">
+          Conejo 
+          <i class="fa-solid fa-chevron-down ml-0.5 text-2xs md:text-xs transform transition-transform duration-300 group-hover:rotate-180" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu" [ngClass]="{'show': activeDropdown === 'rabbit'}" role="menu">
+          <ul class="py-2 bg-white rounded-lg shadow-lg">
+            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" role="none">
+              <a routerLink="/categories/conejo/alimento" 
+                 class="text-orange-900 hover:text-orange-600 text-sm" 
+                 role="menuitem">Alimento para conejos</a>
+            </li>
+            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" role="none">
+              <a routerLink="/categories/conejo/accesorios" 
+                 class="text-orange-900 hover:text-orange-600 text-sm" 
+                 role="menuitem">Accesorios para conejos</a>
             </li>
           </ul>
         </div>

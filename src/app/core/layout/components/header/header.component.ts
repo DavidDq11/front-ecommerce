@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CartService } from 'src/app/core/services/cart.service';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
@@ -9,8 +9,8 @@ import { Product } from 'src/app/modules/product/model';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
-  @ViewChild('categoryMenu') categoryMenu!: ElementRef; // Agregar esta línea
+export class HeaderComponent implements OnInit, AfterViewInit {
+  @ViewChild('categoryMenu') categoryMenu!: ElementRef;
   @ViewChild('carousel') carousel!: ElementRef;
   
   mobileMenuOpen = false;
@@ -23,7 +23,13 @@ export class HeaderComponent implements OnInit {
   userName: string | null = null;
   isCartModalOpen = false;
   isAdmin: boolean = false;
+  
+  // Nuevas propiedades para el scroll
+  canScrollLeft = false;
+  canScrollRight = false;
+  showScrollHint = false;
   private userSubscription: Subscription = new Subscription();
+  private scrollCheckTimeout: any;
 
   constructor(private cartService: CartService, public authService: AuthService) {}
 
@@ -41,10 +47,34 @@ export class HeaderComponent implements OnInit {
     this.cartService.cartUpdated.subscribe(() => {
       this.cart = this.cartService.getCart();
     });
+
+    // Mostrar hint de scroll para nuevos usuarios (solo una vez por sesión)
+    const hasSeenScrollHint = sessionStorage.getItem('hasSeenScrollHint');
+    if (!hasSeenScrollHint && window.innerWidth <= 768) {
+      setTimeout(() => {
+        this.showScrollHint = true;
+        setTimeout(() => {
+          this.showScrollHint = false;
+          sessionStorage.setItem('hasSeenScrollHint', 'true');
+        }, 4000);
+      }, 1000);
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.checkScrollability();
+    
+    // Revisar scrollability después de que la vista se estabilice
+    setTimeout(() => {
+      this.checkScrollability();
+    }, 500);
   }
 
   ngOnDestroy(): void {
     this.userSubscription.unsubscribe();
+    if (this.scrollCheckTimeout) {
+      clearTimeout(this.scrollCheckTimeout);
+    }
   }
 
   checkUserStatus() {
@@ -60,17 +90,48 @@ export class HeaderComponent implements OnInit {
     }
   }
 
+  // Verificar si el menú puede hacer scroll
+  checkScrollability() {
+    if (!this.categoryMenu?.nativeElement) return;
+
+    const element = this.categoryMenu.nativeElement;
+    this.canScrollLeft = element.scrollLeft > 0;
+    this.canScrollRight = element.scrollLeft < (element.scrollWidth - element.clientWidth - 1);
+    
+    // Actualizar clases CSS
+    const navElement = document.querySelector('nav');
+    if (navElement) {
+      navElement.classList.toggle('scrollable-left', this.canScrollLeft);
+      navElement.classList.toggle('scrollable-right', this.canScrollRight);
+      navElement.classList.toggle('show-scroll-hint', this.showScrollHint);
+    }
+  }
+
+  // Evento de scroll del menú
+  onCategoryScroll() {
+    if (this.scrollCheckTimeout) {
+      clearTimeout(this.scrollCheckTimeout);
+    }
+    
+    this.scrollCheckTimeout = setTimeout(() => {
+      this.checkScrollability();
+    }, 100);
+  }
+
   // Método para scroll del menú
   scrollMenu(direction: 'left' | 'right') {
     if (this.categoryMenu && this.categoryMenu.nativeElement) {
       const menu = this.categoryMenu.nativeElement;
-      const scrollAmount = 200; // Ajusta según necesites
+      const scrollAmount = 200;
       
       if (direction === 'left') {
         menu.scrollLeft -= scrollAmount;
       } else {
         menu.scrollLeft += scrollAmount;
       }
+      
+      // Actualizar estado después del scroll
+      setTimeout(() => this.checkScrollability(), 150);
     }
   }
 
@@ -233,6 +294,11 @@ export class HeaderComponent implements OnInit {
     this.pinnedDropdown = null;
     this.showAccountMenu = false;
     
+    // Revisar scrollability al cambiar tamaño
+    setTimeout(() => {
+      this.checkScrollability();
+    }, 300);
+    
     if (this.activeDropdown) {
       setTimeout(() => {
         this.positionDropdown(this.activeDropdown!);
@@ -278,5 +344,41 @@ export class HeaderComponent implements OnInit {
 
   closeCartModal() {
     this.isCartModalOpen = false;
+  }
+
+  // Método para mejorar SEO - Estructura semántica
+  get structuredData() {
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      'name': 'DOMIPETS',
+      'url': window.location.origin,
+      'logo': 'https://res.cloudinary.com/dgtukxydi/image/upload/v1757113148/Blanco_02_itshur.png',
+      'description': 'Tienda veterinaria especializada en alimentos y accesorios para mascotas',
+      'telephone': '+57-3016650526',
+      'address': {
+        '@type': 'PostalAddress',
+        'addressCountry': 'CO'
+      },
+      'sameAs': [
+        'https://tiktok.com/@domipets636',
+        'https://www.facebook.com/profile.php?id=61577026983860',
+        'https://instagram.com/domipetstiendaveterinaria'
+      ]
+    };
+  }
+
+  // Método para trackeo de interacciones (opcional para analytics)
+  trackCategoryInteraction(category: string, action: string) {
+    // Aquí puedes integrar con Google Analytics o otro servicio
+    console.log(`Category ${category} - ${action}`);
+    
+    // Ejemplo de implementación para Google Analytics:
+    // if (typeof gtag !== 'undefined') {
+    //   gtag('event', action, {
+    //     'event_category': 'Category Navigation',
+    //     'event_label': category
+    //   });
+    // }
   }
 }
