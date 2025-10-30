@@ -10,7 +10,7 @@ import { Product } from 'src/app/modules/product/model';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('categoryMenu') categoryMenu!: ElementRef<HTMLElement>;
+  @ViewChild('categoryMenu') categoryMenu!: ElementRef;
 
   mobileMenuOpen = false;
   showAccountMenu = false;
@@ -27,6 +27,16 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   // Scroll indicator
   scrollPercentage = 100;
   scrollLeftPercentage = 0;
+
+  
+
+  updateScrollIndicator(menu: HTMLElement): void {
+    const scrollLeft = menu.scrollLeft;
+    const scrollWidth = menu.scrollWidth - menu.clientWidth;
+
+    this.scrollPercentage = (menu.clientWidth / menu.scrollWidth) * 100;
+    this.scrollLeftPercentage = (scrollLeft / scrollWidth) * (100 - this.scrollPercentage);
+  }
 
   constructor(
     private cartService: CartService,
@@ -50,10 +60,9 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.setupMenuScroll();
-      this.onMenuScroll();
-    }, 100);
+    const menu = this.categoryMenu.nativeElement;
+    menu.addEventListener('scroll', () => this.updateScrollIndicator(menu));
+    this.updateScrollIndicator(menu);
   }
 
   ngOnDestroy(): void {
@@ -227,4 +236,5 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
       this.pinnedDropdown = null;
     }
   }
+  
 }
