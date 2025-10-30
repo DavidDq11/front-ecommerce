@@ -499,3 +499,49 @@ nav::after {
 .dropdown-overlay.show {
   display: block;
 }
+
+/* Ocultar scrollbar pero mantener funcionalidad */
+.scrollbar-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* Barra indicadora de scroll */
+.scroll-indicator {
+  height: 3px;
+  background: linear-gradient(to right, #ea580c, #f97316);
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: width 0.3s ease, left 0.3s ease;
+  z-index: 20;
+}
+
+/* Scroll suave y táctil */
+nav ul {
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+}
+
+/* Evitar que los items bloqueen el scroll */
+nav li,
+nav li * {
+  touch-action: pan-x;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* Dropdowns no interfieren */
+.dropdown-menu {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.dropdown-menu.show {
+  pointer-events: auto;
+  opacity: 1;
+}

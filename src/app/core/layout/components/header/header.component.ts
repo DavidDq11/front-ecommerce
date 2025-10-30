@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CartService } from 'src/app/core/services/cart.service';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
@@ -9,10 +9,10 @@ import { Product } from 'src/app/modules/product/model';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
-  @ViewChild('categoryMenu') categoryMenu!: ElementRef; // Agregar esta línea
+export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('categoryMenu') categoryMenu!: ElementRef;
   @ViewChild('carousel') carousel!: ElementRef;
-  
+
   mobileMenuOpen = false;
   showAccountMenu = false;
   activeDropdown: string | null = null;
@@ -25,11 +25,19 @@ export class HeaderComponent implements OnInit {
   isAdmin: boolean = false;
   private userSubscription: Subscription = new Subscription();
 
-  constructor(private cartService: CartService, public authService: AuthService) {}
+  // Variables para la barra indicadora de scroll
+  scrollPercentage = 0;
+  scrollLeftPercentage = 0;
+
+  constructor(
+    private cartService: CartService,
+    public authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.cart = this.cartService.getCart();
     this.checkUserStatus();
+
     this.userSubscription = this.authService.user$.subscribe(user => {
       this.userName = user?.name || null;
       this.isAdmin = user?.admin ?? false;
@@ -38,9 +46,15 @@ export class HeaderComponent implements OnInit {
         this.mobileMenuOpen = false;
       }
     });
+
     this.cartService.cartUpdated.subscribe(() => {
       this.cart = this.cartService.getCart();
     });
+  }
+
+  ngAfterViewInit(): void {
+    // Inicializar barra indicadora
+    setTimeout(() => this.onMenuScroll(), 100);
   }
 
   ngOnDestroy(): void {
@@ -60,20 +74,25 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  // Método para scroll del menú
-  scrollMenu(direction: 'left' | 'right') {
-    if (this.categoryMenu && this.categoryMenu.nativeElement) {
-      const menu = this.categoryMenu.nativeElement;
-      const scrollAmount = 200; // Ajusta según necesites
-      
-      if (direction === 'left') {
-        menu.scrollLeft -= scrollAmount;
-      } else {
-        menu.scrollLeft += scrollAmount;
-      }
+  // === SCROLL DEL MENÚ DE CATEGORÍAS ===
+  onMenuScroll() {
+    if (!this.categoryMenu) return;
+
+    const menu = this.categoryMenu.nativeElement;
+    const maxScroll = menu.scrollWidth - menu.clientWidth;
+
+    if (maxScroll > 0) {
+      const scrollLeft = menu.scrollLeft;
+      const percentage = (scrollLeft / maxScroll) * 100;
+      this.scrollPercentage = (menu.clientWidth / menu.scrollWidth) * 100;
+      this.scrollLeftPercentage = percentage * (1 - this.scrollPercentage / 100);
+    } else {
+      this.scrollPercentage = 100;
+      this.scrollLeftPercentage = 0;
     }
   }
 
+  // === TOGGLE MENÚS ===
   toggleMobileMenu() {
     this.mobileMenuOpen = !this.mobileMenuOpen;
     if (this.mobileMenuOpen) {
@@ -103,6 +122,7 @@ export class HeaderComponent implements OnInit {
     }
 
     if (window.innerWidth > 1024) {
+      // Desktop: pin al hacer click
       if (this.pinnedDropdown === category) {
         this.pinnedDropdown = null;
         this.activeDropdown = null;
@@ -112,6 +132,7 @@ export class HeaderComponent implements OnInit {
         this.showAccountMenu = false;
       }
     } else {
+      // Móvil/Tablet: toggle simple
       if (this.activeDropdown === category) {
         this.activeDropdown = null;
       } else {
@@ -119,95 +140,78 @@ export class HeaderComponent implements OnInit {
         this.showAccountMenu = false;
       }
       setTimeout(() => {
-        this.positionDropdown(category, event);
+        this.positionDropdown(category);
       }, 10);
     }
   }
 
-  private positionDropdown(category: string, event?: Event) {
-    if (window.innerWidth <= 1024) {
-      const dropdownMenu = document.querySelector('.dropdown-menu.show') as HTMLElement;
-      if (dropdownMenu) {
-        if (window.innerWidth <= 768) {
-          const navHeight = document.querySelector('nav')?.offsetHeight || 0;
-          const headerHeight = document.querySelector('header')?.offsetHeight || 0;
-          
-          dropdownMenu.style.position = 'fixed';
-          dropdownMenu.style.top = `${navHeight + headerHeight + 60}px`;
-          dropdownMenu.style.left = '10px';
-          dropdownMenu.style.right = 'auto';
-          dropdownMenu.style.width = 'calc(100% - 20px)';
-          dropdownMenu.style.maxWidth = '300px';
-          dropdownMenu.style.margin = '0 auto';
-          dropdownMenu.style.zIndex = '25000';
-          
-          const screenWidth = window.innerWidth;
-          const dropdownWidth = 300;
-          const leftPosition = (screenWidth - dropdownWidth) / 2;
-          dropdownMenu.style.left = `${Math.max(10, leftPosition)}px`;
-          dropdownMenu.style.right = 'auto';
-          dropdownMenu.style.width = `${Math.min(300, screenWidth - 20)}px`;
-        } else {
-          const navHeight = document.querySelector('nav')?.offsetHeight || 0;
-          const headerHeight = document.querySelector('header')?.offsetHeight || 0;
-          
-          dropdownMenu.style.position = 'fixed';
-          dropdownMenu.style.top = `${navHeight + headerHeight + 60}px`;
-          dropdownMenu.style.left = '20px';
-          dropdownMenu.style.right = 'auto';
-          dropdownMenu.style.width = 'calc(100% - 40px)';
-          dropdownMenu.style.maxWidth = '400px';
-          dropdownMenu.style.margin = '0 auto';
-          dropdownMenu.style.zIndex = '24000';
-          
-          const screenWidth = window.innerWidth;
-          const dropdownWidth = 400;
-          const leftPosition = (screenWidth - dropdownWidth) / 2;
-          dropdownMenu.style.left = `${Math.max(20, leftPosition)}px`;
-          dropdownMenu.style.right = 'auto';
-          dropdownMenu.style.width = `${Math.min(400, screenWidth - 40)}px`;
-        }
-      }
+  private positionDropdown(category: string) {
+    if (window.innerWidth > 1024) return;
+
+    const dropdownMenu = document.querySelector('.dropdown-menu.show') as HTMLElement;
+    if (!dropdownMenu) return;
+
+    const navHeight = document.querySelector('nav')?.offsetHeight || 0;
+    const headerHeight = document.querySelector('header')?.offsetHeight || 0;
+    const topOffset = navHeight + headerHeight + 60;
+
+    if (window.innerWidth <= 768) {
+      // Móvil
+      const screenWidth = window.innerWidth;
+      const dropdownWidth = Math.min(300, screenWidth - 20);
+      const leftPosition = (screenWidth - dropdownWidth) / 2;
+
+      dropdownMenu.style.position = 'fixed';
+      dropdownMenu.style.top = `${topOffset}px`;
+      dropdownMenu.style.left = `${Math.max(10, leftPosition)}px`;
+      dropdownMenu.style.width = `${dropdownWidth}px`;
+      dropdownMenu.style.maxWidth = '300px';
+      dropdownMenu.style.zIndex = '25000';
+    } else {
+      // Tablet
+      const screenWidth = window.innerWidth;
+      const dropdownWidth = Math.min(400, screenWidth - 40);
+      const leftPosition = (screenWidth - dropdownWidth) / 2;
+
+      dropdownMenu.style.position = 'fixed';
+      dropdownMenu.style.top = `${topOffset}px`;
+      dropdownMenu.style.left = `${Math.max(20, leftPosition)}px`;
+      dropdownMenu.style.width = `${dropdownWidth}px`;
+      dropdownMenu.style.maxWidth = '400px';
+      dropdownMenu.style.zIndex = '24000';
     }
   }
 
+  // === HOVER (solo desktop) ===
   onMouseEnter(category: string) {
-    if (window.innerWidth > 1024) {
-      if (!this.pinnedDropdown) {
-        this.activeDropdown = category;
-        this.showAccountMenu = false;
-      }
-    } else if (window.innerWidth > 768) {
+    if (window.innerWidth > 1024 && !this.pinnedDropdown) {
       this.activeDropdown = category;
       this.showAccountMenu = false;
     }
   }
 
   onMouseLeave() {
-    if (window.innerWidth > 1024) {
-      if (!this.pinnedDropdown) {
-        this.activeDropdown = null;
-      }
-    } else if (window.innerWidth > 768) {
+    if (window.innerWidth > 1024 && !this.pinnedDropdown) {
       this.activeDropdown = null;
     }
   }
 
+  // === CIERRE CON CLICK/TAP FUERA ===
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
     const target = event.target as HTMLElement;
-    
-    if (window.innerWidth > 1024) {
-      if (!target.closest('.group') && !target.closest('.dropdown-menu') && !target.closest('.suggestions-list')) {
+
+    // Cerrar dropdowns
+    if (!target.closest('.group') && !target.closest('.dropdown-menu') && !target.closest('.suggestions-list')) {
+      if (window.innerWidth > 1024) {
         this.activeDropdown = null;
         this.pinnedDropdown = null;
-      }
-    } else {
-      if (!target.closest('.group') && !target.closest('.dropdown-menu') && !target.closest('.suggestions-list')) {
+      } else {
         this.activeDropdown = null;
       }
     }
-    
+
+    // Cerrar menú de cuenta
     if (!target.closest('.group') && !target.closest('.account-menu') && !target.closest('.suggestions-list')) {
       this.showAccountMenu = false;
     }
@@ -216,31 +220,32 @@ export class HeaderComponent implements OnInit {
   @HostListener('document:touchstart', ['$event'])
   onTouchStart(event: Event) {
     const target = event.target as HTMLElement;
-    
+
     if (!target.closest('.group') && !target.closest('.dropdown-menu') && !target.closest('.suggestions-list')) {
       this.activeDropdown = null;
       this.pinnedDropdown = null;
     }
-    
+
     if (!target.closest('.group') && !target.closest('.account-menu') && !target.closest('.suggestions-list')) {
       this.showAccountMenu = false;
     }
   }
 
-  @HostListener('window:resize', ['$event'])
+  // === RESIZE Y SCROLL ===
+  @HostListener('window:resize')
   onWindowResize() {
     this.activeDropdown = null;
     this.pinnedDropdown = null;
     this.showAccountMenu = false;
-    
+
     if (this.activeDropdown) {
-      setTimeout(() => {
-        this.positionDropdown(this.activeDropdown!);
-      }, 100);
+      setTimeout(() => this.positionDropdown(this.activeDropdown!), 100);
     }
+
+    setTimeout(() => this.onMenuScroll(), 100);
   }
 
-  @HostListener('window:scroll', ['$event'])
+  @HostListener('window:scroll')
   onWindowScroll() {
     if (window.innerWidth <= 1024 && this.activeDropdown) {
       this.activeDropdown = null;
@@ -248,26 +253,7 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  logOut() {
-    this.authService.logout();
-    this.userName = null;
-    this.isAdmin = false;
-    this.showAccountMenu = false;
-    this.mobileMenuOpen = false;
-    this.activeDropdown = null;
-    this.pinnedDropdown = null;
-  }
-
-  scrollCarousel(direction: 'left' | 'right') {
-    const carouselEl = this.carousel.nativeElement;
-    const scrollAmount = 150;
-    if (direction === 'left') {
-      carouselEl.scrollLeft -= scrollAmount;
-    } else {
-      carouselEl.scrollLeft += scrollAmount;
-    }
-  }
-
+  // === CARRITO ===
   openCartModal(event: Event) {
     event.stopPropagation();
     this.isCartModalOpen = true;
@@ -278,5 +264,28 @@ export class HeaderComponent implements OnInit {
 
   closeCartModal() {
     this.isCartModalOpen = false;
+  }
+
+  // === CARRUSEL (si lo usas) ===
+  scrollCarousel(direction: 'left' | 'right') {
+    if (!this.carousel) return;
+    const carouselEl = this.carousel.nativeElement;
+    const scrollAmount = 150;
+    if (direction === 'left') {
+      carouselEl.scrollLeft -= scrollAmount;
+    } else {
+      carouselEl.scrollLeft += scrollAmount;
+    }
+  }
+
+  // === LOGOUT ===
+  logOut() {
+    this.authService.logout();
+    this.userName = null;
+    this.isAdmin = false;
+    this.showAccountMenu = false;
+    this.mobileMenuOpen = false;
+    this.activeDropdown = null;
+    this.pinnedDropdown = null;
   }
 }
