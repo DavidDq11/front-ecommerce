@@ -89,6 +89,49 @@ nav ul {
   overflow: visible !important;
 }
 
+/* Scroll horizontal para el menú de categorías */
+nav ul {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+  
+  /* CRÍTICO: Habilitar scroll horizontal */
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+  scrollbar-width: none; /* Ocultar scrollbar en Firefox */
+  -ms-overflow-style: none; /* Ocultar scrollbar en IE/Edge */
+  
+  /* Evitar que el contenido se rompa */
+  white-space: nowrap;
+  flex-wrap: nowrap;
+  
+  /* Padding para mejor UX en móviles */
+  padding-bottom: 0.5rem;
+  scroll-behavior: smooth;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+/* Ocultar scrollbar en Chrome, Safari y Opera */
+nav ul::-webkit-scrollbar {
+  display: none;
+}
+
+/* Indicador visual de que hay más contenido */
+nav::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 30px;
+  background: linear-gradient(to right, transparent, white);
+  pointer-events: none;
+}
+
 /* Asegura que el elemento padre tenga posición relativa */
 .group {
   position: relative;
@@ -205,6 +248,10 @@ nav ul {
     overflow: visible !important;
   }
 
+  nav::after {
+    display: block;
+  }
+
   .logo-container {
     height: 120px;
   }
@@ -229,6 +276,8 @@ nav ul {
     white-space: nowrap;
     /* CRÍTICO: Permitir que los dropdowns se muestren verticalmente */
     overflow-y: visible !important;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   nav li {
@@ -327,6 +376,13 @@ nav ul {
 
   nav ul {
     overflow: visible !important;
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  nav::after {
+    display: none;
   }
 
   .dropdown-menu {
@@ -376,6 +432,12 @@ nav ul {
     flex-wrap: wrap;
     justify-content: center;
     overflow: visible;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  nav::after {
+    display: none;
   }
 
   nav li img {

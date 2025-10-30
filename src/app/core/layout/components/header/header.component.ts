@@ -10,7 +10,9 @@ import { Product } from 'src/app/modules/product/model';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
+  @ViewChild('categoryMenu') categoryMenu!: ElementRef; // Agregar esta línea
   @ViewChild('carousel') carousel!: ElementRef;
+  
   mobileMenuOpen = false;
   showAccountMenu = false;
   activeDropdown: string | null = null;
@@ -55,6 +57,20 @@ export class HeaderComponent implements OnInit {
       this.isAdmin = false;
       this.showAccountMenu = false;
       this.mobileMenuOpen = false;
+    }
+  }
+
+  // Método para scroll del menú
+  scrollMenu(direction: 'left' | 'right') {
+    if (this.categoryMenu && this.categoryMenu.nativeElement) {
+      const menu = this.categoryMenu.nativeElement;
+      const scrollAmount = 200; // Ajusta según necesites
+      
+      if (direction === 'left') {
+        menu.scrollLeft -= scrollAmount;
+      } else {
+        menu.scrollLeft += scrollAmount;
+      }
     }
   }
 
