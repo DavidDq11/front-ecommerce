@@ -151,7 +151,6 @@ nav::after {
   overflow: visible;
   /* CRÍTICO: Z-index muy alto para móviles y tablets */
   z-index: 15000;
-  display: none !important;
   animation: fadeIn 0.2s ease-in-out;
   position: absolute;
   /* CRÍTICO: Posición fija para móviles */
