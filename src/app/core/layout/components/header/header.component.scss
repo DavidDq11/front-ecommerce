@@ -1,3 +1,4 @@
+/* === HEADER BASE === */
 header {
   position: relative;
   overflow: visible;
@@ -6,7 +7,7 @@ header {
   z-index: 10000;
 }
 
-/* Parte superior que se oculta */
+/* Ocultar parte superior */
 .header-top {
   transition: all 0.5s ease-in-out;
 }
@@ -20,7 +21,6 @@ header {
   overflow: hidden;
 }
 
-/* Parte que contiene el título y el buscador */
 .header-fixed {
   padding: 0 !important;
   margin: 0 !important;
@@ -36,6 +36,7 @@ header {
   overflow: hidden;
 }
 
+/* Logo */
 .logo-container {
   height: 180px;
   display: flex;
@@ -66,12 +67,11 @@ header {
   align-items: center;
 }
 
-/* Ensure mobile hamburger and cart are aligned */
 .md\:hidden.flex.items-center.gap-2 {
   margin-left: 0.5rem;
 }
 
-/* Navegación de categorías */
+/* === NAVEGACIÓN === */
 nav {
   position: sticky;
   top: 0;
@@ -80,47 +80,32 @@ nav {
   padding: 0.5rem 1rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
-  /* CRÍTICO: Permitir que los elementos hijos puedan salir del contenedor */
-  overflow: visible !important;
+  overflow: visible !important; /* Permite dropdowns */
 }
 
-/* Asegurar que las listas también tengan overflow visible */
-nav ul {
-  overflow: visible !important;
-}
-
-/* Scroll horizontal para el menú de categorías */
 nav ul {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
   gap: 0.5rem;
-  
-  /* CRÍTICO: Habilitar scroll horizontal */
   overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
-  scrollbar-width: none; /* Ocultar scrollbar en Firefox */
-  -ms-overflow-style: none; /* Ocultar scrollbar en IE/Edge */
-  
-  /* Evitar que el contenido se rompa */
+  overflow-y: hidden; /* POR DEFECTO: evita cortes */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   white-space: nowrap;
   flex-wrap: nowrap;
-  
-  /* Padding para mejor UX en móviles */
   padding-bottom: 0.5rem;
   scroll-behavior: smooth;
   padding-left: 2rem;
   padding-right: 2rem;
 }
 
-/* Ocultar scrollbar en Chrome, Safari y Opera */
 nav ul::-webkit-scrollbar {
   display: none;
 }
 
-/* Indicador visual de que hay más contenido */
 nav::after {
   content: '';
   position: absolute;
@@ -132,14 +117,12 @@ nav::after {
   pointer-events: none;
 }
 
-/* Asegura que el elemento padre tenga posición relativa */
 .group {
   position: relative;
-  /* CRÍTICO: Permitir que los dropdowns se muestren por fuera */
   overflow: visible !important;
 }
 
-/* Estilo base del menú desplegable */
+/* === DROPDOWN BASE === */
 .dropdown-menu {
   background-color: white;
   border: 1px solid #e5e7eb;
@@ -149,13 +132,9 @@ nav::after {
   width: auto;
   max-height: none;
   overflow: visible;
-  /* CRÍTICO: Z-index muy alto para móviles y tablets */
   z-index: 15000;
   animation: fadeIn 0.2s ease-in-out;
-  position: absolute;
-  /* CRÍTICO: Posición fija para móviles */
-  top: 100%;
-  left: 0;
+  display: none;
 }
 
 .dropdown-menu.show {
@@ -170,12 +149,12 @@ nav::after {
   overflow: visible;
 }
 
-.dropdown-menu li:hover {
-  background-color: #f3f4f6;
-}
-
 .dropdown-menu li {
   padding: 0.75rem 1rem;
+}
+
+.dropdown-menu li:hover {
+  background-color: #f3f4f6;
 }
 
 .dropdown-menu li a {
@@ -189,13 +168,12 @@ nav::after {
   color: #0056D2;
 }
 
-/* Animación para el menú desplegable */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Estilo base del menú de cuenta */
+/* === ACCOUNT MENU === */
 .account-menu {
   position: absolute;
   top: 100%;
@@ -237,200 +215,13 @@ nav::after {
   border-radius: 0.375rem;
 }
 
-/* Ajustes para pantallas móviles (max-width: 768px) */
-@media (max-width: 768px) {
-  nav {
-    position: sticky;
-    top: 0;
-    z-index: 11000;
-    /* CRÍTICO: Mantener overflow visible en móviles */
-    overflow: visible !important;
-  }
-
-  nav::after {
-    display: block;
-  }
-
-  .logo-container {
-    height: 120px;
-  }
-
-  .logo-image {
-    height: 210px;
-  }
-
-  .flex.items-center.justify-between.w-full.md\:w-auto {
-    height: 70px;
-  }
-
-  nav ul {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    gap: 0.5rem;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 0.5rem;
-    white-space: nowrap;
-    /* CRÍTICO: Permitir que los dropdowns se muestren verticalmente */
-    overflow-y: visible !important;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
-  nav li {
-    position: relative;
-    z-index: 1040;
-    flex-shrink: 0;
-    /* CRÍTICO: Permitir overflow visible en elementos li */
-    overflow: visible !important;
-  }
-
-  nav li img {
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-
-  nav li a {
-    font-size: 0.875rem;
-  }
-
-  .dropdown-menu {
-    /* CRÍTICO: Posición fija para móviles para evitar el scroll horizontal */
-    position: fixed !important;
-    top: auto !important;
-    left: 10px !important;
-    right: 10px !important;
-    width: calc(100% - 120px) !important;
-    max-width: 300px;
-    min-width: 150px;
-    max-height: 60vh;
-    overflow-y: auto;
-    /* CRÍTICO: Z-index muy alto para estar por encima de todo */
-    z-index: 25000 !important;
-    border-radius: 0.5rem;
-    display: none !important;
-    background-color: white;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    /* CRÍTICO: Calcular la posición dinámicamente */
-    transform: none !important;
-    margin-top: 120px !important; /* Ajustado de 10px a 20px */
-  }
-
-  .dropdown-menu.show {
-    display: block !important;
-  }
-
-  .dropdown-menu ul {
-    max-height: none;
-    overflow: visible;
-  }
-
-  .dropdown-menu li {
-    font-size: 1rem;
-    padding: 1rem;
-    text-align: left;
-  }
-
-  .account-menu {
-    position: fixed;
-    top: 190px;
-    left: 5%;
-    width: 90%;
-    max-height: 70vh;
-    overflow-y: auto;
-    z-index: 26000;
-    display: none !important;
-    background-color: white;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  }
-
-  .account-menu.show {
-    display: block !important;
-  }
-
-  .account-menu ul {
-    padding: 0.5rem;
-  }
-
-  .account-menu li a {
-    font-size: 0.875rem;
-  }
-}
-
-/* Ajustes para tablets (min-width: 769px y max-width: 1024px) */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .header-fixed {
-    padding: 0.5rem 1rem;
-  }
-
-  .flex.items-center.justify-between.w-full.md\:w-auto {
-    height: 80px;
-  }
-
-  nav {
-    overflow: visible !important;
-  }
-
-  nav ul {
-    overflow: visible !important;
-    justify-content: center;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  nav::after {
-    display: none;
-  }
-
-  .dropdown-menu {
-    /* CRÍTICO: Posición fija para tablets también */
-    position: fixed !important;
-    top: auto !important;
-    left: 20px !important;
-    right: 20px !important;
-    width: calc(100% - 120px) !important;
-    max-width: 400px;
-    min-width: 200px;
-    max-height: 70vh;
-    overflow-y: auto;
-    /* CRÍTICO: Z-index alto para tablets */
-    z-index: 24000 !important;
-    display: none !important;
-    background-color: white;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    margin-top: 120px !important; /* Ajustado de 10px a 20px */
-  }
-
-  .dropdown-menu.show {
-    display: block !important;
-  }
-
-  .account-menu {
-    position: absolute;
-    top: calc(100% + 0.5rem);
-    right: 10%;
-    width: 50%;
-    max-height: 60vh;
-    overflow-y: auto;
-    z-index: 23000;
-    display: none !important;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  }
-
-  .account-menu.show {
-    display: block !important;
-  }
-}
-
-/* Ajustes para pantallas grandes (min-width: 1025px) */
+/* === ESCRITORIO: HOVER + POSITION ABSOLUTE === */
 @media (min-width: 1025px) {
   nav ul {
     gap: 1.5rem;
     flex-wrap: wrap;
     justify-content: center;
-    overflow: visible;
+    overflow: visible !important; /* Permite que dropdown salga */
     padding-left: 0;
     padding-right: 0;
   }
@@ -450,30 +241,28 @@ nav::after {
   }
 
   .dropdown-menu {
-    position: absolute;
-    left: 0;
-    top: calc(100% + 0.5rem); /* Ajustado de 0.5rem a 1rem */
-    margin-top: 0.5rem; /* Ajustado de 0.5rem a 1rem */
+    position: absolute !important;
+    left: 0 !important;
+    top: calc(100% + 0.5rem) !important;
     min-width: 12rem;
-    z-index: 12000;
-    display: none !important;
+    z-index: 30000 !important;
     background-color: white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border-radius: 0.5rem;
+    display: none;
+    margin-top: 0.5rem;
   }
 
+  .group:hover > .dropdown-menu,
   .dropdown-menu.show {
-    display: block !important;
-  }
-
-  .group:hover .dropdown-menu {
     display: block !important;
   }
 
   .account-menu {
     position: absolute;
     right: 0;
-    top: calc(100% + 0.5rem); /* Ajustado de 0.5rem a 1rem */
-    margin-top: 0.5rem; /* Ajustado de 0.5rem a 1rem */
+    top: calc(100% + 0.5rem);
+    margin-top: 0.5rem;
     z-index: 13000;
     display: none !important;
   }
@@ -483,97 +272,122 @@ nav::after {
   }
 }
 
-/* CRÍTICO: Overlay para cerrar menús en móviles/tablets */
-.dropdown-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.3);
-  z-index: 20000;
-  display: none;
+/* === MÓVIL: CLIC + POSITION FIXED + SCROLL HORIZONTAL === */
+@media (max-width: 768px) {
+  nav {
+    overflow: visible !important;
+  }
+
+  .logo-container {
+    height: 120px;
+  }
+
+  .logo-image {
+    height: 210px;
+  }
+
+  .flex.items-center.justify-between.w-full.md\:w-auto {
+    height: 70px;
+  }
+
+  nav ul {
+    overflow-y: hidden !important; /* CRÍTICO: permite scroll horizontal */
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  nav li {
+    position: relative;
+    z-index: 1040;
+    flex-shrink: 0;
+    overflow: visible !important;
+  }
+
+  nav li img {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  nav li a {
+    font-size: 0.875rem;
+  }
+
+  .dropdown-menu {
+    position: fixed !important;
+    top: auto !important;
+    left: 10px !important;
+    right: 10px !important;
+    width: calc(100% - 120px) !important;
+    max-width: 300px;
+    min-width: 150px;
+    max-height: 60vh;
+    overflow-y: auto;
+    z-index: 30000 !important;
+    border-radius: 0.5rem;
+    display: none !important;
+    background-color: white;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    margin-top: 120px !important;
+  }
+
+  .dropdown-menu.show {
+    display: block !important;
+  }
+
+  .account-menu {
+    position: fixed;
+    top: 190px;
+    left: 5%;
+    width: 90%;
+    max-height: 70vh;
+    overflow-y: auto;
+    z-index: 26000;
+    display: none !important;
+    background-color: white;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .account-menu.show {
+    display: block !important;
+  }
 }
 
-.dropdown-overlay.show {
-  display: block;
+/* === TABLETS: MISMO QUE MÓVIL === */
+@media (min-width: 769px) and (max-width: 1024px) {
+  nav ul {
+    overflow-y: hidden !important;
+  }
+
+  .dropdown-menu {
+    position: fixed !important;
+    top: auto !important;
+    left: 20px !important;
+    right: 20px !important;
+    width: calc(100% - 120px) !important;
+    max-width: 400px;
+    min-width: 200px;
+    max-height: 70vh;
+    overflow-y: auto;
+    z-index: 24000 !important;
+    display: none !important;
+    background-color: white;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    margin-top: 120px !important;
+  }
+
+  .dropdown-menu.show {
+    display: block !important;
+  }
 }
 
-/* Ocultar scrollbar pero mantener funcionalidad */
-.scrollbar-hidden {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-hidden::-webkit-scrollbar {
-  display: none;
-}
-
-/* Barra indicadora de scroll */
-.scroll-indicator {
-  height: 3px;
-  background: linear-gradient(to right, #ea580c, #f97316);
-  border-radius: 2px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  transition: width 0.3s ease, left 0.3s ease;
-  z-index: 20;
-}
-
-/* Scroll suave y táctil */
-nav ul {
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-x;
-  overscroll-behavior-x: contain;
-  scroll-behavior: smooth;
-}
-
-/* Evitar que los items bloqueen el scroll */
-nav li,
-nav li * {
-  touch-action: pan-x;
-  -webkit-user-drag: none;
-  user-select: none;
-}
-
-/* Dropdowns no interfieren */
-.dropdown-menu {
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-.dropdown-menu.show {
-  pointer-events: auto;
-  opacity: 1;
-}
-
-/* FIX SCROLL CATEGORÍAS */
-nav ul.category-menu-list {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 0.5rem;
-
-  overflow-x: auto !important;
-  overflow-y: hidden !important;
-  
-  white-space: nowrap;
-  flex-wrap: nowrap;
-  padding: 0 1rem 0.5rem 1rem;
-}
-
-
-/* Asegurar que el <nav> no bloquee el scroll */
-nav {
-  overflow: hidden !important;
-}
-
+/* === SCROLL INDICATOR === */
 .scroll-indicator-container {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   height: 3px;
-  background-color: #ffe0b2; /* Fondo tenue */
+  background-color: #ffe0b2;
   overflow: hidden;
   border-radius: 2px;
 }
@@ -583,8 +397,7 @@ nav {
   top: 0;
   bottom: 0;
   height: 100%;
-  background-color: #f97316; /* Color naranja */
+  background-color: #f97316;
   border-radius: 2px;
   transition: left 0.1s ease, width 0.1s ease;
 }
-

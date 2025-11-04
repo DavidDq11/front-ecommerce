@@ -142,8 +142,8 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onMouseEnter(category: string) {
-    if (window.innerWidth > 1024 && !this.pinnedDropdown) {
-      this.activeDropdown = category;
+    if (window.innerWidth > 1024) {
+      this.activeDropdown = category;  // Solo cambia el estado
       this.showAccountMenu = false;
     }
   }
