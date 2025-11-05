@@ -22,18 +22,16 @@ interface NewsItem {
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  faBone = faBone;
-  faFish = faFish;
-  faCookieBite = faCookieBite;
-  faPaw = faPaw;
-  faTag = faTag;
-  faSyringe = faSyringe;
+  faBone = faBone; faFish = faFish; faCookieBite = faCookieBite;
+  faPaw = faPaw; faTag = faTag; faSyringe = faSyringe;
 
   products: Product[] = [];
   brands: Brand[] = [];
+  featuredBrand: Brand | null = null;
   skeletons: number[] = [...new Array(6)];
   error!: string;
   isLoading = false;
+  launchCountdown: string = '';
   images: string[] = [
     'assets/banner/banner1.png',
     'assets/banner/banner2.jpg',
@@ -74,7 +72,28 @@ export class HomeComponent implements OnInit {
   selectedBrandId: number | null = null;
   selectedBrandName: string | null = null;
 
-  private customBrandOrder: number[] = [38, 37, 195, 77, 63, 65, 66, 61, 80, 31, 49, 51, 81, 82, 83]; // Ajusta según tus prioridades
+  // === VARIABLES DE OFERTA DEL DÍA ===
+  todayBrandName: string = '';
+  todayDiscountPercent: number = 0;
+  hasTodayDeal: boolean = false;
+  sectionTitle: string = 'Nuevos Productos';
+
+  // === MAPA DE DESCUENTOS POR DÍA ===
+  private dailyBrandDiscounts: { [key: number]: { discount: number; name: string } } = {
+    0: { discount: 10, name: 'Monello' },
+    1: { discount: 5, name: 'Hills' },
+    2: { discount: 5, name: 'EQUILIBRIO' },
+    3: { discount: 5, name: 'Br For Cat' },
+    4: { discount: 5, name: 'Agility' },
+    5: { discount: 5, name: 'Br For Dog' },
+    6: { discount: 10, name: 'Cipacan' }
+  };
+
+  // === ORDEN PERSONALIZADO DE MARCAS ===
+  private customBrandOrder: string[] = [
+    'Select', 'Monello', 'Hills', 'EQUILIBRIO', 'Agility', 'Br For Cat', 'Br For Dog',
+    'Cipacan', 'Birbo', 'Chunky', 'KI', 'Kitten Paw', 'MAX', 'Nutrecan', 'SOLLA'
+  ];
 
   constructor(
     private _productService: ProductService,
@@ -87,51 +106,22 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.titleService.setTitle('Domipets - Tienda de Productos para Mascotas y Ganado');
-    this.metaService.updateTag({
-      name: 'description',
-      content: 'Explora nuestra amplia gama de alimentos, accesorios, medicamentos veterinarios y consultas veterinarias en Manizales y Villa María. ¡Entregas rápidas el mismo día!'
-    });
-    this.metaService.updateTag({
-      name: 'keywords',
-      content: 'mascotas, ganado, alimentos secos, accesorios, medicamentos veterinarios, consultas veterinarias, domicilios Manizales, Villa María'
-    });
-
-    const schema = {
-      '@context': 'https://schema.org',
-      '@type': 'CollectionPage',
-      name: 'Domipets - Inicio',
-      description: 'Explora nuestros productos y servicios para mascotas y ganado, incluyendo consultas veterinarias, entregas rápidas y medicamentos en Manizales.',
-      url: 'https://www.domipets.com.co/',
-      hasPart: this.categories.map(category => ({
-        '@type': 'Collection',
-        name: category.name,
-        url: `https://www.domipets.com.co${category.path}`
-      })),
-      mainEntity: {
-        '@type': 'NewsArticle',
-        headline: 'Noticias de Domipets',
-        description: 'Descubre nuestras consultas veterinarias, entregas rápidas en Manizales y nuevos medicamentos para tus mascotas.',
-        publisher: {
-          '@type': 'Organization',
-          name: 'Domipets',
-          logo: {
-            '@type': 'ImageObject',
-            url: 'https://www.domipets.com.co/assets/logo.png'
-          }
-        },
-        articleSection: this.newsItems.map(item => ({
-          '@type': 'Article',
-          headline: item.title,
-          description: item.summary,
-          image: `https://www.domipets.com.co/${item.image}`
-        }))
-      }
-    };
-    this.metaService.addTag({ name: 'application/ld+json', content: JSON.stringify(schema) });
+    this.metaService.updateTag({ name: 'description', content: 'Alimentos, medicamentos y accesorios para mascotas con entrega el mismo día en Manizales.' });
 
     this.fetchBrands();
-    this.newArrivalProducts();
-    this.validateImages();
+    this.newArrivalProducts(); // ← AQUÍ SE BUSCA EN TODAS LAS CATEGORÍAS
+    this.startLaunchCountdown();
+  }
+
+  // === NORMALIZACIÓN ROBUSTA ===
+  private normalize(str?: string): string {
+    if (!str) return '';
+    return str
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, ' ');
   }
 
   fetchBrands() {
@@ -143,36 +133,40 @@ export class HomeComponent implements OnInit {
           image: brand.image || undefined
         }));
 
-        // Reordenar marcas según customBrandOrder
         this.brands.sort((a, b) => {
-          const aIndex = this.customBrandOrder.indexOf(a.id);
-          const bIndex = this.customBrandOrder.indexOf(b.id);
-
-          if (aIndex !== -1 && bIndex !== -1) {
-            return aIndex - bIndex; // Ordena según el índice en customBrandOrder
-          } else if (aIndex !== -1) {
-            return -1; // a va primero si está en customBrandOrder
-          } else if (bIndex !== -1) {
-            return 1; // b va primero si está en customBrandOrder
-          } else {
-            return a.name.localeCompare(b.name); // Orden alfabético para las demás
-          }
+          const aIndex = this.customBrandOrder.indexOf(a.name);
+          const bIndex = this.customBrandOrder.indexOf(b.name);
+          if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+          if (aIndex !== -1) return -1;
+          if (bIndex !== -1) return 1;
+          return a.name.localeCompare(b.name);
         });
 
-        this.brands.forEach(brand => {
-          if (brand.image) {
-            const img = new Image();
-            img.src = brand.image;
-            img.onload = () => {};
-            img.onerror = (error) => console.error(`Error al cargar imagen: ${brand.image}`, error);
-          }
-        });
+        this.featuredBrand = this.brands[6] || null;
       },
-      (error) => {
-        console.error('Error fetching brands:', error);
-        this.brands = [];
-      }
+      () => this.brands = []
     );
+  }
+
+  startLaunchCountdown() {
+    const launchDate = new Date();
+    launchDate.setDate(launchDate.getDate() + 7);
+
+    const timer = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = launchDate.getTime() - now;
+
+      if (distance < 0) {
+        clearInterval(timer);
+        this.launchCountdown = '¡Oferta terminada!';
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      this.launchCountdown = `${days}d ${hours}h ${minutes}m`;
+    }, 60000);
   }
 
   selectBrand(brandId: number, brandName: string) {
@@ -188,78 +182,170 @@ export class HomeComponent implements OnInit {
     this.selectedBrandName = null;
     const category = this.categories.find(c => c.id === categoryId)?.name || 'Alimentos Secos';
     this.router.navigate([`/categories/${category}`]);
-    this.newArrivalProducts();
+    this.newArrivalProducts(); // ← Recarga oferta al cambiar categoría
   }
 
+  // === NUEVA LÓGICA: BUSCAR EN TODAS LAS CATEGORÍAS ===
   newArrivalProducts() {
     this.isLoading = true;
-    const params: any = {
-      limit: 5,
-      offset: 0
-    };
-    const category = this.categories.find(c => c.id === this.selectedCategoryId)?.name;
-    if (category) {
-      params.category = category;
+    this.products = [];
+
+    const allCategories = this.categories.map(c => c.name);
+    const allProducts: Product[] = [];
+    let completed = 0;
+
+    console.log('%c[OFERTA DEL DÍA] Buscando en TODAS las categorías...', 'color: #10b981; font-weight: bold');
+
+    allCategories.forEach(categoryName => {
+      const params = { limit: 50, offset: 0 }; // Más productos por categoría
+
+      this._productService.getByCategory(categoryName, params).subscribe(
+        (response: { products: Product[], total: number }) => {
+          const validProducts = response.products.filter(p => {
+            const firstSize = p.sizes?.[0];
+            return firstSize?.price && firstSize.price > 0;
+          });
+          allProducts.push(...validProducts);
+          completed++;
+
+          console.log(`%c[${categoryName}] ${validProducts.length} productos válidos`, 'color: #3b82f6');
+
+          if (completed === allCategories.length) {
+            console.log('%c[TODOS] Total productos válidos:', 'color: #8b5cf6', allProducts.length);
+            this.processAllProductsForDeal(allProducts);
+          }
+        },
+        (error) => {
+          completed++;
+          console.error(`%c[ERROR en ${categoryName}]`, 'color: #ef4444', error);
+          if (completed === allCategories.length) {
+            this.processAllProductsForDeal(allProducts);
+          }
+        }
+      );
+    });
+  }
+
+  // === PROCESAR TODOS LOS PRODUCTOS PARA OFERTA ===
+  private processAllProductsForDeal(data: Product[]) {
+    this.isLoading = false;
+
+    if (data.length === 0) {
+      console.warn('%c[OFERTA] No hay productos válidos', 'color: #f59e0b');
+      this.products = [];
+      // this.updateSectionTitle(false);
+      return;
     }
 
-    this._productService.getByCategory(category || 'Alimentos Secos', params).subscribe(
-      (response: { products: Product[], total: number }) => {
-        this.isLoading = false;
-        const data = response.products;
+    const today = new Date().getDay();
+    const todayDeal = this.dailyBrandDiscounts[today];
 
-        if (data.length === 0) {
-          console.warn('No products returned', params);
-          this.products = [];
-          return;
-        }
+    console.log(`%c[HOY] Día: ${today} (${['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'][today]})`, 'color: #3b82f6');
+    console.log('%c[MARCA DEL DÍA]', 'color: #8b5cf6; font-weight: bold', todayDeal);
 
-        this.products = data.map(product => {
-          if (product.sizes && product.sizes.length > 0) {
-            return {
-              ...product,
-              size: product.sizes[0].size,
-              size_id: product.sizes[0].size_id,
-              price: product.sizes[0].price
-            };
-          }
-          return product;
-        });
+    if (!todayDeal) {
+      console.warn('%c[OFERTA] No hay oferta programada para hoy', 'color: #ef4444');
+      // this.updateSectionTitle(false);
+      this.applyGeneralDiscount(data);
+      return;
+    }
 
-        const today = new Date();
-        const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
-
-        const seededShuffle = (array: Product[], seed: number) => {
-          const rng = (seed: number) => {
-            const x = Math.sin(seed++) * 10000;
-            return x - Math.floor(x);
-          };
-          const shuffled = [...array];
-          for (let i = shuffled.length - 1; i > 0; i--) {
-            const j = Math.floor(rng(seed + i) * (i + 1));
-            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-          }
-          return shuffled;
-        };
-
-        const shuffledProducts = seededShuffle(this.products, seed);
-        this.products = shuffledProducts.slice(0, 5);
-      },
-      (error) => {
-        this.isLoading = false;
-        this.error = error.message;
-        console.error('HTTP Error:', error);
+    // === FILTRO POR MARCA ===
+    const dealProducts = data.filter(p => {
+      const pb = this.normalize(p.brand);
+      const db = this.normalize(todayDeal.name);
+      const match = pb && (pb === db || pb.includes(db));
+      if (match) {
+        console.log(`%cCOINCIDENCIA: "${p.brand}" (Categoría: ${p.category})`, 'color: #22c55e');
       }
-    );
+      return match;
+    });
+
+    console.log(`%c[RESULTADO] Productos de "${todayDeal.name}": ${dealProducts.length}`, 'color: #10b981; font-weight: bold');
+
+    if (dealProducts.length > 0) {
+      this.hasTodayDeal = true;
+      this.todayBrandName = todayDeal.name;
+      this.todayDiscountPercent = todayDeal.discount;
+
+      this.products = dealProducts.map(product => {
+        const firstSize = product.sizes![0];
+        const discountedPrice = Math.round(firstSize.price * (1 - todayDeal.discount / 100));
+
+        return {
+          ...product,
+          price: discountedPrice,
+          prevprice: firstSize.price,
+          size: firstSize.size,
+          size_id: firstSize.size_id,
+          sizes: product.sizes || [],
+          isTodayDeal: true
+        };
+      });
+
+      // this.updateSectionTitle(true);
+      console.log('%cOFERTA ACTIVADA EN TODAS LAS CATEGORÍAS', 'color: #22c55e; font-weight: bold', this.sectionTitle);
+    } else {
+      console.warn('%c[OFERTA] No se encontraron productos de la marca del día', 'color: #f59e0b');
+      // this.updateSectionTitle(false);
+      this.applyGeneralDiscount(data);
+    }
+
+    const seed = new Date().getTime();
+    this.products = this.seededShuffle(this.products, seed).slice(0, 5);
+  }
+
+  // private updateSectionTitle(hasDeal: boolean) {
+  //   if (hasDeal) {
+  //     this.sectionTitle = `Oferta del Día: ${this.todayBrandName} -${this.todayDiscountPercent}%`;
+  //   } else {
+  //     this.sectionTitle = 'Explora nuestras marcas premium';
+  //   }
+  //   console.log('%c[TÍTULO]', 'color: #6366f1', this.sectionTitle);
+  // }
+
+  private applyGeneralDiscount(data: Product[]) {
+    this.hasTodayDeal = false;
+    this.products = data.map(product => {
+      const firstSize = product.sizes![0];
+      const discountedPrice = Math.round(firstSize.price * 0.9);
+
+      return {
+        ...product,
+        price: discountedPrice,
+        prevprice: firstSize.price,
+        size: firstSize.size,
+        size_id: firstSize.size_id,
+        sizes: product.sizes || [],
+        isTodayDeal: false
+      };
+    });
+  }
+
+  private seededShuffle(array: Product[], seed: number): Product[] {
+    const rng = (s: number) => {
+      const x = Math.sin(s++) * 10000;
+      return x - Math.floor(x);
+    };
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(rng(seed + i) * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
   }
 
   selectSize(product: Product, size: { size_id: number; size: string; price: number; stock_quantity: number; image_url?: string }) {
     const updatedProducts = this.products.map(p => {
       if (p.id === product.id) {
+        const discount = this.hasTodayDeal ? (1 - this.todayDiscountPercent / 100) : 0.9;
+        const discountedPrice = Math.round(size.price * discount);
         return {
           ...p,
           size: size.size,
           size_id: size.size_id,
-          price: size.price
+          price: discountedPrice,
+          prevprice: size.price
         };
       }
       return p;
@@ -267,35 +353,26 @@ export class HomeComponent implements OnInit {
     this.products = [...updatedProducts];
   }
 
-  getCategoryPath(categoryId: number | null): string {
-    const categoryMap: Record<number, string> = {
-      1: 'Alimentos Secos',
-      2: 'Alimentos Húmedos',
-      3: 'Snacks',
-      4: 'Arena para Gatos',
-      5: 'Accesorios',
-      6: 'Productos Veterinarios'
-    };
-    return categoryId && categoryMap[categoryId] ? categoryMap[categoryId] : 'Alimentos Secos';
+  getDiscountPercent(product: Product): number {
+    if (!product.prevprice || product.prevprice <= product.price) return 0;
+    return Math.round((product.prevprice - product.price) / product.prevprice * 100);
   }
 
-  getProductImageUrl(product: Product): string {
-    return product.images && product.images.length > 0 ? product.images[0].image_url : 'assets/placeholder.jpg';
+  getStockQuantity(product: Product): number {
+    if (!product.sizes || product.sizes.length === 0) return 0;
+    if (product.size_id) {
+      return product.sizes.find(s => s.size_id === product.size_id)?.stock_quantity ?? 0;
+    }
+    return product.sizes[0].stock_quantity ?? 0;
   }
 
   scrollBrands(direction: 'left' | 'right') {
     const container = document.querySelector('.brands-container') as HTMLElement;
     if (container) {
       const scrollAmount = container.clientWidth * 0.8;
-      if (direction === 'left') {
-        container.scrollLeft -= scrollAmount;
-      } else {
-        container.scrollLeft += scrollAmount;
-      }
+      container.scrollLeft += direction === 'left' ? -scrollAmount : scrollAmount;
     }
   }
-
-  validateImages() {}
 
   onImageError(event: Event) {
     (event.target as HTMLImageElement).src = 'assets/placeholder.jpg';
@@ -316,13 +393,5 @@ export class HomeComponent implements OnInit {
 
   isProductInCart(product: Product) {
     return this.cartService.getCart().some((item: Product) => item.id === product.id);
-  }
-
-  getRatingStar(product: Product): boolean[] {
-    if (!product.rating || !product.rating.rate) {
-      return [false, false, false, false, false];
-    }
-    const rating = Math.round(product.rating.rate);
-    return Array(5).fill(false).map((_, index) => index < rating);
   }
 }
