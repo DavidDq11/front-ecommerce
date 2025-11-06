@@ -12,13 +12,10 @@ import { ProductService } from 'src/app/modules/product/services/product.service
   styleUrls: ['./search.component.scss']
 })
 export class SearchComponent implements OnInit, OnDestroy {
-onImageError($event: ErrorEvent) {
-throw new Error('Method not implemented.');
-}
-  searchControl = new FormControl('');
+  searchControl = new FormControl('', { nonNullable: true });
   suggestions: Product[] = [];
   isLoading = false;
-  private searchSubscription: Subscription = new Subscription();
+  private searchSubscription = new Subscription();
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -31,21 +28,22 @@ throw new Error('Method not implemented.');
       debounceTime(300),
       distinctUntilChanged(),
       switchMap(query => {
-        if (!query || query.trim() === '') {
+        const trimmed = query?.trim();
+        if (!trimmed) {
           this.suggestions = [];
           return [];
         }
         this.isLoading = true;
-        return this.productService.search(query);
+        return this.productService.search(trimmed);
       }),
       takeUntil(this.destroy$)
     ).subscribe({
-      next: (products: Product[]) => {
-        this.suggestions = products.slice(0, 25); 
+      next: (products) => {
+        this.suggestions = products.slice(0, 25);
         this.isLoading = false;
       },
-      error: (error) => {
-        console.error('Error en búsqueda:', error);
+      error: (err) => {
+        console.error('Error en búsqueda:', err);
         this.suggestions = [];
         this.isLoading = false;
       }
@@ -53,15 +51,28 @@ throw new Error('Method not implemented.');
   }
 
   selectSuggestion(product: Product): void {
-    // Navegar a la página de detalles del producto, igual que en HomeComponent
     this.router.navigate(['/categories', 'product', product.id]);
-    this.searchControl.setValue(''); // Limpiar el input
-    this.suggestions = []; // Limpiar sugerencias
+    this.clearSearch();
   }
 
   clearSearch(): void {
     this.searchControl.setValue('');
     this.suggestions = [];
+    // Opcional: enfocar el input
+    setTimeout(() => {
+      const input = document.querySelector('.search-input') as HTMLInputElement;
+      input?.focus();
+    }, 0);
+  }
+
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.src = 'assets/placeholder.jpg';
+  }
+
+  // Mejora de rendimiento
+  trackByProductId(index: number, product: Product): any {
+    return product.id;
   }
 
   ngOnDestroy(): void {

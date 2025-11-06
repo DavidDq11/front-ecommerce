@@ -36,6 +36,11 @@ header {
   overflow: hidden;
 }
 
+.search-container {
+  position: relative;
+  z-index: 9999 !important;
+}
+
 /* Logo */
 .logo-container {
   height: 180px;

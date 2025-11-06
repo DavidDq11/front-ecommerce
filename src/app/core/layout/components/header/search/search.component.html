@@ -1,54 +1,66 @@
-<div class="relative w-full">
-  <div class="flex items-center bg-white rounded-full shadow-sm border border-gray-300 focus-within:ring-2 focus-within:ring-orange-500 transition-all duration-200">
-    <i class="fa-solid fa-magnifying-glass text-gray-500 pl-4"></i>
+<div class="search-container">
+  <!-- Input de búsqueda -->
+  <div class="search-input-wrapper">
+    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+    
     <input
       [formControl]="searchControl"
       type="text"
       placeholder="Busca productos para tus mascotas..."
-      class="w-full py-2 px-3 text-gray-700 bg-transparent focus:outline-none"
+      class="search-input"
       aria-label="Busca productos para tus mascotas"
+      autocomplete="off"
+      spellcheck="false"
     />
+    
     <button
       *ngIf="searchControl.value"
       (click)="clearSearch()"
-      class="pr-4 text-gray-500 hover:text-gray-700 focus:outline-none"
+      class="clear-button"
+      type="button"
       aria-label="Limpiar búsqueda"
     >
       <i class="fa-solid fa-xmark"></i>
     </button>
   </div>
 
-  <!-- Lista de sugerencias -->
+  <!-- Sugerencias -->
   <ul
     *ngIf="suggestions.length > 0"
-    class="suggestions-list absolute w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 z-1000 max-h-96 overflow-y-auto"
+    class="suggestions-list"
+    role="listbox"
   >
     <li
-      *ngFor="let product of suggestions"
+      *ngFor="let product of suggestions; trackBy: trackByProductId"
       (click)="selectSuggestion(product)"
-      class="flex items-center p-3 hover:bg-gray-100 cursor-pointer border-b last:border-b-0"
+      class="suggestion-item"
+      role="option"
+      tabindex="0"
+      [attr.aria-label]="'Producto: ' + product.title"
     >
       <img
-        [src]="product.images && product.images.length > 0 ? product.images[0].image_url : 'assets/placeholder.jpg'"
+        [src]="product.images?.[0]?.image_url || 'assets/placeholder.jpg'"
         [alt]="product.title"
-        class="w-12 h-12 object-contain rounded mr-3"
+        class="product-image"
         (error)="onImageError($event)"
       />
-      <div class="flex-1">
-        <p class="text-sm font-medium text-gray-900 line-clamp-1">{{ product.title }}</p>
-        <p class="text-xs text-gray-600">{{ product.animal_category || product.category }}</p>
-        <p class="text-sm font-bold text-gray-800">
-          {{ (product.sizes && product.sizes.length > 0 ? product.sizes[0].price : product.price) | currency:'COP':'symbol':'1.0-0' }}
+      <div class="product-info">
+        <p class="product-title">{{ product.title }}</p>
+        <p class="product-category">{{ product.animal_category || product.category || 'General' }}</p>
+        <p class="product-price">
+          {{ (product.sizes?.[0]?.price ?? product.price) | currency:'COP':'symbol':'1.0-0' }}
         </p>
       </div>
     </li>
   </ul>
 
   <!-- Estado de carga -->
-  <div
-    *ngIf="isLoading"
-    class="absolute w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 z-1000 p-3 text-center"
-  >
-    <p class="text-sm text-gray-500">Cargando...</p>
+  <div *ngIf="isLoading" class="loading-state">
+    <p class="loading-text">Cargando...</p>
+  </div>
+
+  <!-- Sin resultados (opcional) -->
+  <div *ngIf="!isLoading && searchControl.value && suggestions.length === 0" class="no-results">
+    <p class="no-results-text">No se encontraron productos</p>
   </div>
 </div>
