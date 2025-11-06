@@ -91,7 +91,7 @@ export class HomeComponent implements OnInit {
 
   // === ORDEN PERSONALIZADO DE MARCAS ===
   private customBrandOrder: string[] = [
-    'Select', 'Monello', 'Hills', 'EQUILIBRIO', 'Agility', 'Br For Cat', 'Br For Dog',
+    'Select', 'Monello', 'Hills', 'Royal Canin', 'EQUILIBRIO', 'Agility', 'Br For Cat', 'Br For Dog',
     'Cipacan', 'Birbo', 'Chunky', 'KI', 'Kitten Paw', 'MAX', 'Nutrecan', 'SOLLA'
   ];
 
