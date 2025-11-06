@@ -4,9 +4,10 @@ import { CartService } from 'src/app/core/services/cart.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { OrderData, OrderService } from 'src/app/shared/services/auth/order.service';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
-import { addDays, format, getDay, eachDayOfInterval, isAfter, set } from 'date-fns';
+import { addDays, format, getDay, eachDayOfInterval, isAfter, set, parseISO } from 'date-fns';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { es } from 'date-fns/locale'
 
 @Component({
   selector: 'app-checkout',
@@ -44,6 +45,10 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     Nequi: 'Nequi',
     cash_on_delivery: 'Contraentrega',
   };
+
+  // NUEVAS PROPIEDADES
+  shippingCost = 3000; // Valor por defecto
+  selectedNeighborhoodName: string | null = null;
 
   constructor(
     private cartService: CartService,
@@ -102,24 +107,39 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     console.log('isAuthenticated:', this.authService.isAuthenticated());
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.cart = this.cartService.getCart();
+
+    // Suscripción al total del carrito
     this.cartService.getTotalAmount().subscribe((subtotal) => {
       this.total = Number(subtotal.toFixed(2));
-      const shippingCost = this.checkoutForm.get('shippingAddress.deliveryOption')?.value === 'store' ? 0 : 3000;
-      this.estimatedTotal = this.total + shippingCost;
+      this.updateShippingCost(); // Recalcula con el costo correcto
     });
+
+    // Leer datos desde history.state (incluye barrio y costo)
     const state = history.state;
     this.isGuest = state.isGuest || this.router.getCurrentNavigation()?.extras.queryParams?.['isGuest'] === 'true' || !this.authService.isAuthenticated();
+
     if (!this.isGuest && !this.authService.isAuthenticated()) {
       this.router.navigate(['/login'], { queryParams: { returnUrl: '/checkout' } });
       return;
     }
+
+    // NUEVO: Leer costo de envío y nombre del barrio
+    if (state.shippingCost !== undefined && state.neighborhood) {
+      this.shippingCost = state.shippingCost;
+      this.selectedNeighborhoodName = state.neighborhood.name;
+      // Forzar recalculo del total
+      this.updateShippingCost();
+    }
+
     if (!this.isGuest) {
       this.fetchUserData();
     }
+
     this.checkoutForm.get('shippingAddress.deliveryOption')?.valueChanges.subscribe(value => {
       this.updateAddressValidators(value);
       this.updateShippingCost();
     });
+
     document.addEventListener('click', this.closeDropdowns.bind(this));
   }
 
@@ -192,9 +212,11 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     });
   }
 
+  // MODIFICADO: Usa shippingCost del barrio
   updateShippingCost() {
-    const shippingCost = this.checkoutForm.get('shippingAddress.deliveryOption')?.value === 'store' ? 0 : 3000;
-    this.estimatedTotal = this.total + shippingCost;
+    const deliveryOption = this.checkoutForm.get('shippingAddress.deliveryOption')?.value;
+    const cost = deliveryOption === 'store' ? 0 : this.shippingCost;
+    this.estimatedTotal = this.total + cost;
   }
 
   toggleDropdown(field: 'city' | 'addressType' | 'paymentMethod' | 'deliveryOption') {
@@ -231,7 +253,15 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   }
 
   formatDate(dateStr: string, pattern: string): string {
-    return dateStr ? format(new Date(dateStr), pattern) : '';
+    if (!dateStr) return '';
+    try {
+      // Forzar interpretación como fecha local (sin conversión UTC)
+      const date = parseISO(dateStr);
+      if (isNaN(date.getTime())) return '';
+      return format(date, pattern, { locale: es });
+    } catch (e) {
+      return '';
+    }
   }
 
   validateField(field: string) {

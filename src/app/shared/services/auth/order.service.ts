@@ -49,7 +49,7 @@ export class OrderService {
     // console.log('OrderService: Placing order to', endpoint, 'with isGuest=', isGuest, 'data=', orderData);
     return this.http.post(endpoint, orderData).pipe(
       catchError(error => {
-        console.error('OrderService: Error processing order:', error);
+        console.error('OrderService: Error procesando order:', error);
         return throwError(() => error);
       })
     );

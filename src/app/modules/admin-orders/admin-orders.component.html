@@ -29,9 +29,9 @@
           <tr *ngFor="let order of orders" 
               class="hover:bg-gray-100"
               [ngClass]="{
-                'bg-red-100': order.status === 'cancelled',
-                'bg-green-100': order.status === 'completed',
-                'bg-white': order.status === 'pending' || order.status === 'processing'
+                'bg-red-100': order.status === 'cancelado',
+                'bg-green-100': order.status === 'completado',
+                'bg-white': order.status === 'pendiente' || order.status === 'procesando'
               }">
             <td class="py-2 px-4 border-b">{{ order.order_number }}</td>
             <td class="py-2 px-4 border-b">{{ order.user_id || 'Invitado' }}</td>
@@ -42,10 +42,10 @@
             <td class="py-2 px-4 border-b">{{ getPaymentMethodLabel(order.payment_method) }}</td>
             <td class="py-2 px-4 border-b flex space-x-2">
               <select [(ngModel)]="order.status" (ngModelChange)="updateOrderStatus(order, $event)" class="border rounded p-1">
-                <option value="pending">Pendiente</option>
-                <option value="processing">Procesando</option>
-                <option value="completed">Completada</option>
-                <option value="cancelled">Cancelada</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="procesando">Procesando</option>
+                <option value="completado">Completada</option>
+                <option value="cancelado">Cancelada</option>
               </select>
               <button (click)="viewOrderDetails(order)" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Ver Detalles</button>
             </td>
@@ -152,10 +152,10 @@
             Volver a la Lista
           </button>
           <select [(ngModel)]="selectedOrder.status" (ngModelChange)="updateOrderStatus(selectedOrder, $event)" class="border rounded p-2">
-            <option value="pending">Pendiente</option>
-            <option value="processing">Procesando</option>
-            <option value="completed">Completada</option>
-            <option value="cancelled">Cancelada</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="procesando">Procesando</option>
+            <option value="completado">Completada</option>
+            <option value="cancelado">Cancelada</option>
           </select>
         </div>
       </div>

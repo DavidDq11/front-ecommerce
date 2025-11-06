@@ -84,8 +84,8 @@ export class HomeComponent implements OnInit {
     1: { discount: 5, name: 'Hills' },
     2: { discount: 5, name: 'EQUILIBRIO' },
     3: { discount: 5, name: 'Br For Cat' },
-    4: { discount: 5, name: 'Agility' },
-    5: { discount: 5, name: 'Br For Dog' },
+    4: { discount: 5, name: 'Br For Dog' },
+    5: { discount: 5, name: 'Agility' },
     6: { discount: 10, name: 'Cipacan' }
   };
 
@@ -192,7 +192,7 @@ export class HomeComponent implements OnInit {
 
     const allCategories = this.categories.map(c => c.name);
     const allProducts: Product[] = [];
-    let completed = 0;
+    let completado = 0;
 
     console.log('%c[OFERTA DEL DÍA] Buscando en TODAS las categorías...', 'color: #10b981; font-weight: bold');
 
@@ -206,19 +206,19 @@ export class HomeComponent implements OnInit {
             return firstSize?.price && firstSize.price > 0;
           });
           allProducts.push(...validProducts);
-          completed++;
+          completado++;
 
           console.log(`%c[${categoryName}] ${validProducts.length} productos válidos`, 'color: #3b82f6');
 
-          if (completed === allCategories.length) {
+          if (completado === allCategories.length) {
             console.log('%c[TODOS] Total productos válidos:', 'color: #8b5cf6', allProducts.length);
             this.processAllProductsForDeal(allProducts);
           }
         },
         (error) => {
-          completed++;
+          completado++;
           console.error(`%c[ERROR en ${categoryName}]`, 'color: #ef4444', error);
-          if (completed === allCategories.length) {
+          if (completado === allCategories.length) {
             this.processAllProductsForDeal(allProducts);
           }
         }
