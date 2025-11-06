@@ -230,11 +230,14 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleAccountMenu() {
-    this.showAccountMenu = !this.showAccountMenu;
-    if (this.showAccountMenu) {
-      this.activeDropdown = null;
-      this.pinnedDropdown = null;
+    if (window.innerWidth > 1024) {
+      this.showAccountMenu = !this.showAccountMenu;
+      if (this.showAccountMenu) {
+        this.activeDropdown = null;
+        this.pinnedDropdown = null;
+      }
     }
+    // En móvil, no hacemos nada
   }
   
 }
