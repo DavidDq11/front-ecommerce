@@ -1,12 +1,7 @@
 .search-container {
   position: relative;
-  z-index: 12000 !important; /* ¡Más alto que nav (11000)! */
-}
-
-.suggestions-list,
-.loading-state,
-.no-results {
-  z-index: 12000 !important; /* Igual que el contenedor */
+  width: 100%;
+  font-family: inherit;
 }
 
 .search-input-wrapper {

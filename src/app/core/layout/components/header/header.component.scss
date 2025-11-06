@@ -406,3 +406,12 @@ nav::after {
   border-radius: 2px;
   transition: left 0.1s ease, width 0.1s ease;
 }
+
+
+@media (min-width: 1024px) {
+  .desktop-search-center {
+    flex: 1 1 auto;
+    max-width: 800px; /* ajusta este valor */
+    margin: 0 auto;
+  }
+}
