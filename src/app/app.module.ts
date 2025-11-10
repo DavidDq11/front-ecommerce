@@ -27,6 +27,8 @@ import Swal from 'sweetalert2';
 import { ProfileComponent } from './modules/product/components/profile/profile.component';
 import { AdminOrdersComponent } from './modules/admin-orders/admin-orders.component';
 import { AdminGuard } from './shared/services/auth/admin.guard';
+import { ForgotPasswordComponent } from './core/components/auth/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './core/components/auth/reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
@@ -49,6 +51,8 @@ import { AdminGuard } from './shared/services/auth/admin.guard';
     AboutComponent,
     ProfileComponent,
     AdminOrdersComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent,
   ],
   imports: [
     BrowserModule,
@@ -57,7 +61,9 @@ import { AdminGuard } from './shared/services/auth/admin.guard';
     ReactiveFormsModule,
     CommonModule,
     AppRoutingModule,
-    SharedModule
+    SharedModule,
+    CommonModule,
+    ReactiveFormsModule
   ],
   providers: [
     {

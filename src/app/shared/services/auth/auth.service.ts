@@ -259,4 +259,16 @@ export class AuthService {
     const user = this.getUserData();
     return user?.admin === true;
   }
+
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}forgot-password`, { email }).pipe(
+      catchError(error => throwError(() => error))
+    );
+  }
+
+  resetPassword(token: string, password: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}reset-password/${token}`, { password }).pipe(
+      catchError(error => throwError(() => error))
+    );
+  }
 }
