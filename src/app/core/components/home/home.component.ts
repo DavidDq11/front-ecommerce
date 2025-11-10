@@ -82,20 +82,20 @@ export class HomeComponent implements OnInit, OnDestroy {
   // === CAMBIO PRINCIPAL: DESCUENTOS POR SEMANA EN LUGAR DE POR DÍA ===
   private weeklyBrandDiscounts: { [key: string]: { discount: number; name: string } } = {
      // Noviembre 2025
-    '2025-45': { discount: 10, name: 'Monello' },      // Semana 45: 4-10 nov
-    '2025-46': { discount: 10, name: 'Royal Canin' },  // Semana 46: 11-17 nov ← ESTA SEMANA
-    '2025-47': { discount: 10, name: 'Hills' },        // Semana 47: 18-24 nov
-    '2025-48': { discount: 10, name: 'EQUILIBRIO' },   // Semana 48: 25 nov - 1 dic
+    '2025-45': { discount: 5, name: 'Monello' },      // Semana 45: 4-5 nov
+    '2025-46': { discount: 5, name: 'Royal Canin' },  // Semana 46: 11-17 nov ← ESTA SEMANA
+    '2025-47': { discount: 5, name: 'Hills' },        // Semana 47: 18-24 nov
+    '2025-48': { discount: 5, name: 'EQUILIBRIO' },   // Semana 48: 25 nov - 1 dic
     
     // Diciembre 2025
-    '2025-49': { discount: 10, name: 'Agility' },      // Semana 49: 2-8 dic
-    '2025-50': { discount: 10, name: 'Br For Cat' },   // Semana 50: 9-15 dic
-    '2025-51': { discount: 10, name: 'Cipacan' },      // Semana 51: 16-22 dic (Navidad)
-    '2025-52': { discount: 10, name: 'Birbo' },        // Semana 52: 23-29 dic (Navidad)
+    '2025-49': { discount: 5, name: 'Agility' },      // Semana 49: 2-8 dic
+    '2025-50': { discount: 5, name: 'Br For Cat' },   // Semana 50: 9-15 dic
+    '2025-51': { discount: 5, name: 'Cipacan' },      // Semana 51: 16-22 dic (Navidad)
+    '2025-52': { discount: 5, name: 'Birbo' },        // Semana 52: 23-29 dic (Navidad)
     
     // Enero 2026
-    '2026-01': { discount: 10, name: 'Chunky' },       // Semana 1: 30 dic - 5 ene
-    '2026-02': { discount: 10, name: 'KI' },           // Semana 2: 6-12 ene
+    '2026-01': { discount: 5, name: 'Chunky' },       // Semana 1: 30 dic - 5 ene
+    '2026-02': { discount: 5, name: 'KI' },           // Semana 2: 6-12 ene
   };
 
   // === ORDEN PERSONALIZADO DE MARCAS ===
