@@ -117,35 +117,74 @@
       ></app-productcard>
     </div>
     <nav class="flex justify-center mt-6" aria-label="Paginación de productos relacionados">
-      <ul class="inline-flex -space-x-px text-sm font-medium">
+      <ul class="inline-flex flex-wrap justify-center gap-2 text-sm font-medium">
         <li>
           <button
             (click)="changePage(currentPage - 1)"
             [disabled]="currentPage === 1"
-            class="px-4 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 disabled:opacity-50"
+            class="px-3 py-2 md:px-4 md:py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
             aria-label="Página anterior"
           >
-            Anterior
+            <span class="hidden sm:inline">Anterior</span>
+            <span class="sm:hidden">‹</span>
           </button>
         </li>
-        <li *ngFor="let page of [].constructor(totalPages); let i = index">
+        
+        <!-- Mostrar primera página siempre -->
+        <li *ngIf="totalPages > 1 && currentPage > 2">
           <button
-            (click)="changePage(i + 1)"
-            [ngClass]="currentPage === i + 1 ? 'bg-teal-500 text-white' : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-100'"
-            class="px-4 py-2 leading-tight border rounded-none hover:text-gray-700"
-            [attr.aria-label]="'Página ' + (i + 1)"
+            (click)="changePage(1)"
+            class="px-3 py-2 leading-tight border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+            [ngClass]="currentPage === 1 ? 'bg-teal-500 text-white border-teal-500' : 'text-gray-500 bg-white'"
+            aria-label="Página 1"
           >
-            {{ i + 1 }}
+            1
           </button>
         </li>
+        
+        <!-- Mostrar puntos suspensivos si hay muchas páginas -->
+        <li *ngIf="currentPage > 3">
+          <span class="px-2 py-2 text-gray-400">...</span>
+        </li>
+        
+        <!-- Páginas alrededor de la actual -->
+        <li *ngFor="let page of getVisiblePages()">
+          <button
+            (click)="changePage(page)"
+            [ngClass]="currentPage === page ? 'bg-teal-500 text-white border-teal-500' : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-100'"
+            class="px-3 py-2 leading-tight border rounded-lg transition-colors duration-200"
+            [attr.aria-label]="'Página ' + page"
+          >
+            {{ page }}
+          </button>
+        </li>
+        
+        <!-- Mostrar puntos suspensivos si hay muchas páginas -->
+        <li *ngIf="currentPage < totalPages - 2">
+          <span class="px-2 py-2 text-gray-400">...</span>
+        </li>
+        
+        <!-- Mostrar última página siempre -->
+        <li *ngIf="totalPages > 1 && currentPage < totalPages - 1">
+          <button
+            (click)="changePage(totalPages)"
+            class="px-3 py-2 leading-tight border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+            [ngClass]="currentPage === totalPages ? 'bg-teal-500 text-white border-teal-500' : 'text-gray-500 bg-white'"
+            [attr.aria-label]="'Página ' + totalPages"
+          >
+            {{ totalPages }}
+          </button>
+        </li>
+        
         <li>
           <button
             (click)="changePage(currentPage + 1)"
             [disabled]="currentPage === totalPages"
-            class="px-4 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 disabled:opacity-50"
+            class="px-3 py-2 md:px-4 md:py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
             aria-label="Siguiente página"
           >
-            Siguiente
+            <span class="hidden sm:inline">Siguiente</span>
+            <span class="sm:hidden">›</span>
           </button>
         </li>
       </ul>

@@ -240,4 +240,29 @@ export class ProductdetailComponent implements OnInit {
     }
     return this.product.stock === 'In stock';
   }
+
+  getVisiblePages(): number[] {
+    const pages = [];
+    const total = this.totalPages;
+    const current = this.currentPage;
+    
+    // Mostrar máximo 3 páginas alrededor de la actual
+    let start = Math.max(1, current - 1);
+    let end = Math.min(total, current + 1);
+    
+    // Ajustar para mostrar siempre 3 páginas si es posible
+    if (end - start < 2) {
+      if (start === 1) {
+        end = Math.min(total, start + 2);
+      } else if (end === total) {
+        start = Math.max(1, end - 2);
+      }
+    }
+    
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    
+    return pages;
+  }
 }
