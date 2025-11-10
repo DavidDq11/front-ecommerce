@@ -16,4 +16,6 @@ export interface Product {
   size_id?: number;
   qty?: number;
   totalprice?: number;
+  discountPercent?: number;
+  isWeeklyDeal?: boolean;
 }

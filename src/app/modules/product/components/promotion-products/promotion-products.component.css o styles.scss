@@ -1,0 +1,152 @@
+/* promotion-products.component.css */
+.breadcrumb-promotions {
+  position: sticky;
+  top: 0;
+  z-index: 15000;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  padding: 0.75rem 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  margin: 0.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.breadcrumb-promotions ol {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.breadcrumb-promotions ol::-webkit-scrollbar {
+  display: none;
+}
+
+.breadcrumb-promotions li {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb-promotions a {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: #fef3c7;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.breadcrumb-promotions a:hover {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.breadcrumb-promotions span {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.875rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.breadcrumb-promotions .fa-paw,
+.breadcrumb-promotions .fa-tag,
+.breadcrumb-promotions .fa-bolt {
+  color: #fef3c7;
+  margin: 0 0.25rem;
+}
+
+/* Mejoras específicas para móviles */
+@media (max-width: 768px) {
+  .breadcrumb-promotions {
+    padding: 0.6rem 0.75rem;
+    margin: 0.25rem;
+    border-radius: 10px;
+  }
+
+  .breadcrumb-promotions ol {
+    gap: 0.375rem;
+  }
+
+  .breadcrumb-promotions a,
+  .breadcrumb-promotions span {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+    border-radius: 6px;
+  }
+
+  .breadcrumb-promotions .fa-paw,
+  .breadcrumb-promotions .fa-tag,
+  .breadcrumb-promotions .fa-bolt {
+    font-size: 0.7rem;
+    margin: 0 0.125rem;
+  }
+
+  /* Ocultar texto largo en móviles */
+  .breadcrumb-promotions span:last-child {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* Ajustes para pantallas muy pequeñas (iPhone SE, etc) */
+@media (max-width: 375px) {
+  .breadcrumb-promotions {
+    padding: 0.5rem;
+  }
+
+  .breadcrumb-promotions a,
+  .breadcrumb-promotions span {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .breadcrumb-promotions .home-text {
+    display: none; /* Ocultar texto "Inicio" en pantallas muy pequeñas */
+  }
+}
+
+/* Tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .breadcrumb-promotions {
+    padding: 0.875rem 1.25rem;
+    margin: 0.75rem;
+  }
+
+  .breadcrumb-promotions a,
+  .breadcrumb-promotions span {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.875rem;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+  .breadcrumb-promotions {
+    padding: 1rem 1.5rem;
+    margin: 1rem auto;
+    max-width: 1300px;
+  }
+
+  .breadcrumb-promotions a,
+  .breadcrumb-promotions span {
+    font-size: 0.95rem;
+    padding: 0.6rem 1rem;
+  }
+}

@@ -1,3 +1,4 @@
+<!-- home.component.html -->
 <section class="w-full px-4 md:px-6 lg:px-8">
   <!-- Carousel -->
   <div class="flex justify-center">
@@ -110,116 +111,139 @@
     </div>
   </section>
 
-  <!-- ==================== NUEVOS PRODUCTOS (EXISTENTE) ==================== -->
+  <!-- ==================== OFERTAS DE LA SEMANA ==================== -->
   <article class="my-5 md:my-8">
-    <div class="flex flex-col items-center text-center gap-2">
-      <!-- Título principal -->
-      <div class="flex items-center gap-3">
-        <i class="fa-solid fa-paw text-orange-600 text-3xl"></i>
-        <h3 class="text-2xl sm:text-3xl font-bold text-gray-800">
-          Semana de <span class="text-orange-600">{{ todayBrandName }}</span>
-        </h3>
-        <i class="fa-solid fa-bone text-orange-600 text-3xl"></i>
-      </div>
-
-      <!-- Subtítulo con descuento -->
-      <p class="text-sm sm:text-base text-gray-600 font-medium">
-        <i class="fa-solid fa-tag mr-1 text-green-600"></i>
-        <strong>{{ todayDiscountPercent }}% off</strong> en todos los productos de esta marca
-      </p>
-
-      <!-- Contador (opcional) -->
-      <div class="text-xs font-medium text-orange-600" *ngIf="launchCountdown">
-        <i class="fa-solid fa-clock mr-1"></i>
-        Oferta termina en: <span class="font-bold">{{ launchCountdown }}</span>
-      </div>
+  <div class="flex flex-col items-center text-center gap-2 mb-6">
+    <!-- Título principal -->
+    <div class="flex items-center gap-3">
+      <i class="fa-solid fa-calendar-week text-orange-600 text-3xl"></i>
+      <h3 class="text-2xl sm:text-3xl font-bold text-gray-800">
+        {{ sectionTitle }}
+      </h3>
+      <i class="fa-solid fa-tag text-orange-600 text-3xl"></i>
     </div>
 
-    <!-- Loading / Error / Products Grid (TU CÓDIGO EXISTENTE) -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-5" *ngIf="!error && isLoading">
-      <app-cardskeleton *ngFor="let skeleton of skeletons"></app-cardskeleton>
+    <!-- Subtítulo con descuento -->
+    <p class="text-sm sm:text-base text-gray-600 font-medium" *ngIf="hasTodayDeal">
+      <i class="fa-solid fa-bolt mr-1 text-yellow-500"></i>
+      <strong>{{ todayDiscountPercent }}% OFF</strong> en todos los productos de {{ todayBrandName }}
+    </p>
+
+    <!-- Contador -->
+    <div class="text-xs font-medium text-orange-600" *ngIf="launchCountdown">
+      <i class="fa-solid fa-clock mr-1"></i>
+      Oferta termina en: <span class="font-bold">{{ launchCountdown }}</span>
     </div>
+  </div>
 
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-5" *ngIf="!isLoading && products.length > 0">
-      <div *ngFor="let product of products" 
-           class="relative flex flex-col h-full bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100">
-        
-        <!-- Badges -->
-        <div class="absolute top-2 left-2 z-10 flex flex-col gap-1">
-          <span class="bg-orange-600 text-white text-xs font-bold px-2 py-1 rounded-full animate-pulse">¡NUEVO!</span>
-          <span class="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full" 
-                *ngIf="getDiscountPercent(product) > 0">
-            -{{ getDiscountPercent(product) }}%
-          </span>
-        </div>
+  <!-- Loading / Error / Products Grid -->
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-5" *ngIf="!error && isLoading">
+    <app-cardskeleton *ngFor="let skeleton of skeletons"></app-cardskeleton>
+  </div>
 
-        <!-- Imagen -->
-        <a [routerLink]="['/categories', 'product', product.id]" class="w-full h-32 sm:h-40 md:h-48 overflow-hidden">
-          <img 
-            class="w-full h-full object-contain sm:object-cover transition-all duration-500 hover:scale-110"
-            [src]="product.images?.[0]?.image_url || 'assets/placeholder.jpg'"
-            [alt]="product.title" 
-            (error)="onImageError($event)" />
-        </a>
-
-        <!-- Detalles -->
-        <div class="flex flex-col justify-between flex-grow p-3 sm:p-4">
-          <div>
-            <a [routerLink]="['/categories', 'product', product.id]">
-              <h5 class="mb-1 text-sm font-semibold text-gray-900 line-clamp-2">{{ product.title }}</h5>
-            </a>
-            <p class="mt-1">
-              <span class="text-lg font-bold text-teal-600">{{ product.price | currency:'COP':'symbol':'1.0-0' }}</span>
-              <span class="line-through text-gray-500 text-sm ml-2" *ngIf="product.prevprice">
-                {{ product.prevprice | currency:'COP':'symbol':'1.0-0' }}
-              </span>
-            </p>
-          </div>
-
-          <!-- Tamaños -->
-          <div class="flex flex-wrap gap-1 mt-2" *ngIf="product.sizes?.length">
-            <button
-              *ngFor="let size of product.sizes"
-              [ngClass]="product.size === size.size ? 'bg-teal-500 text-white' : 'border border-teal-500 text-teal-500 hover:bg-teal-500 hover:text-white'"
-              class="text-xs px-2 py-1 rounded transition-all"
-              (click)="selectSize(product, size)"
-              [disabled]="size.stock_quantity === 0">
-              {{ size.size }}
-            </button>
-          </div>
-
-          <!-- Botón -->
-          <div class="mt-3">
-            <button
-              class="w-full py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-all flex items-center justify-center gap-2 text-sm font-medium"
-              *ngIf="!isProductInCart(product)"
-              (click)="addToCart(product)"
-              [disabled]="(product.sizes?.length ?? 0) > 0 && !product.size">
-              <i class="fa-solid fa-cart-plus"></i> Agregar
-            </button>
-            <button
-              class="w-full py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all flex items-center justify-center gap-2 text-sm font-medium"
-              *ngIf="isProductInCart(product)"
-              (click)="removeFromCart(product)">
-              <i class="fa-solid fa-trash"></i> Quitar
-            </button>
-          </div>
-        </div>
+  <!-- ✅ MOSTRAR SOLO 5 PRODUCTOS -->
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-5" *ngIf="!isLoading && products.length > 0">
+    <div *ngFor="let product of products" 
+         class="relative flex flex-col h-full bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100">
+      
+      <!-- Badges -->
+      <div class="absolute top-2 left-2 z-10 flex flex-col gap-1">
+        <span class="bg-orange-600 text-white text-xs font-bold px-2 py-1 rounded-full" 
+              *ngIf="product.isWeeklyDeal">
+          OFERTA SEMANAL
+        </span>
+        <span class="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full" 
+              *ngIf="getDiscountPercent(product) > 0">
+          -{{ getDiscountPercent(product) }}%
+        </span>
       </div>
-    </div>
 
-    <!-- Ver todos -->
-    <div class="text-center mt-6">
-      <a routerLink="/nuevos" class="inline-block px-6 py-3 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-all font-medium">
-        Ver productos en promoción →
+      <!-- Imagen -->
+      <a [routerLink]="['/categories', 'product', product.id]" class="w-full h-32 sm:h-40 md:h-48 overflow-hidden">
+        <img 
+          class="w-full h-full object-contain sm:object-cover transition-all duration-500 hover:scale-110"
+          [src]="product.images?.[0]?.image_url || 'assets/placeholder.jpg'"
+          [alt]="product.title" 
+          (error)="onImageError($event)" />
       </a>
-    </div>
 
-    <!-- Empty State -->
-    <div class="text-center text-gray-500 py-8" *ngIf="!isLoading && products.length === 0">
-      <p>No products available at the moment.</p>
+      <!-- Detalles -->
+      <div class="flex flex-col justify-between flex-grow p-3 sm:p-4">
+        <div>
+          <a [routerLink]="['/categories', 'product', product.id]">
+            <h5 class="mb-1 text-sm font-semibold text-gray-900 line-clamp-2">{{ product.title }}</h5>
+          </a>
+          <p class="text-xs text-gray-500 mb-2">{{ product.brand }}</p>
+          <p class="mt-1">
+            <span class="text-lg font-bold text-teal-600">{{ product.price | currency:'COP':'symbol':'1.0-0' }}</span>
+            <span class="line-through text-gray-500 text-sm ml-2" *ngIf="product.prevprice">
+              {{ product.prevprice | currency:'COP':'symbol':'1.0-0' }}
+            </span>
+          </p>
+        </div>
+
+        <!-- Tamaños -->
+        <div class="flex flex-wrap gap-1 mt-2" *ngIf="product.sizes?.length">
+          <button
+            *ngFor="let size of product.sizes"
+            [ngClass]="product.size === size.size ? 'bg-teal-500 text-white' : 'border border-teal-500 text-teal-500 hover:bg-teal-500 hover:text-white'"
+            class="text-xs px-2 py-1 rounded transition-all"
+            (click)="selectSize(product, size)"
+            [disabled]="size.stock_quantity === 0">
+            {{ size.size }}
+          </button>
+        </div>
+
+        <!-- Botón -->
+        <div class="mt-3">
+          <button
+            class="w-full py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-all flex items-center justify-center gap-2 text-sm font-medium"
+            *ngIf="!isProductInCart(product)"
+            (click)="addToCart(product)"
+            [disabled]="(product.sizes?.length ?? 0) > 0 && !product.size">
+            <i class="fa-solid fa-cart-plus"></i> Agregar
+          </button>
+          <button
+            class="w-full py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all flex items-center justify-center gap-2 text-sm font-medium"
+            *ngIf="isProductInCart(product)"
+            (click)="removeFromCart(product)">
+            <i class="fa-solid fa-trash"></i> Quitar
+          </button>
+        </div>
+      </div>
     </div>
-  </article>
+  </div>
+
+  <!-- ✅ BOTÓN MEJORADO - Solo mostrar si hay ofertas esta semana -->
+  <div class="text-center mt-6" *ngIf="hasTodayDeal">
+    <a routerLink="/promociones" 
+      (click)="scrollToTop()"
+      class="inline-block px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-all font-medium shadow-lg transform hover:scale-105">
+      <i class="fa-solid fa-tags mr-2"></i>
+      Ver todos los {{ todayBrandName }} en promoción →
+    </a>
+    
+    <!-- ✅ Mensaje informativo -->
+    <p class="text-sm text-gray-600 mt-2">
+      Mostrando 5 de {{ getTotalWeeklyProducts() }} productos en oferta
+    </p>
+  </div>
+
+  <!-- ✅ Botón alternativo cuando NO hay ofertas -->
+  <div class="text-center mt-6" *ngIf="!hasTodayDeal && products.length > 0">
+    <a routerLink="/categories" 
+       class="inline-block px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-all font-medium shadow-lg transform hover:scale-105">
+      <i class="fa-solid fa-store mr-2"></i>
+      Explorar todos los productos →
+    </a>
+  </div>
+
+  <!-- Empty State -->
+  <div class="text-center text-gray-500 py-8" *ngIf="!isLoading && products.length === 0">
+    <i class="fa-solid fa-tag text-4xl text-gray-300 mb-3"></i>
+    <p>No hay productos disponibles en este momento.</p>
+  </div>
+</article>
 
   <!-- ==================== 1. PROMOCIONES DESTACADAS ==================== -->
   <section class="py-8 bg-gradient-to-r from-orange-500 to-red-600 text-white">
@@ -324,7 +348,7 @@
           </ul>
           <!-- BOTÓN MODIFICADO -->
           <a 
-            href="https://www.google.com/maps/dir/?api=1&destination=Carrera+23+%2313-12,+Manizales,+Caldas,+Colombia&travelmode=driving"
+            href="https://www.google.com/maps/dir/?api=1&destination=Carrera+23+%2313-12%2C+Manizales%2C+Caldas%2C+Colombia&travelmode=driving"
             target="_blank"
             class="mt-4 inline-block px-6 py-3 bg-white text-purple-600 rounded-lg hover:bg-gray-100 transition-all font-bold shadow-lg transform hover:scale-105 flex items-center gap-2">
             <i class="fa-solid fa-directions mr-2"></i> ¿Cómo llegar?

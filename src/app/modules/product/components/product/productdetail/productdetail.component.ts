@@ -161,19 +161,52 @@ export class ProductdetailComponent implements OnInit {
   relatedProducts() {
     this.isLoading = true;
     const offset = (this.currentPage - 1) * this.pageSize;
+    
     this.productService.getRelated(this.product.category, this.pageSize, offset).subscribe(
       (data) => {
         this.isLoading = false;
-        this.relatedProductList = data.products.filter((item: Product) => 
-          (item.category === this.product.category) && item.id !== this.product.id
-        );
-        this.totalPages = Math.ceil(this.relatedProductList.length / this.pageSize) || 1;
+        
+        // ✅ FILTRO MEJORADO - Más flexible
+        this.relatedProductList = data.products.filter((item: Product) => {
+          // Excluir el producto actual
+          if (item.id === this.product.id) return false;
+          
+          // Si hay categoría, filtrar por categoría similar
+          if (this.product.category) {
+            return item.category === this.product.category || 
+                  this.isRelatedCategory(item.category, this.product.category);
+          }
+          
+          // Si no hay categoría, mostrar todos los productos relacionados
+          return true;
+        });
+        
+        // ✅ PAGINACIÓN CORRECTA - Usar el total de la respuesta
+        this.totalPages = Math.ceil(data.total / this.pageSize) || 1;
+        
+        console.log('Productos relacionados encontrados:', this.relatedProductList.length);
+        console.log('Categoría del producto:', this.product.category);
       },
       (error) => {
         this.isLoading = false;
         console.error('Error al cargar productos relacionados:', error);
+        this.relatedProductList = []; // Asegurar que esté vacío en caso de error
       }
     );
+  }
+
+  // ✅ MÉTODO AUXILIAR PARA CATEGORÍAS RELACIONADAS
+  private isRelatedCategory(cat1: string, cat2: string): boolean {
+    const relatedCategories: {[key: string]: string[]} = {
+      'Alimentos Secos': ['Alimentos Húmedos', 'Snacks'],
+      'Alimentos Húmedos': ['Alimentos Secos', 'Snacks'],
+      'Snacks': ['Alimentos Secos', 'Alimentos Húmedos'],
+      'Arena para Gatos': ['Accesorios'],
+      'Accesorios': ['Arena para Gatos', 'Productos Veterinarios'],
+      'Productos Veterinarios': ['Accesorios']
+    };
+    
+    return relatedCategories[cat1]?.includes(cat2) || false;
   }
 
   changePage(page: number) {

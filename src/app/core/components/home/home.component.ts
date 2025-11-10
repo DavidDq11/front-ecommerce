@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+// home.component.ts
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { faBone, faFish, faCookieBite, faPaw, faTag, faSyringe } from '@fortawesome/free-solid-svg-icons';
 import { Product } from 'src/app/modules/product/model';
 import { ProductService } from 'src/app/modules/product/services/product.service';
@@ -21,7 +22,7 @@ interface NewsItem {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   faBone = faBone; faFish = faFish; faCookieBite = faCookieBite;
   faPaw = faPaw; faTag = faTag; faSyringe = faSyringe;
 
@@ -72,21 +73,29 @@ export class HomeComponent implements OnInit {
   selectedBrandId: number | null = null;
   selectedBrandName: string | null = null;
 
-  // === VARIABLES DE OFERTA DEL DÍA ===
+  // === VARIABLES MODIFICADAS: DESCUENTOS POR SEMANA ===
   todayBrandName: string = '';
   todayDiscountPercent: number = 0;
   hasTodayDeal: boolean = false;
-  sectionTitle: string = 'Nuevos Productos';
+  sectionTitle: string = 'Ofertas de la Semana';
 
-  // === MAPA DE DESCUENTOS POR DÍA ===
-  private dailyBrandDiscounts: { [key: number]: { discount: number; name: string } } = {
-    0: { discount: 10, name: 'Monello' },
-    1: { discount: 5, name: 'Hills' },
-    2: { discount: 5, name: 'EQUILIBRIO' },
-    3: { discount: 5, name: 'Br For Cat' },
-    4: { discount: 5, name: 'Br For Dog' },
-    5: { discount: 5, name: 'Agility' },
-    6: { discount: 10, name: 'Cipacan' }
+  // === CAMBIO PRINCIPAL: DESCUENTOS POR SEMANA EN LUGAR DE POR DÍA ===
+  private weeklyBrandDiscounts: { [key: string]: { discount: number; name: string } } = {
+     // Noviembre 2025
+    '2025-45': { discount: 10, name: 'Monello' },      // Semana 45: 4-10 nov
+    '2025-46': { discount: 10, name: 'Royal Canin' },  // Semana 46: 11-17 nov ← ESTA SEMANA
+    '2025-47': { discount: 10, name: 'Hills' },        // Semana 47: 18-24 nov
+    '2025-48': { discount: 10, name: 'EQUILIBRIO' },   // Semana 48: 25 nov - 1 dic
+    
+    // Diciembre 2025
+    '2025-49': { discount: 10, name: 'Agility' },      // Semana 49: 2-8 dic
+    '2025-50': { discount: 10, name: 'Br For Cat' },   // Semana 50: 9-15 dic
+    '2025-51': { discount: 10, name: 'Cipacan' },      // Semana 51: 16-22 dic (Navidad)
+    '2025-52': { discount: 10, name: 'Birbo' },        // Semana 52: 23-29 dic (Navidad)
+    
+    // Enero 2026
+    '2026-01': { discount: 10, name: 'Chunky' },       // Semana 1: 30 dic - 5 ene
+    '2026-02': { discount: 10, name: 'KI' },           // Semana 2: 6-12 ene
   };
 
   // === ORDEN PERSONALIZADO DE MARCAS ===
@@ -109,7 +118,7 @@ export class HomeComponent implements OnInit {
     this.metaService.updateTag({ name: 'description', content: 'Alimentos, medicamentos y accesorios para mascotas con entrega el mismo día en Manizales.' });
 
     this.fetchBrands();
-    this.newArrivalProducts(); // ← AQUÍ SE BUSCA EN TODAS LAS CATEGORÍAS
+    this.newArrivalProducts();
     this.startLaunchCountdown();
   }
 
@@ -122,6 +131,14 @@ export class HomeComponent implements OnInit {
       .toLowerCase()
       .trim()
       .replace(/\s+/g, ' ');
+  }
+
+  // === NUEVA FUNCIÓN: OBTENER SEMANA DEL AÑO ===
+  private getWeekNumber(date: Date): string {
+    const startDate = new Date(date.getFullYear(), 0, 1);
+    const days = Math.floor((date.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));
+    const weekNumber = Math.ceil((days + 1) / 7);
+    return `${date.getFullYear()}-${weekNumber.toString().padStart(2, '0')}`;
   }
 
   fetchBrands() {
@@ -182,10 +199,10 @@ export class HomeComponent implements OnInit {
     this.selectedBrandName = null;
     const category = this.categories.find(c => c.id === categoryId)?.name || 'Alimentos Secos';
     this.router.navigate([`/categories/${category}`]);
-    this.newArrivalProducts(); // ← Recarga oferta al cambiar categoría
+    this.newArrivalProducts();
   }
 
-  // === NUEVA LÓGICA: BUSCAR EN TODAS LAS CATEGORÍAS ===
+  // === MODIFICADO: BUSCAR EN TODAS LAS CATEGORÍAS CON DESCUENTOS POR SEMANA ===
   newArrivalProducts() {
     this.isLoading = true;
     this.products = [];
@@ -194,10 +211,16 @@ export class HomeComponent implements OnInit {
     const allProducts: Product[] = [];
     let completado = 0;
 
-    console.log('%c[OFERTA DEL DÍA] Buscando en TODAS las categorías...', 'color: #10b981; font-weight: bold');
+    console.log('%c[OFERTA DE LA SEMANA] Buscando en TODAS las categorías...', 'color: #10b981; font-weight: bold');
+
+    // Obtener semana actual para descuentos
+    const currentWeek = this.getWeekNumber(new Date());
+    const weeklyDeal = this.weeklyBrandDiscounts[currentWeek];
+
+    console.log(`%c[SEMANA ACTUAL] ${currentWeek} - Marca: ${weeklyDeal?.name || 'Ninguna'} - ${weeklyDeal?.discount || 0}%`, 'color: #3b82f6');
 
     allCategories.forEach(categoryName => {
-      const params = { limit: 50, offset: 0 }; // Más productos por categoría
+      const params = { limit: 50, offset: 0 };
 
       this._productService.getByCategory(categoryName, params).subscribe(
         (response: { products: Product[], total: number }) => {
@@ -205,122 +228,172 @@ export class HomeComponent implements OnInit {
             const firstSize = p.sizes?.[0];
             return firstSize?.price && firstSize.price > 0;
           });
-          allProducts.push(...validProducts);
+
+          // Aplicar descuentos de la semana
+          const discountedProducts = validProducts.map(product => {
+            return this.applyWeeklyDiscount(product, weeklyDeal);
+          });
+
+          allProducts.push(...discountedProducts);
           completado++;
 
           console.log(`%c[${categoryName}] ${validProducts.length} productos válidos`, 'color: #3b82f6');
 
           if (completado === allCategories.length) {
-            console.log('%c[TODOS] Total productos válidos:', 'color: #8b5cf6', allProducts.length);
-            this.processAllProductsForDeal(allProducts);
+            this.processAllProductsForDeal(allProducts, weeklyDeal);
           }
         },
         (error) => {
           completado++;
           console.error(`%c[ERROR en ${categoryName}]`, 'color: #ef4444', error);
           if (completado === allCategories.length) {
-            this.processAllProductsForDeal(allProducts);
+            this.processAllProductsForDeal(allProducts, weeklyDeal);
           }
         }
       );
     });
   }
 
-  // === PROCESAR TODOS LOS PRODUCTOS PARA OFERTA ===
-  private processAllProductsForDeal(data: Product[]) {
+  // === NUEVA FUNCIÓN: APLICAR DESCUENTO SEMANAL ===
+   private applyWeeklyDiscount(product: Product, weeklyDeal: any): Product {
+    if (!weeklyDeal) {
+      // ⚠️ IMPORTANTE: Si no hay oferta semanal, NO aplicar descuento
+      const firstSize = product.sizes![0];
+      return {
+        ...product,
+        price: firstSize.price, // Precio original SIN descuento
+        prevprice: undefined,   // No hay precio anterior
+        size: firstSize.size,
+        size_id: firstSize.size_id,
+        sizes: product.sizes || [],
+        isWeeklyDeal: false
+      };
+    }
+
+    const normalizedProductBrand = this.normalize(product.brand);
+    const normalizedDealBrand = this.normalize(weeklyDeal.name);
+    
+    const hasWeeklyDiscount = normalizedProductBrand && 
+                             (normalizedProductBrand === normalizedDealBrand || 
+                              normalizedProductBrand.includes(normalizedDealBrand));
+
+    const firstSize = product.sizes![0];
+    
+    if (hasWeeklyDiscount) {
+      const discountedPrice = Math.round(firstSize.price * (1 - weeklyDeal.discount / 100));
+      
+      return {
+        ...product,
+        price: discountedPrice,
+        prevprice: firstSize.price,
+        discountPercent: weeklyDeal.discount,
+        size: firstSize.size,
+        size_id: firstSize.size_id,
+        sizes: product.sizes || [],
+        isWeeklyDeal: true
+      };
+    } else {
+      // ⚠️ IMPORTANTE: Si el producto no es de la marca en oferta, NO aplicar descuento
+      return {
+        ...product,
+        price: firstSize.price, // Precio original
+        prevprice: undefined,   // No hay precio anterior
+        size: firstSize.size,
+        size_id: firstSize.size_id,
+        sizes: product.sizes || [],
+        isWeeklyDeal: false
+      };
+    }
+  }
+
+  // === MODIFICADO: PROCESAR PRODUCTOS CON DESCUENTOS SEMANALES ===
+  private processAllProductsForDeal(data: Product[], weeklyDeal: any) {
     this.isLoading = false;
 
     if (data.length === 0) {
       console.warn('%c[OFERTA] No hay productos válidos', 'color: #f59e0b');
       this.products = [];
-      // this.updateSectionTitle(false);
       return;
     }
 
-    const today = new Date().getDay();
-    const todayDeal = this.dailyBrandDiscounts[today];
+    // Filtrar productos que tienen descuento semanal
+    const weeklyDealProducts = data.filter(product => product.isWeeklyDeal);
 
-    console.log(`%c[HOY] Día: ${today} (${['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'][today]})`, 'color: #3b82f6');
-    console.log('%c[MARCA DEL DÍA]', 'color: #8b5cf6; font-weight: bold', todayDeal);
+    console.log(`%c[OFERTA SEMANAL] Productos con descuento real: ${weeklyDealProducts.length}`, 'color: #10b981; font-weight: bold');
 
-    if (!todayDeal) {
-      console.warn('%c[OFERTA] No hay oferta programada para hoy', 'color: #ef4444');
-      // this.updateSectionTitle(false);
-      this.applyGeneralDiscount(data);
-      return;
-    }
-
-    // === FILTRO POR MARCA ===
-    const dealProducts = data.filter(p => {
-      const pb = this.normalize(p.brand);
-      const db = this.normalize(todayDeal.name);
-      const match = pb && (pb === db || pb.includes(db));
-      if (match) {
-        console.log(`%cCOINCIDENCIA: "${p.brand}" (Categoría: ${p.category})`, 'color: #22c55e');
-      }
-      return match;
-    });
-
-    console.log(`%c[RESULTADO] Productos de "${todayDeal.name}": ${dealProducts.length}`, 'color: #10b981; font-weight: bold');
-
-    if (dealProducts.length > 0) {
+    if (weeklyDealProducts.length > 0) {
       this.hasTodayDeal = true;
-      this.todayBrandName = todayDeal.name;
-      this.todayDiscountPercent = todayDeal.discount;
-
-      this.products = dealProducts.map(product => {
-        const firstSize = product.sizes![0];
-        const discountedPrice = Math.round(firstSize.price * (1 - todayDeal.discount / 100));
-
-        return {
-          ...product,
-          price: discountedPrice,
-          prevprice: firstSize.price,
-          size: firstSize.size,
-          size_id: firstSize.size_id,
-          sizes: product.sizes || [],
-          isTodayDeal: true
-        };
-      });
-
-      // this.updateSectionTitle(true);
-      console.log('%cOFERTA ACTIVADA EN TODAS LAS CATEGORÍAS', 'color: #22c55e; font-weight: bold', this.sectionTitle);
+      this.todayBrandName = weeklyDeal.name;
+      this.todayDiscountPercent = weeklyDeal.discount;
+      
+      // ✅ LIMITAR A SOLO 5 PRODUCTOS EN EL HOME
+      this.products = this.seededShuffle(weeklyDealProducts, new Date().getTime()).slice(0, 5);
+      
+      this.sectionTitle = `Oferta de la Semana: ${this.todayBrandName} -${this.todayDiscountPercent}%`;
+      console.log('%cOFERTA SEMANAL ACTIVADA - Mostrando 5 productos', 'color: #22c55e; font-weight: bold', this.sectionTitle);
     } else {
-      console.warn('%c[OFERTA] No se encontraron productos de la marca del día', 'color: #f59e0b');
-      // this.updateSectionTitle(false);
-      this.applyGeneralDiscount(data);
+      console.warn('%c[OFERTA] No se encontraron productos de la marca de la semana', 'color: #f59e0b');
+      this.hasTodayDeal = false;
+      
+      // ✅ LIMITAR A SOLO 5 PRODUCTOS EN EL HOME (sin oferta)
+      const seed = new Date().getTime();
+      const randomProducts = this.seededShuffle(data, seed)
+        .slice(0, 5)
+        .map(product => {
+          const firstSize = product.sizes![0];
+          return {
+            ...product,
+            price: firstSize.price, // Precio original
+            prevprice: undefined,   // Sin precio anterior
+            size: firstSize.size,
+            size_id: firstSize.size_id,
+            isWeeklyDeal: false
+          };
+        });
+      
+      this.products = randomProducts;
+      this.sectionTitle = 'Productos Destacados';
     }
-
-    const seed = new Date().getTime();
-    this.products = this.seededShuffle(this.products, seed).slice(0, 5);
   }
 
-  // private updateSectionTitle(hasDeal: boolean) {
-  //   if (hasDeal) {
-  //     this.sectionTitle = `Oferta del Día: ${this.todayBrandName} -${this.todayDiscountPercent}%`;
-  //   } else {
-  //     this.sectionTitle = 'Explora nuestras marcas premium';
-  //   }
-  //   console.log('%c[TÍTULO]', 'color: #6366f1', this.sectionTitle);
-  // }
-
-  private applyGeneralDiscount(data: Product[]) {
-    this.hasTodayDeal = false;
-    this.products = data.map(product => {
-      const firstSize = product.sizes![0];
-      const discountedPrice = Math.round(firstSize.price * 0.9);
-
-      return {
-        ...product,
-        price: discountedPrice,
-        prevprice: firstSize.price,
-        size: firstSize.size,
-        size_id: firstSize.size_id,
-        sizes: product.sizes || [],
-        isTodayDeal: false
-      };
+  selectSize(product: Product, size: { size_id: number; size: string; price: number; stock_quantity: number; image_url?: string }) {
+    const updatedProducts = this.products.map(p => {
+      if (p.id === product.id) {
+        // Recalcular precio: solo aplicar descuento si es oferta semanal
+        if (p.isWeeklyDeal) {
+          const discountedPrice = Math.round(size.price * (1 - this.todayDiscountPercent / 100));
+          return {
+            ...p,
+            size: size.size,
+            size_id: size.size_id,
+            price: discountedPrice,
+            prevprice: size.price
+          };
+        } else {
+          // Si no es oferta semanal, usar precio normal
+          return {
+            ...p,
+            size: size.size,
+            size_id: size.size_id,
+            price: size.price,
+            prevprice: undefined
+          };
+        }
+      }
+      return p;
     });
+    this.products = [...updatedProducts];
   }
+
+  getTotalWeeklyProducts(): number {
+  // Este es un ejemplo - en una app real podrías tener este dato del backend
+  // Por ahora retornamos un número estimado basado en los productos cargados
+  if (this.hasTodayDeal && this.products.length > 0) {
+    // Suponiendo que hay entre 15-25 productos de la marca en oferta
+    return Math.max(15, this.products.length * 3);
+  }
+  return 0;
+}
 
   private seededShuffle(array: Product[], seed: number): Product[] {
     const rng = (s: number) => {
@@ -335,24 +408,6 @@ export class HomeComponent implements OnInit {
     return shuffled;
   }
 
-  selectSize(product: Product, size: { size_id: number; size: string; price: number; stock_quantity: number; image_url?: string }) {
-    const updatedProducts = this.products.map(p => {
-      if (p.id === product.id) {
-        const discount = this.hasTodayDeal ? (1 - this.todayDiscountPercent / 100) : 0.9;
-        const discountedPrice = Math.round(size.price * discount);
-        return {
-          ...p,
-          size: size.size,
-          size_id: size.size_id,
-          price: discountedPrice,
-          prevprice: size.price
-        };
-      }
-      return p;
-    });
-    this.products = [...updatedProducts];
-  }
-
   getDiscountPercent(product: Product): number {
     if (!product.prevprice || product.prevprice <= product.price) return 0;
     return Math.round((product.prevprice - product.price) / product.prevprice * 100);
@@ -365,6 +420,8 @@ export class HomeComponent implements OnInit {
     }
     return product.sizes[0].stock_quantity ?? 0;
   }
+
+  
 
   scrollBrands(direction: 'left' | 'right') {
     const container = document.querySelector('.brands-container') as HTMLElement;
@@ -393,5 +450,18 @@ export class HomeComponent implements OnInit {
 
   isProductInCart(product: Product) {
     return this.cartService.getCart().some((item: Product) => item.id === product.id);
+  }
+
+  scrollToTop(): void {
+    // Scroll suave al inicio de la página
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+  }
+
+  ngOnDestroy(): void {
+    // Cleanup si es necesario
   }
 }

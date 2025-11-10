@@ -16,6 +16,7 @@ import { AboutComponent } from './core/components/about/about.component';
 import { ProfileComponent } from './modules/product/components/profile/profile.component';
 import { AdminOrdersComponent } from './modules/admin-orders/admin-orders.component';
 import { AdminGuard } from './shared/services/auth/admin.guard';
+import { PromotionProductsComponent } from './modules/product/components/promotion-products/promotion-products.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -31,6 +32,7 @@ const routes: Routes = [
   { path: 'privacy', component: PrivacyComponent },
   { path: 'about', component: AboutComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [canActivate] },
+  { path: 'promociones', component: PromotionProductsComponent }, 
   { path: 'admin/orders', component: AdminOrdersComponent, canActivate: [AdminGuard] },
   { path: '**', component: Page404Component, data: { message: 'Esta página está en desarrollo' } }
 ];

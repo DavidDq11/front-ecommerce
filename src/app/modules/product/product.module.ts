@@ -11,6 +11,7 @@ import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { PricefilterComponent } from './components/product/filter/pricefilter/pricefilter.component';
 import { ProgressDirective } from './components/product/filter/pricefilter/directive/progress.directive';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { PromotionProductsComponent } from './components/promotion-products/promotion-products.component';
 @NgModule({
   declarations: [
     ProductComponent,
@@ -20,7 +21,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
     CheckoutComponent,
     BreadcrumbComponent,
     PricefilterComponent,
-    ProgressDirective
+    ProgressDirective,
+    PromotionProductsComponent
   ],
   imports: [
     CommonModule,
