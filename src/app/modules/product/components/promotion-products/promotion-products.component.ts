@@ -1,4 +1,4 @@
-// promotion-products.component.ts
+// promotion-products.component.ts - VERSIÓN CON DEPURACIÓN
 import { Component, OnInit } from '@angular/core';
 import { Product } from '../../model';
 import { ProductService } from '../../services/product.service';
@@ -22,21 +22,16 @@ export class PromotionProductsComponent implements OnInit {
 
   // Descuentos por semana
   private weeklyBrandDiscounts: { [key: string]: { discount: number; name: string } } = {
-    // Noviembre 2025
-    '2025-45': { discount: 5, name: 'Monello' },      // Semana 45: 4-5 nov
-    '2025-46': { discount: 5, name: 'Royal Canin' },  // Semana 46: 11-17 nov ← ESTA SEMANA
-    '2025-47': { discount: 5, name: 'Hills' },        // Semana 47: 18-24 nov
-    '2025-48': { discount: 5, name: 'EQUILIBRIO' },   // Semana 48: 25 nov - 1 dic
-    
-    // Diciembre 2025
-    '2025-49': { discount: 5, name: 'Agility' },      // Semana 49: 2-8 dic
-    '2025-50': { discount: 5, name: 'Br For Cat' },   // Semana 50: 9-15 dic
-    '2025-51': { discount: 5, name: 'Cipacan' },      // Semana 51: 16-22 dic (Navidad)
-    '2025-52': { discount: 5, name: 'Birbo' },        // Semana 52: 23-29 dic (Navidad)
-    
-    // Enero 2026
-    '2026-01': { discount: 5, name: 'Chunky' },       // Semana 1: 30 dic - 5 ene
-    '2026-02': { discount: 5, name: 'KI' },           // Semana 2: 6-12 ene
+    '2025-45': { discount: 5, name: 'Monello' },
+    '2025-46': { discount: 5, name: 'Royal Canin' },
+    '2025-47': { discount: 5, name: 'Hills' },
+    '2025-48': { discount: 5, name: 'EQUILIBRIO' },
+    '2025-49': { discount: 5, name: 'Agility' },
+    '2025-50': { discount: 5, name: 'Br For Cat' },
+    '2025-51': { discount: 5, name: 'Cipacan' },
+    '2025-52': { discount: 5, name: 'Birbo' },
+    '2026-01': { discount: 5, name: 'Chunky' },
+    '2026-02': { discount: 5, name: 'KI' },
   };
 
   constructor(
@@ -50,34 +45,10 @@ export class PromotionProductsComponent implements OnInit {
     this.forceScrollToTop();
   }
 
-  // Función mejorada para scroll en móviles
   private forceScrollToTop(): void {
-    // Método 1: Scroll inmediato
     window.scrollTo(0, 0);
-    
-    // Método 2: Scroll suave después de un pequeño delay
-    setTimeout(() => {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    }, 100);
-
-    // Método 3: Para iOS/Safari - usar diferentes enfoques
-    setTimeout(() => {
-      document.body.scrollTop = 0;
-      document.documentElement.scrollTop = 0;
-      
-      // Alternativa para Safari
-      if ('scrollBehavior' in document.documentElement.style) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        window.scrollTo(0, 0);
-      }
-    }, 150);
   }
 
-  // También puedes agregar esta función pública para llamarla desde el home
   scrollToTop(): void {
     this.forceScrollToTop();
   }
@@ -99,14 +70,22 @@ export class PromotionProductsComponent implements OnInit {
       .replace(/\s+/g, ' ');
   }
 
+  // 🎯 MÉTODO CON LOGS DETALLADOS
   private applyWeeklyDiscount(product: Product, weeklyDeal: any): Product {
+    console.log('🔧 Aplicando descuento a producto:', {
+      producto: product.title,
+      marca: product.brand,
+      precioOriginal: product.sizes?.[0]?.price,
+      ofertaSemanal: weeklyDeal
+    });
+
     if (!weeklyDeal) {
-      // ⚠️ IMPORTANTE: Si no hay oferta semanal, NO aplicar descuento
+      console.log('❌ No hay oferta semanal esta semana');
       const firstSize = product.sizes![0];
       return {
         ...product,
-        price: firstSize.price, // Precio original SIN descuento
-        prevprice: undefined,   // No hay precio anterior
+        price: firstSize.price,
+        prevprice: undefined,
         discountPercent: undefined,
         size: firstSize.size,
         size_id: firstSize.size_id,
@@ -118,6 +97,11 @@ export class PromotionProductsComponent implements OnInit {
     const normalizedProductBrand = this.normalize(product.brand);
     const normalizedDealBrand = this.normalize(weeklyDeal.name);
     
+    console.log('🔍 Comparando marcas:', {
+      marcaProducto: normalizedProductBrand,
+      marcaOferta: normalizedDealBrand
+    });
+
     const hasWeeklyDiscount = normalizedProductBrand && 
                              (normalizedProductBrand === normalizedDealBrand || 
                               normalizedProductBrand.includes(normalizedDealBrand));
@@ -127,6 +111,14 @@ export class PromotionProductsComponent implements OnInit {
     if (hasWeeklyDiscount && firstSize) {
       const discountedPrice = Math.round(firstSize.price * (1 - weeklyDeal.discount / 100));
       
+      console.log('✅ APLICANDO DESCUENTO:', {
+        producto: product.title,
+        precioOriginal: firstSize.price,
+        descuento: weeklyDeal.discount + '%',
+        precioConDescuento: discountedPrice,
+        ahorro: firstSize.price - discountedPrice
+      });
+
       return {
         ...product,
         price: discountedPrice,
@@ -135,23 +127,33 @@ export class PromotionProductsComponent implements OnInit {
         size: firstSize.size,
         size_id: firstSize.size_id,
         sizes: product.sizes || [],
-        isWeeklyDeal: true
+        isWeeklyDeal: true,
+        qty: product.qty || 1,
+        totalprice: discountedPrice * (product.qty || 1)
       };
+    } else {
+      console.log('❌ Producto no califica para descuento:', {
+        producto: product.title,
+        motivo: !hasWeeklyDiscount ? 'Marca no coincide' : 'No tiene tamaño'
+      });
     }
     
-    // ⚠️ IMPORTANTE: Si el producto no es de la marca en oferta, NO aplicar descuento
+    // Producto sin descuento semanal
     return {
       ...product,
-      price: firstSize.price, // Precio original
-      prevprice: undefined,   // No hay precio anterior
+      price: firstSize.price,
+      prevprice: undefined,
       discountPercent: undefined,
       size: firstSize.size,
       size_id: firstSize.size_id,
       sizes: product.sizes || [],
-      isWeeklyDeal: false
+      isWeeklyDeal: false,
+      qty: product.qty || 1,
+      totalprice: firstSize.price * (product.qty || 1)
     };
   }
 
+  // 🎯 MÉTODO MEJORADO CON MÁS LOGS
   loadPromotionProducts() {
     this.isLoading = true;
     this.promotionProducts = [];
@@ -166,39 +168,95 @@ export class PromotionProductsComponent implements OnInit {
     
     this.weeklyBrandName = weeklyDeal?.name || '';
     this.weeklyDiscountPercent = weeklyDeal?.discount || 0;
-    this.hasWeeklyDeal = !!weeklyDeal; // Solo true si hay oferta esta semana
+    this.hasWeeklyDeal = !!weeklyDeal;
 
-    console.log(`%c[PROMOCIONES] Semana ${currentWeek} - Oferta: ${this.weeklyBrandName || 'Ninguna'}`, 'color: #3b82f6');
+    console.log(`%c📅 [PROMOCIONES] Semana ${currentWeek}`, 'color: #3b82f6; font-weight: bold', {
+      oferta: weeklyDeal,
+      marca: this.weeklyBrandName,
+      descuento: this.weeklyDiscountPercent + '%',
+      tieneOferta: this.hasWeeklyDeal
+    });
+
+    // 🎯 VERIFICAR SEMANA ACTUAL MANUALMENTE
+    console.log('🔍 VERIFICANDO SEMANA ACTUAL:', {
+      fechaActual: new Date(),
+      semanaCalculada: currentWeek,
+      ofertasConfiguradas: Object.keys(this.weeklyBrandDiscounts)
+    });
 
     categories.forEach(category => {
-      this.productService.getByCategory(category, { limit: 50, offset: 0 }).subscribe({
+      this.productService.getByCategory(category, { limit: 100, offset: 0 }).subscribe({
         next: (response) => {
+          console.log(`📦 [${category}] Productos recibidos:`, response.products.length);
+
           const validProducts = response.products.filter(p => {
             const firstSize = p.sizes?.[0];
-            return firstSize?.price && firstSize.price > 0;
+            const isValid = firstSize?.price && firstSize.price > 0;
+            if (!isValid) {
+              console.log('❌ Producto inválido:', { 
+                producto: p.title, 
+                tieneSizes: !!p.sizes,
+                precio: firstSize?.price 
+              });
+            }
+            return isValid;
           });
 
-          // Aplicar descuentos y filtrar SOLO productos con oferta semanal
+          console.log(`✅ [${category}] Productos válidos:`, validProducts.length);
+
+          // Aplicar descuentos
           const weeklyProducts = validProducts
             .map(product => this.applyWeeklyDiscount(product, weeklyDeal))
-            .filter(product => product.isWeeklyDeal); // ⚠️ Solo productos con oferta real
+            .filter(product => {
+              const hasDiscount = product.isWeeklyDeal;
+              if (hasDiscount) {
+                console.log('🎯 PRODUCTO CON OFERTA ENCONTRADO:', {
+                  categoria: category,
+                  producto: product.title,
+                  precio: product.price,
+                  precioOriginal: product.prevprice,
+                  descuento: product.discountPercent + '%'
+                });
+              }
+              return hasDiscount;
+            });
+
+          console.log(`🔥 [${category}] Productos con oferta:`, weeklyProducts.length);
 
           allProducts = [...allProducts, ...weeklyProducts];
           completed++;
 
-          console.log(`%c[${category}] Productos con oferta: ${weeklyProducts.length}`, 'color: #10b981');
-
           if (completed === categories.length) {
-            this.promotionProducts = allProducts;
+            this.promotionProducts = this.sortProducts(allProducts);
             this.totalItems = allProducts.length;
             this.totalPages = Math.ceil(allProducts.length / this.pageSize);
             this.isLoading = false;
             
-            console.log(`%c[PROMOCIONES FINAL] Total productos con oferta: ${allProducts.length}`, 'color: #22c55e; font-weight: bold');
+            // 🎯 RESUMEN FINAL
+            console.log(`%c🎉 [PROMOCIONES FINAL]`, 'color: #22c55e; font-weight: bold', {
+              totalProductos: allProducts.length,
+              productosConDescuento: allProducts.filter(p => p.isWeeklyDeal).length,
+              marcaOferta: this.weeklyBrandName,
+              descuentoAplicado: this.weeklyDiscountPercent + '%'
+            });
+
+            // 🎯 MOSTRAR LOS PRIMEROS 5 PRODUCTOS PARA VERIFICAR
+            if (allProducts.length > 0) {
+              console.log('📋 MUESTRA DE PRODUCTOS CON DESCUENTO:');
+              allProducts.slice(0, 5).forEach((product, index) => {
+                console.log(`   ${index + 1}. ${product.title}`, {
+                  marca: product.brand,
+                  precio: product.price,
+                  precioOriginal: product.prevprice,
+                  descuento: product.discountPercent + '%',
+                  tieneDescuento: product.isWeeklyDeal
+                });
+              });
+            }
           }
         },
         error: (error) => {
-          console.error(`Error loading ${category}:`, error);
+          console.error(`❌ Error loading ${category}:`, error);
           completed++;
           if (completed === categories.length) {
             this.isLoading = false;
@@ -208,8 +266,48 @@ export class PromotionProductsComponent implements OnInit {
     });
   }
 
+  // 🎯 MÉTODO PARA VERIFICAR SI HAY PRODUCTOS CON DESCUENTO
+  checkDiscounts() {
+    const productsWithDiscount = this.promotionProducts.filter(p => p.isWeeklyDeal);
+    console.log('🔍 VERIFICACIÓN MANUAL DE DESCUENTOS:', {
+      totalProductos: this.promotionProducts.length,
+      productosConDescuento: productsWithDiscount.length,
+      productos: productsWithDiscount.map(p => ({
+        title: p.title,
+        brand: p.brand,
+        price: p.price,
+        prevprice: p.prevprice,
+        discount: p.discountPercent
+      }))
+    });
+  }
+
+  private sortProducts(products: Product[]): Product[] {
+    return products.sort((a, b) => {
+      if (a.brand === this.weeklyBrandName && b.brand !== this.weeklyBrandName) return -1;
+      if (a.brand !== this.weeklyBrandName && b.brand === this.weeklyBrandName) return 1;
+      
+      const discountA = this.getDiscountPercent(a);
+      const discountB = this.getDiscountPercent(b);
+      return discountB - discountA;
+    });
+  }
+
   addToCart(product: Product) {
-    this.cartService.addToCart(product);
+    console.log('🛒 Agregando al carrito:', {
+      producto: product.title,
+      precio: product.price,
+      precioOriginal: product.prevprice,
+      tieneDescuento: product.isWeeklyDeal
+    });
+
+    const productToAdd: Product = {
+      ...product,
+      qty: product.qty || 1,
+      totalprice: product.price * (product.qty || 1)
+    };
+    
+    this.cartService.addToCart(productToAdd);
   }
 
   removeFromCart(product: Product) {
@@ -222,7 +320,7 @@ export class PromotionProductsComponent implements OnInit {
     );
   }
 
-  // Métodos de paginación
+  // Métodos de paginación (sin cambios)
   previousPage() {
     if (this.currentPage > 1) {
       this.currentPage--;
@@ -263,9 +361,13 @@ export class PromotionProductsComponent implements OnInit {
     return pages;
   }
 
-  // Método para obtener el porcentaje de descuento
   getDiscountPercent(product: Product): number {
     if (!product.prevprice || product.prevprice <= product.price) return 0;
     return Math.round((product.prevprice - product.price) / product.prevprice * 100);
+  }
+
+  // 🎯 MÉTODO PARA FORZAR LA VERIFICACIÓN
+  forceCheckDiscounts() {
+    this.checkDiscounts();
   }
 }
