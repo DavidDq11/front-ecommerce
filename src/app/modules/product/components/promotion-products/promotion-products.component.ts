@@ -70,27 +70,29 @@ export class PromotionProductsComponent implements OnInit {
       .replace(/\s+/g, ' ');
   }
 
-  // 🎯 MÉTODO CON LOGS DETALLADOS
+  // 🎯 MÉTODO CON LOGS DETALLADOS - ACTUALIZADO PARA SIZES[]
   private applyWeeklyDiscount(product: Product, weeklyDeal: any): Product {
     console.log('🔧 Aplicando descuento a producto:', {
       producto: product.title,
       marca: product.brand,
-      precioOriginal: product.sizes?.[0]?.price,
+      precioOriginalPrimerTamaño: product.sizes?.[0]?.price,
       ofertaSemanal: weeklyDeal
     });
 
     if (!weeklyDeal) {
       console.log('❌ No hay oferta semanal esta semana');
-      const firstSize = product.sizes![0];
+      const firstSize = product.sizes?.[0];
       return {
         ...product,
-        price: firstSize.price,
+        price: firstSize?.price || 0,
         prevprice: undefined,
         discountPercent: undefined,
-        size: firstSize.size,
-        size_id: firstSize.size_id,
+        size: firstSize?.size,
+        size_id: firstSize?.size_id,
         sizes: product.sizes || [],
-        isWeeklyDeal: false
+        isWeeklyDeal: false,
+        qty: product.qty || 1,
+        totalprice: (firstSize?.price || 0) * (product.qty || 1)
       };
     }
 
@@ -106,51 +108,63 @@ export class PromotionProductsComponent implements OnInit {
                              (normalizedProductBrand === normalizedDealBrand || 
                               normalizedProductBrand.includes(normalizedDealBrand));
 
-    const firstSize = product.sizes![0];
-    
-    if (hasWeeklyDiscount && firstSize) {
-      const discountedPrice = Math.round(firstSize.price * (1 - weeklyDeal.discount / 100));
+    if (hasWeeklyDiscount && product.sizes && product.sizes.length > 0) {
+      // Aplicar descuento a TODOS los tamaños
+      const discountedSizes = product.sizes.map(size => {
+        const discountedPrice = Math.round(size.price * (1 - weeklyDeal.discount / 100));
+        console.log('   📏 Descuento en tamaño:', {
+          tamaño: size.size,
+          precioOriginal: size.price,
+          precioConDescuento: discountedPrice
+        });
+        return {
+          ...size,
+          price: discountedPrice
+        };
+      });
+
+      const firstDiscountedSize = discountedSizes[0];
+      const originalFirstPrice = product.sizes[0].price;
       
       console.log('✅ APLICANDO DESCUENTO:', {
         producto: product.title,
-        precioOriginal: firstSize.price,
+        precioOriginal: originalFirstPrice,
         descuento: weeklyDeal.discount + '%',
-        precioConDescuento: discountedPrice,
-        ahorro: firstSize.price - discountedPrice
+        precioConDescuento: firstDiscountedSize.price,
+        ahorro: originalFirstPrice - firstDiscountedSize.price
       });
 
       return {
         ...product,
-        price: discountedPrice,
-        prevprice: firstSize.price,
+        sizes: discountedSizes,
+        price: firstDiscountedSize.price,
+        prevprice: originalFirstPrice,
         discountPercent: weeklyDeal.discount,
-        size: firstSize.size,
-        size_id: firstSize.size_id,
-        sizes: product.sizes || [],
+        size: firstDiscountedSize.size,
+        size_id: firstDiscountedSize.size_id,
         isWeeklyDeal: true,
         qty: product.qty || 1,
-        totalprice: discountedPrice * (product.qty || 1)
+        totalprice: firstDiscountedSize.price * (product.qty || 1)
       };
     } else {
       console.log('❌ Producto no califica para descuento:', {
         producto: product.title,
-        motivo: !hasWeeklyDiscount ? 'Marca no coincide' : 'No tiene tamaño'
+        motivo: !hasWeeklyDiscount ? 'Marca no coincide' : 'No tiene tamaños'
       });
+      const firstSize = product.sizes?.[0];
+      return {
+        ...product,
+        price: firstSize?.price || 0,
+        prevprice: undefined,
+        discountPercent: undefined,
+        size: firstSize?.size,
+        size_id: firstSize?.size_id,
+        sizes: product.sizes || [],
+        isWeeklyDeal: false,
+        qty: product.qty || 1,
+        totalprice: (firstSize?.price || 0) * (product.qty || 1)
+      };
     }
-    
-    // Producto sin descuento semanal
-    return {
-      ...product,
-      price: firstSize.price,
-      prevprice: undefined,
-      discountPercent: undefined,
-      size: firstSize.size,
-      size_id: firstSize.size_id,
-      sizes: product.sizes || [],
-      isWeeklyDeal: false,
-      qty: product.qty || 1,
-      totalprice: firstSize.price * (product.qty || 1)
-    };
   }
 
   // 🎯 MÉTODO MEJORADO CON MÁS LOGS

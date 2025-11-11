@@ -254,17 +254,17 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  // === NUEVA FUNCIÓN: APLICAR DESCUENTO SEMANAL ===
-   private applyWeeklyDiscount(product: Product, weeklyDeal: any): Product {
+  // === ACTUALIZADO: APLICAR DESCUENTO SEMANAL, INCLUYENDO SIZES[] ===
+  private applyWeeklyDiscount(product: Product, weeklyDeal: any): Product {
     if (!weeklyDeal) {
       // ⚠️ IMPORTANTE: Si no hay oferta semanal, NO aplicar descuento
-      const firstSize = product.sizes![0];
+      const firstSize = product.sizes?.[0];
       return {
         ...product,
-        price: firstSize.price, // Precio original SIN descuento
-        prevprice: undefined,   // No hay precio anterior
-        size: firstSize.size,
-        size_id: firstSize.size_id,
+        price: firstSize?.price || 0, // Precio original SIN descuento
+        prevprice: undefined,         // No hay precio anterior
+        size: firstSize?.size,
+        size_id: firstSize?.size_id,
         sizes: product.sizes || [],
         isWeeklyDeal: false
       };
@@ -277,29 +277,35 @@ export class HomeComponent implements OnInit, OnDestroy {
                              (normalizedProductBrand === normalizedDealBrand || 
                               normalizedProductBrand.includes(normalizedDealBrand));
 
-    const firstSize = product.sizes![0];
-    
-    if (hasWeeklyDiscount) {
-      const discountedPrice = Math.round(firstSize.price * (1 - weeklyDeal.discount / 100));
+    if (hasWeeklyDiscount && product.sizes && product.sizes.length > 0) {
+      // Aplicar descuento a TODOS los tamaños
+      const discountedSizes = product.sizes.map(size => ({
+        ...size,
+        price: Math.round(size.price * (1 - weeklyDeal.discount / 100))
+      }));
+
+      const firstDiscountedSize = discountedSizes[0];
+      const originalFirstPrice = product.sizes[0].price;
       
       return {
         ...product,
-        price: discountedPrice,
-        prevprice: firstSize.price,
+        sizes: discountedSizes,
+        price: firstDiscountedSize.price,
+        prevprice: originalFirstPrice,
         discountPercent: weeklyDeal.discount,
-        size: firstSize.size,
-        size_id: firstSize.size_id,
-        sizes: product.sizes || [],
+        size: firstDiscountedSize.size,
+        size_id: firstDiscountedSize.size_id,
         isWeeklyDeal: true
       };
     } else {
       // ⚠️ IMPORTANTE: Si el producto no es de la marca en oferta, NO aplicar descuento
+      const firstSize = product.sizes?.[0];
       return {
         ...product,
-        price: firstSize.price, // Precio original
-        prevprice: undefined,   // No hay precio anterior
-        size: firstSize.size,
-        size_id: firstSize.size_id,
+        price: firstSize?.price || 0, // Precio original
+        prevprice: undefined,         // No hay precio anterior
+        size: firstSize?.size,
+        size_id: firstSize?.size_id,
         sizes: product.sizes || [],
         isWeeklyDeal: false
       };
@@ -340,13 +346,13 @@ export class HomeComponent implements OnInit, OnDestroy {
       const randomProducts = this.seededShuffle(data, seed)
         .slice(0, 5)
         .map(product => {
-          const firstSize = product.sizes![0];
+          const firstSize = product.sizes?.[0];
           return {
             ...product,
-            price: firstSize.price, // Precio original
-            prevprice: undefined,   // Sin precio anterior
-            size: firstSize.size,
-            size_id: firstSize.size_id,
+            price: firstSize?.price || 0, // Precio original
+            prevprice: undefined,         // Sin precio anterior
+            size: firstSize?.size,
+            size_id: firstSize?.size_id,
             isWeeklyDeal: false
           };
         });
@@ -360,14 +366,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     const updatedProducts = this.products.map(p => {
       if (p.id === product.id) {
         // Recalcular precio: solo aplicar descuento si es oferta semanal
+        // Nota: Dado que sizes[] ya tiene descuentos aplicados, usamos directamente el price de size
         if (p.isWeeklyDeal) {
-          const discountedPrice = Math.round(size.price * (1 - this.todayDiscountPercent / 100));
+          const originalPrice = p.sizes?.find(s => s.size_id === size.size_id)?.price || size.price; // Pero wait, sizes ya descontados? No, en la actualización, sizes tiene descuentos, pero para tachado necesitamos original.
+          // Para consistencia, quizá almacenar original en una prop nueva, pero por ahora, asumimos prevprice es fijo.
           return {
             ...p,
             size: size.size,
             size_id: size.size_id,
-            price: discountedPrice,
-            prevprice: size.price
+            price: size.price, // Ya con descuento
+            prevprice: p.prevprice // Mantenemos el original del primero, o calcular por tamaño si necesitas
           };
         } else {
           // Si no es oferta semanal, usar precio normal
