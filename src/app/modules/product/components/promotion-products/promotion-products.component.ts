@@ -23,7 +23,7 @@ export class PromotionProductsComponent implements OnInit {
   // Descuentos por semana
   private weeklyBrandDiscounts: { [key: string]: { discount: number; name: string } } = {
     '2025-45': { discount: 5, name: 'Monello' },
-    '2025-46': { discount: 5, name: 'Royal Canin' },
+    '2025-46': { discount: 5, name: 'Cipacan' },
     '2025-47': { discount: 5, name: 'Hills' },
     '2025-48': { discount: 5, name: 'EQUILIBRIO' },
     '2025-49': { discount: 5, name: 'Agility' },
