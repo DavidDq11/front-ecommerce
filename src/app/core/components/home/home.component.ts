@@ -137,21 +137,21 @@ export class HomeComponent implements OnInit, OnDestroy {
         title: '¡Cuidamos a tu Mascota! Consultas Veterinarias en Tienda o a Domicilio',
         summary: 'Visítanos en nuestro punto físico en Manizales o agenda una consulta veterinaria a domicilio. Nuestros expertos están listos para mantener a tus mascotas sanas y felices. ¡Contáctanos hoy!',
         // Reemplaza 'Veterinario.webp' con el Public ID de Cloudinary
-        image: `${this.baseUrl}${this.newsTransformations}/images/VETERINARIO_ID` // 👈 REEMPLAZA
+        image: `${this.baseUrl}${this.newsTransformations}/Domicilio_vmickv` // 👈 REEMPLAZA
       },
       {
         id: 2,
         title: '¡Productos para Mascotas en tu Puerta el Mismo Día!',
         summary: 'Pide alimentos, accesorios, o medicamentos antes de las 3 p.m. y recíbelos hoy mismo en cualquier parte de Manizales. ¡Compra ahora y consiente a tu mascota!',
         // Reemplaza 'Domicilio.webp' con el Public ID de Cloudinary
-        image: `${this.baseUrl}${this.newsTransformations}/images/DOMICILIO_ID` // 👈 REEMPLAZA
+        image: `${this.baseUrl}${this.newsTransformations}/Veterinario_if2gdm` // 👈 REEMPLAZA
       },
       {
         id: 3,
         title: '¡Nuevos Medicamentos y Vitaminas para tus Mascotas!',
         summary: 'Explora nuestra gama de medicamentos y vitaminas de alta calidad para perros, gatos y ganado. Fortalece su salud con productos confiables. ¡Pídelos hoy en Domipets!',
         // Reemplaza 'Medicamentos.webp' con el Public ID de Cloudinary
-        image: `${this.baseUrl}${this.newsTransformations}/images/MEDICAMENTOS_ID` // 👈 REEMPLAZA
+        image: `${this.baseUrl}${this.newsTransformations}/Medicamentos_bkmron` // 👈 REEMPLAZA
       }
     ];
   }
