@@ -199,6 +199,20 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
   }
 
+  currentSlide: number = 0;
+
+  // Método para redirigir a Royal Canin
+  goToRoyalCanin() {
+    const royalBrand = this.brands.find(brand => brand.name.toLowerCase() === 'royal canin');
+    if (royalBrand) {
+      this.selectBrand(royalBrand.id, royalBrand.name);
+    } else {
+      console.warn('Marca Royal Canin no encontrada');
+      // Opcional: redirige a una página genérica si no se encuentra
+      this.router.navigate(['/brands']);
+    }
+  }
+
   startLaunchCountdown() {
     const launchDate = new Date();
     launchDate.setDate(launchDate.getDate() + 7);

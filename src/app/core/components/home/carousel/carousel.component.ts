@@ -1,5 +1,5 @@
 // carousel.component.ts
-import { Component, Input, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ElementRef, AfterViewInit, Output, EventEmitter } from '@angular/core';  // 👈 Agrega Output y EventEmitter
 
 @Component({
   selector: 'app-carousel',
@@ -16,6 +16,8 @@ export class CarouselComponent implements OnInit, AfterViewInit {
   selectedSlide = 0;
   private intervalId: any;
 
+  @Output() slideChanged = new EventEmitter<number>();  // 👈 Nueva salida para notificar cambios de slide
+
   constructor() {}
 
   ngOnInit(): void {
@@ -24,6 +26,7 @@ export class CarouselComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.startAutoSlide();
+    this.slideChanged.emit(this.selectedSlide);  // 👈 Emite el slide inicial (0)
   }
 
   ngOnDestroy(): void {
@@ -34,19 +37,22 @@ export class CarouselComponent implements OnInit, AfterViewInit {
 
   selectSlide(index: number) {
     this.selectedSlide = index;
+    this.slideChanged.emit(this.selectedSlide);  // 👈 Emite el nuevo índice
   }
 
   onPrev() {
     this.selectedSlide = (this.selectedSlide - 1 + this.slideImages.length) % this.slideImages.length;
+    this.slideChanged.emit(this.selectedSlide);  // 👈 Emite el nuevo índice
   }
 
   onNext() {
     this.selectedSlide = (this.selectedSlide + 1) % this.slideImages.length;
+    this.slideChanged.emit(this.selectedSlide);  // 👈 Emite el nuevo índice
   }
 
   private startAutoSlide(): void {
     this.intervalId = setInterval(() => {
       this.onNext();
-    }, 5000);
+    }, 10000);  // 👈 Cambiado a 8000 ms (8 segundos). Ajusta según necesites.
   }
 }

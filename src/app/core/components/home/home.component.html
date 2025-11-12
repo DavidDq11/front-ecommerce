@@ -1,12 +1,19 @@
 <!-- home.component.html -->
 <section class="w-full px-4 md:px-6 lg:px-8">
   <!-- Carousel -->
-  <div class="flex justify-center max-w-[1200px] mx-auto">
+  <div class="flex justify-center max-w-[1200px] mx-auto relative">
     <app-carousel 
       [slideImages]="images" 
       [customHeight]="'h-auto'"
-      [customWidth]="'w-full'">
+      [customWidth]="'w-full'"
+      (slideChanged)="currentSlide = $event">
     </app-carousel>
+    <!-- Overlay clickable solo para el botón "Compra Aquí" en el primer banner -->
+    <!-- 👈 Condición: solo muestra si es el primer slide -->
+    <button *ngIf="currentSlide === 0"
+      (click)="goToRoyalCanin()" 
+      class="absolute z-20 bg-transparent border-0 cursor-pointer top-0 left-0 w-full h-full">  <!-- 👈 Cambiado: top-0 left-0 w-full h-full -->
+    </button>
   </div>
 
   <!-- Categories Section -->
