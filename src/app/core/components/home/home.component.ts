@@ -1,4 +1,3 @@
-// home.component.ts
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { faBone, faFish, faCookieBite, faPaw, faTag, faSyringe } from '@fortawesome/free-solid-svg-icons';
 import { Product } from 'src/app/modules/product/model';
@@ -26,6 +25,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   faBone = faBone; faFish = faFish; faCookieBite = faCookieBite;
   faPaw = faPaw; faTag = faTag; faSyringe = faSyringe;
 
+  // === ⚙️ CONFIGURACIÓN DE CLOUDINARY ===
+  private cloudName = 'dvx9tlqvt'; // 👈 REEMPLAZA ESTO (EJ: domipets-cdn)
+  private baseUrl = `https://res.cloudinary.com/${this.cloudName}/image/upload/`;
+
+  // Transformaciones para los banners (aplicadas a TODOS)
+  private bannerTransformations = 'f_auto,q_auto:best,c_fit,h_300,w_1200';
+  // Transformaciones para las noticias (pequeñas)
+  private newsTransformations = 'f_auto,q_auto:good,c_fill,h_400,w_600';
+  // ======================================
+
   products: Product[] = [];
   brands: Brand[] = [];
   featuredBrand: Brand | null = null;
@@ -33,11 +42,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   error!: string;
   isLoading = false;
   launchCountdown: string = '';
-  images: string[] = [
-    'assets/banner/banner1.png',
-    'assets/banner/banner2.jpg',
-    'assets/banner/banner3.jpg'
-  ];
+
+  // Ahora se inicializa vacío y se llena en ngOnInit
+  images: string[] = [];
 
   categories = [
     { id: 1, name: 'Alimentos Secos', icon: 'fa-bone', path: '/categories/Alimentos Secos' },
@@ -48,26 +55,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     { id: 6, name: 'Productos Veterinarios', icon: 'fa-syringe', path: '/categories/Productos Veterinarios' }
   ];
 
-  newsItems: NewsItem[] = [
-    {
-      id: 1,
-      title: '¡Cuidamos a tu Mascota! Consultas Veterinarias en Tienda o a Domicilio',
-      summary: 'Visítanos en nuestro punto físico en Manizales o agenda una consulta veterinaria a domicilio. Nuestros expertos están listos para mantener a tus mascotas sanas y felices. ¡Contáctanos hoy!',
-      image: 'assets/images/Veterinario.webp'
-    },
-    {
-      id: 2,
-      title: '¡Productos para Mascotas en tu Puerta el Mismo Día!',
-      summary: 'Pide alimentos, accesorios, o medicamentos antes de las 3 p.m. y recíbelos hoy mismo en cualquier parte de Manizales. ¡Compra ahora y consiente a tu mascota!',
-      image: 'assets/images/Domicilio.webp'
-    },
-    {
-      id: 3,
-      title: '¡Nuevos Medicamentos y Vitaminas para tus Mascotas!',
-      summary: 'Explora nuestra gama de medicamentos y vitaminas de alta calidad para perros, gatos y ganado. Fortalece su salud con productos confiables. ¡Pídelos hoy en Domipets!',
-      image: 'assets/images/Medicamentos.webp'
-    }
-  ];
+  // Ahora se inicializa vacío y se llena en la función
+  newsItems: NewsItem[] = [];
 
   selectedCategoryId: number | null = null;
   selectedBrandId: number | null = null;
@@ -81,21 +70,21 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   // === CAMBIO PRINCIPAL: DESCUENTOS POR SEMANA EN LUGAR DE POR DÍA ===
   private weeklyBrandDiscounts: { [key: string]: { discount: number; name: string } } = {
-     // Noviembre 2025
-    '2025-45': { discount: 5, name: 'Monello' },      // Semana 45: 4-5 nov
-    '2025-46': { discount: 5, name: 'Royal Canin' },  // Semana 46: 11-17 nov ← ESTA SEMANA
-    '2025-47': { discount: 5, name: 'Hills' },        // Semana 47: 18-24 nov
-    '2025-48': { discount: 5, name: 'EQUILIBRIO' },   // Semana 48: 25 nov - 1 dic
-    
+    // Noviembre 2025
+    '2025-45': { discount: 5, name: 'Monello' },      // Semana 45: 4-5 nov
+    '2025-46': { discount: 5, name: 'Cipacan' },  // Semana 46: 11-17 nov ← ESTA SEMANA
+    '2025-47': { discount: 5, name: 'Hills' },        // Semana 47: 18-24 nov
+    '2025-48': { discount: 5, name: 'EQUILIBRIO' },   // Semana 48: 25 nov - 1 dic
+
     // Diciembre 2025
-    '2025-49': { discount: 5, name: 'Agility' },      // Semana 49: 2-8 dic
-    '2025-50': { discount: 5, name: 'Br For Cat' },   // Semana 50: 9-15 dic
-    '2025-51': { discount: 5, name: 'Cipacan' },      // Semana 51: 16-22 dic (Navidad)
-    '2025-52': { discount: 5, name: 'Birbo' },        // Semana 52: 23-29 dic (Navidad)
-    
+    '2025-49': { discount: 5, name: 'Agility' },      // Semana 49: 2-8 dic
+    '2025-50': { discount: 5, name: 'Br For Cat' },   // Semana 50: 9-15 dic
+    '2025-51': { discount: 5, name: 'Cipacan' },      // Semana 51: 16-22 dic (Navidad)
+    '2025-52': { discount: 5, name: 'Birbo' },        // Semana 52: 23-29 dic (Navidad)
+
     // Enero 2026
-    '2026-01': { discount: 5, name: 'Chunky' },       // Semana 1: 30 dic - 5 ene
-    '2026-02': { discount: 5, name: 'KI' },           // Semana 2: 6-12 ene
+    '2026-01': { discount: 5, name: 'Chunky' },       // Semana 1: 30 dic - 5 ene
+    '2026-02': { discount: 5, name: 'KI' },           // Semana 2: 6-12 ene
   };
 
   // === ORDEN PERSONALIZADO DE MARCAS ===
@@ -111,15 +100,60 @@ export class HomeComponent implements OnInit, OnDestroy {
     private router: Router,
     private titleService: Title,
     private metaService: Meta
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.titleService.setTitle('Domipets - Tienda de Productos para Mascotas y Ganado');
     this.metaService.updateTag({ name: 'description', content: 'Alimentos, medicamentos y accesorios para mascotas con entrega el mismo día en Manizales.' });
 
+    // === LLAMADAS A LAS FUNCIONES DE CLOUDINARY ===
+    this.setupCarouselImages();
+    this.setupNewsItems();
+    // ==============================================
+
     this.fetchBrands();
     this.newArrivalProducts();
     this.startLaunchCountdown();
+  }
+
+  // 🚀 NUEVA FUNCIÓN: CONFIGURAR BANNERS (CAROUSEL)
+  setupCarouselImages(): void {
+    // Solo lista los Public IDs de tus imágenes de Cloudinary
+    const imageIds = [
+      'banner2_frxz84', // 👈 REEMPLAZA ESTO
+      'banner3_pjt8uf', // 👈 REEMPLAZA ESTO
+      'banner1_hv0rpe', // 👈 REEMPLAZA ESTO
+    ];
+
+    // Construye el array 'images' usando las transformaciones definidas
+    this.images = imageIds.map(id => `${this.baseUrl}${this.bannerTransformations}/${id}`);
+  }
+
+  // 📰 NUEVA FUNCIÓN: CONFIGURAR NOTICIAS (PARA OPTIMIZARLAS TAMBIÉN)
+  setupNewsItems(): void {
+    this.newsItems = [
+      {
+        id: 1,
+        title: '¡Cuidamos a tu Mascota! Consultas Veterinarias en Tienda o a Domicilio',
+        summary: 'Visítanos en nuestro punto físico en Manizales o agenda una consulta veterinaria a domicilio. Nuestros expertos están listos para mantener a tus mascotas sanas y felices. ¡Contáctanos hoy!',
+        // Reemplaza 'Veterinario.webp' con el Public ID de Cloudinary
+        image: `${this.baseUrl}${this.newsTransformations}/images/VETERINARIO_ID` // 👈 REEMPLAZA
+      },
+      {
+        id: 2,
+        title: '¡Productos para Mascotas en tu Puerta el Mismo Día!',
+        summary: 'Pide alimentos, accesorios, o medicamentos antes de las 3 p.m. y recíbelos hoy mismo en cualquier parte de Manizales. ¡Compra ahora y consiente a tu mascota!',
+        // Reemplaza 'Domicilio.webp' con el Public ID de Cloudinary
+        image: `${this.baseUrl}${this.newsTransformations}/images/DOMICILIO_ID` // 👈 REEMPLAZA
+      },
+      {
+        id: 3,
+        title: '¡Nuevos Medicamentos y Vitaminas para tus Mascotas!',
+        summary: 'Explora nuestra gama de medicamentos y vitaminas de alta calidad para perros, gatos y ganado. Fortalece su salud con productos confiables. ¡Pídelos hoy en Domipets!',
+        // Reemplaza 'Medicamentos.webp' con el Public ID de Cloudinary
+        image: `${this.baseUrl}${this.newsTransformations}/images/MEDICAMENTOS_ID` // 👈 REEMPLAZA
+      }
+    ];
   }
 
   // === NORMALIZACIÓN ROBUSTA ===
@@ -272,10 +306,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     const normalizedProductBrand = this.normalize(product.brand);
     const normalizedDealBrand = this.normalize(weeklyDeal.name);
-    
-    const hasWeeklyDiscount = normalizedProductBrand && 
-                             (normalizedProductBrand === normalizedDealBrand || 
-                              normalizedProductBrand.includes(normalizedDealBrand));
+
+    const hasWeeklyDiscount = normalizedProductBrand &&
+      (normalizedProductBrand === normalizedDealBrand ||
+        normalizedProductBrand.includes(normalizedDealBrand));
 
     if (hasWeeklyDiscount && product.sizes && product.sizes.length > 0) {
       // Aplicar descuento a TODOS los tamaños
@@ -286,7 +320,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
       const firstDiscountedSize = discountedSizes[0];
       const originalFirstPrice = product.sizes[0].price;
-      
+
       return {
         ...product,
         sizes: discountedSizes,
@@ -331,16 +365,16 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.hasTodayDeal = true;
       this.todayBrandName = weeklyDeal.name;
       this.todayDiscountPercent = weeklyDeal.discount;
-      
+
       // ✅ LIMITAR A SOLO 5 PRODUCTOS EN EL HOME
       this.products = this.seededShuffle(weeklyDealProducts, new Date().getTime()).slice(0, 5);
-      
+
       this.sectionTitle = `Oferta de la Semana: ${this.todayBrandName} -${this.todayDiscountPercent}%`;
       console.log('%cOFERTA SEMANAL ACTIVADA - Mostrando 5 productos', 'color: #22c55e; font-weight: bold', this.sectionTitle);
     } else {
       console.warn('%c[OFERTA] No se encontraron productos de la marca de la semana', 'color: #f59e0b');
       this.hasTodayDeal = false;
-      
+
       // ✅ LIMITAR A SOLO 5 PRODUCTOS EN EL HOME (sin oferta)
       const seed = new Date().getTime();
       const randomProducts = this.seededShuffle(data, seed)
@@ -356,7 +390,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             isWeeklyDeal: false
           };
         });
-      
+
       this.products = randomProducts;
       this.sectionTitle = 'Productos Destacados';
     }
@@ -394,14 +428,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   getTotalWeeklyProducts(): number {
-  // Este es un ejemplo - en una app real podrías tener este dato del backend
-  // Por ahora retornamos un número estimado basado en los productos cargados
-  if (this.hasTodayDeal && this.products.length > 0) {
-    // Suponiendo que hay entre 15-25 productos de la marca en oferta
-    return Math.max(15, this.products.length * 3);
+    // Este es un ejemplo - en una app real podrías tener este dato del backend
+    // Por ahora retornamos un número estimado basado en los productos cargados
+    if (this.hasTodayDeal && this.products.length > 0) {
+      // Suponiendo que hay entre 15-25 productos de la marca en oferta
+      return Math.max(15, this.products.length * 3);
+    }
+    return 0;
   }
-  return 0;
-}
 
   private seededShuffle(array: Product[], seed: number): Product[] {
     const rng = (s: number) => {
@@ -429,7 +463,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     return product.sizes[0].stock_quantity ?? 0;
   }
 
-  
+
 
   scrollBrands(direction: 'left' | 'right') {
     const container = document.querySelector('.brands-container') as HTMLElement;

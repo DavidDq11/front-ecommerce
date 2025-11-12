@@ -443,3 +443,19 @@ article {
     }
   }
 }
+
+.carousel-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  aspect-ratio: 4 / 1; /* Proporción nativa 1200:300 = 4:1 */
+  overflow: hidden;
+}
+
+/* Imágenes internas: muestra completa sin agrandar */
+app-carousel ::ng-deep img {
+  width: 100%;
+  height: auto;
+  max-height: 300px; /* Cap máximo para evitar escalado arriba */
+  object-fit: contain !important; /* Mantiene imagen completa, sin corte ni stretch */
+  display: block;
+}
