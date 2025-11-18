@@ -19,6 +19,7 @@ import { AdminGuard } from './shared/services/auth/admin.guard';
 import { PromotionProductsComponent } from './modules/product/components/promotion-products/promotion-products.component';
 import { ForgotPasswordComponent } from './core/components/auth/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './core/components/auth/reset-password/reset-password.component';
+import { DesparasitanteWizardComponent } from './modules/desparasitantes/desparasitante-wizard/desparasitante-wizard.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -38,6 +39,7 @@ const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password/:token', component: ResetPasswordComponent },
   { path: 'admin/orders', component: AdminOrdersComponent, canActivate: [AdminGuard] },
+  { path: 'desparasitantes', component: DesparasitanteWizardComponent },
   { path: '**', component: Page404Component, data: { message: 'Esta página está en desarrollo' } }
   
 ];

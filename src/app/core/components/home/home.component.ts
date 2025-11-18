@@ -24,6 +24,7 @@ interface NewsItem {
 export class HomeComponent implements OnInit, OnDestroy {
   faBone = faBone; faFish = faFish; faCookieBite = faCookieBite;
   faPaw = faPaw; faTag = faTag; faSyringe = faSyringe;
+  step: number = 0;
 
   // === ⚙️ CONFIGURACIÓN DE CLOUDINARY ===
   private cloudName = 'dvx9tlqvt'; // 👈 REEMPLAZA ESTO (EJ: domipets-cdn)
@@ -520,4 +521,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     // Cleanup si es necesario
   }
+    
+    wizardOpen = false;
+
+  openWizard() {
+    this.wizardOpen = true;
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeWizard() {
+    this.wizardOpen = false;
+    document.body.style.overflow = 'auto';
+  } 
 }

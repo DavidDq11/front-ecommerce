@@ -78,3 +78,12 @@ input[type=number] {
 .swal2-cancel:hover, .swal2-deny:hover {
   background-color: #4b5563 !important;
 }
+
+/* FORZAR QUE EL MODAL DEL WIZARD ESTÉ SIEMPRE ENCIMA DE TODO */
+.wizard-modal-forzado {
+  z-index: 2147483647 !important; /* Valor máximo posible en CSS */
+}
+
+.wizard-backdrop-forzado {
+  z-index: 2147483646 !important;
+}

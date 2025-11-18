@@ -38,6 +38,38 @@
       </a>
     </div>
   </div>
+    <!-- En home.component.html, después del carousel -->
+  <!-- BOTÓN PARA ABRIR EL WIZARD (debajo del carousel) -->
+  <div class="py-12 bg-gradient-to-br from-teal-600 to-orange-600">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+      <button (click)="openWizard()" 
+              class="inline-flex items-center gap-6 bg-white text-gray-800 font-black text-3xl md:text-5xl px-16 py-10 rounded-3xl shadow-2xl hover:shadow-orange-500/50 transform hover:scale-105 transition-all duration-500 border-8 border-white">
+        <i class="fa-solid fa-wand-magic-sparkles text-6xl text-orange-500"></i>
+        ¡Desparasitante perfecto en 20 segundos!
+        <i class="fa-solid fa-shie ld-dog text-6xl text-teal-500"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL ÚNICO Y CORRECTO - DELANTE DE TODO -->
+  <!-- MODAL DEL WIZARD - AHORA EMPIEZA UN POCO MÁS ABAJO -->
+<div *ngIf="wizardOpen" 
+     class="fixed inset-0 z-[999999999] flex flex-col items-center pt-32 md:pt-40 lg:pt-48 pb-12 px-4 bg-black/70 overflow-y-auto"
+     (click)="closeWizard()">
+
+  <div class="relative w-full max-w-5xl bg-white rounded-3xl shadow-4xl overflow-y-auto"
+       (click)="$event.stopPropagation()">
+
+      <!-- Botón cerrar -->
+      <button (click)="closeWizard()" 
+              class="absolute top-4 right-4 z-50 bg-white/90 hover:bg-white rounded-full w-12 h-12 flex items-center justify-center text-3xl text-gray-700 hover:text-gray-900 shadow-lg">
+        ✕
+      </button>
+
+      <!-- Wizard dentro del modal -->
+      <app-desparasitante-wizard></app-desparasitante-wizard>
+    </div>
+  </div>
 
   <!-- Brands Section -->
   <div class="brands-section py-8 bg-gradient-to-b from-white to-gray-50">

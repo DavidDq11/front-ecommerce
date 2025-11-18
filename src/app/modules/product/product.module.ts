@@ -12,6 +12,7 @@ import { PricefilterComponent } from './components/product/filter/pricefilter/pr
 import { ProgressDirective } from './components/product/filter/pricefilter/directive/progress.directive';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PromotionProductsComponent } from './components/promotion-products/promotion-products.component';
+import { DesparasitanteWizardComponent } from '../desparasitantes/desparasitante-wizard/desparasitante-wizard.component';
 @NgModule({
   declarations: [
     ProductComponent,
@@ -22,7 +23,8 @@ import { PromotionProductsComponent } from './components/promotion-products/prom
     BreadcrumbComponent,
     PricefilterComponent,
     ProgressDirective,
-    PromotionProductsComponent
+    PromotionProductsComponent,
+    DesparasitanteWizardComponent
   ],
   imports: [
     CommonModule,
@@ -31,6 +33,10 @@ import { PromotionProductsComponent } from './components/promotion-products/prom
     ReactiveFormsModule,
     SharedModule,
   ],
+  exports: [
+    DesparasitanteWizardComponent,   // ← ESTA ES LA LÍNEA MÁGICA QUE FALTABA
+    ProductcardComponent             // (opcional, ya lo tenías pero por si acaso)
+  ]
   
 })
 export class ProductModule { 

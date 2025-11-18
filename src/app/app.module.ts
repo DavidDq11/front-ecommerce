@@ -29,6 +29,7 @@ import { AdminOrdersComponent } from './modules/admin-orders/admin-orders.compon
 import { AdminGuard } from './shared/services/auth/admin.guard';
 import { ForgotPasswordComponent } from './core/components/auth/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './core/components/auth/reset-password/reset-password.component';
+import { ProductModule } from './modules/product/product.module';
 
 @NgModule({
   declarations: [
@@ -63,7 +64,8 @@ import { ResetPasswordComponent } from './core/components/auth/reset-password/re
     AppRoutingModule,
     SharedModule,
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ProductModule
   ],
   providers: [
     {
