@@ -33,42 +33,41 @@
       </a>
     </div>
   </div>
-  <!-- En home.component.html, después del carousel -->
- <!-- BOTÓN DEL WIZARD - VERSIÓN SUTIL Y ELEGANTE PARA MÓVIL -->
-<div class="py-10 sm:py-12 bg-gradient-to-br from-teal-600 to-orange-600">
-  <div class="max-w-6xl mx-auto px-4 text-center">
-    <button (click)="openWizard()"
-            class="group relative inline-flex items-center justify-center gap-3 overflow-hidden
-                   bg-white/95 backdrop-blur-sm text-gray-800 font-bold rounded-2xl
-                   px-8 py-5 sm:px-12 sm:py-6 md:px-16 md:py-8
-                   text-xl sm:text-2xl md:text-3xl lg:text-4xl
-                   shadow-xl hover:shadow-2xl
-                   transform hover:scale-105 active:scale-100
-                   transition-all duration-500
-                   border-4 border-white/50
-                   w-full max-w-md mx-auto">
+  <!-- BOTÓN DESPARASITANTE - ARREGLADO + MÁS POTENTE QUE NUNCA -->
+  <div class="relative -mt-8 mb-12 z-10">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl shadow-2xl p-6 sm:p-8 
+                transform -rotate-1 hover:rotate-0 transition-all duration-500 
+                border-4 border-white/50">
 
-      <!-- Efecto brillo al hacer hover -->
-      <span class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent 
-                   -translate-x-full group-hover:translate-x-full transition-transform duration-1000 skew-x-12"></span>
+        <div class="text-center">
+          <!-- Texto arriba -->
+          <p class="text-white text-sm sm:text-base font-semibold mb-3 tracking-wider">
+            Responde 3 preguntas rápidas y te digo…
+          </p>
 
-      <i class="fa-solid fa-wand-magic-sparkles text-4xl sm:text-5xl text-orange-500 
-                 group-hover:animate-pulse"></i>
+          <!-- BOTÓN CORREGIDO (ahora SÍ se ve la letra) -->
+          <button (click)="openWizard()" class="group inline-flex items-center gap-3 px-8 py-5 
+                       font-black text-lg sm:text-xl lg:text-2xl
+                       bg-white text-orange-600          <!-- fondo blanco -->
+                       rounded-full shadow-2xl hover:shadow-3xl
+                       hover:scale-105 active:scale-95
+                       transition-all duration-300
+                       border-4 border-orange-700"> <!-- borde naranja oscuro para más contraste -->
 
-      <span class="relative z-10 leading-tight">
-        Desparasitante perfecto<br class="block sm:hidden"> <span class="text-orange-600">en 20 segundos</span>
-      </span>
+            <i class="fa-solid fa-wand-magic-sparkles text-yellow-500 animate-pulse text-2xl"></i>
+            ¡Adiós pulgas y garrapatas en 1 clic!
+            <i class="fa-solid fa-shield-dog group-hover:rotate-12 transition-transform duration-300 text-2xl"></i>
+          </button>
 
-      <i class="fa-solid fa-shield-dog text-4xl sm:text-5xl text-teal-600 
-                 group-hover:rotate-12 transition-transform duration-500"></i>
-    </button>
-
-    <!-- Texto pequeño debajo (opcional, queda muy pro) -->
-    <p class="mt-4 text-white/90 text-sm sm:text-base font-medium">
-      Responde 3 preguntas y te recomendamos el mejor → ¡Gratis!
-    </p>
+          <!-- Texto abajo -->
+          <p class="mt-4 text-white font-bold text-sm sm:text-lg">
+            Te recomendamos el desparasitante <span class="text-yellow-300">EXACTO</span> para tu peludo → ¡Gratis!
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
   <!-- MODAL DEL WIZARD - MÁS ESPACIO ARRIBA + NUNCA SE TAPA -->
   <!-- MODAL DEL WIZARD - SUBIDO UN POQUITO MÁS (perfecto ahora) -->

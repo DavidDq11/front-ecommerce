@@ -115,6 +115,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.fetchBrands();
     this.newArrivalProducts();
     this.startLaunchCountdown();
+
+    // Limpia el overflow por si llegaste con el botón "atrás"
+    document.body.classList.remove('overflow-hidden');
+
+    // También puedes escuchar el evento popstate
+    window.addEventListener('popstate', () => {
+      document.body.classList.remove('overflow-hidden');
+    });
   }
 
   // 🚀 NUEVA FUNCIÓN: CONFIGURAR BANNERS (CAROUSEL)
@@ -519,18 +527,18 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Cleanup si es necesario
+    document.body.classList.remove('overflow-hidden');
   }
     
     wizardOpen = false;
 
   openWizard() {
     this.wizardOpen = true;
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = 'overflow-hidden';
   }
 
   closeWizard() {
     this.wizardOpen = false;
-    document.body.style.overflow = 'auto';
+    document.body.style.overflow = 'overflow-hidden';
   } 
 }
