@@ -24,7 +24,7 @@ export class PromotionProductsComponent implements OnInit {
   private weeklyBrandDiscounts: { [key: string]: { discount: number; name: string } } = {
     '2025-45': { discount: 5, name: 'Monello' },
     '2025-46': { discount: 5, name: 'Cipacan' },
-    '2025-47': { discount: 5, name: 'Hills' },
+    '2025-47': { discount: 5, name: 'Br For Dog' },
     '2025-48': { discount: 5, name: 'EQUILIBRIO' },
     '2025-49': { discount: 5, name: 'Agility' },
     '2025-50': { discount: 5, name: 'Br For Cat' },
@@ -106,7 +106,8 @@ export class PromotionProductsComponent implements OnInit {
 
     const hasWeeklyDiscount = normalizedProductBrand && 
                              (normalizedProductBrand === normalizedDealBrand || 
-                              normalizedProductBrand.includes(normalizedDealBrand));
+                              normalizedProductBrand.includes(normalizedDealBrand) ||
+                              normalizedDealBrand.includes(normalizedProductBrand));
 
     if (hasWeeklyDiscount && product.sizes && product.sizes.length > 0) {
       // Aplicar descuento a TODOS los tamaños

@@ -51,7 +51,7 @@ export class DesparasitanteWizardComponent implements OnInit {
     this.productService.getByCategory('Productos Veterinarios', { limit: 200 }).subscribe({
       next: (res) => {
         let products = res.products.filter(p =>
-          /nexgard|credeli|bravecto|simparica|advocate|advantage/i.test(p.title)
+          /nexgard|credeli|bravecto|simparica|advocate|advantage|drontal|milbemax|profender/i.test(p.title)  // Agregado: incluye marcas comunes de internos para futuro
         );
 
         this.allProducts = products.map(p => {
@@ -151,10 +151,13 @@ export class DesparasitanteWizardComponent implements OnInit {
       this.isProductForWeight(p, min, max)
     );
 
+    // Modificado: Agregar caso para 'interno'
     if (this.protection === 'completa') {
       candidates = candidates.filter(p => this.isFullProtection(p));
     } else if (this.protection === 'externo') {
-      candidates = candidates.filter(p => !this.isFullProtection(p));
+      candidates = candidates.filter(p => this.isExternalProtection(p));  // Nueva función para externos puros
+    } else if (this.protection === 'interno') {
+      candidates = candidates.filter(p => this.isInternalProtection(p));  // Nueva función para internos puros
     }
 
     const brandOrder = ['Nexgard', 'Simparica', 'Credelio', 'Bravecto', 'Advocate', 'Advantage'];
@@ -167,9 +170,28 @@ export class DesparasitanteWizardComponent implements OnInit {
       .slice(0, 12);
   }
 
+  // Modificado: Ajustar para confirmar que tiene ambos (internos + externos)
   private isFullProtection(p: Product): boolean {
-    const text = (p.title + ' ' + p.description).toLowerCase();
-    return /spectra|trio|plus|advocate|amplio espectro|parásitos internos|interno|gusanos|lombrices/.test(text);
+    const text = (p.title + ' ' + (p.description || '')).toLowerCase();
+    const hasInternal = /spectra|trio|plus|advocate|amplio|completa|interno|gusanos|lombrices|tenias|corazón/.test(text);
+    const hasExternal = /pulgas|garrapatas|ácaros|demodex|sarna/.test(text);  // Agregado: confirma externos
+    return hasInternal && hasExternal;
+  }
+
+  // Nueva: Detecta externos puros (pulgas/garrapatas, sin internos)
+  private isExternalProtection(p: Product): boolean {
+    const text = (p.title + ' ' + (p.description || '')).toLowerCase();
+    const hasExternal = /pulgas|garrapatas|ácaros|demodex|sarna/.test(text);
+    const hasInternal = /spectra|trio|plus|advocate|amplio|completa|interno|gusanos|lombrices|tenias|corazón/.test(text);
+    return hasExternal && !hasInternal;
+  }
+
+  // Nueva: Detecta internos puros (gusanos/lombrices, sin externos) - para futuros productos
+  private isInternalProtection(p: Product): boolean {
+    const text = (p.title + ' ' + (p.description || '')).toLowerCase();
+    const hasInternal = /interno|gusanos|lombrices|tenias|corazón/.test(text);
+    const hasExternal = /pulgas|garrapatas|ácaros|demodex|sarna|spectra|trio|plus|advocate|amplio|completa/.test(text);  // Niega completos
+    return hasInternal && !hasExternal;
   }
 
   private isProductForWeight(product: Product, selectedMin: number, selectedMax: number): boolean {
