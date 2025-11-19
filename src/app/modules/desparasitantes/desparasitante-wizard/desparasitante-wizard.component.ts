@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ProductService } from 'src/app/modules/product/services/product.service';
 import { Product } from 'src/app/modules/product/model';
 
@@ -14,15 +14,17 @@ interface WeightRange {
   styleUrls: ['./desparasitante-wizard.component.scss']
 })
 export class DesparasitanteWizardComponent implements OnInit {
-  step = 1; // 1: animal, 2: peso, 3: protección, 4: resultados
+
+  @Output() scrollToTop = new EventEmitter<void>();
+
+  step = 1;
   animal: 'perro' | 'gato' | null = null;
-  weightLabel: string = '';
+  weightLabel = '';
   protection: 'externo' | 'interno' | 'completa' = 'completa';
 
   allProducts: Product[] = [];
   filteredProducts: Product[] = [];
 
-  // Todos los rangos posibles
   weightRanges: WeightRange[] = [
     { label: 'Menos de 2 kg', min: 0, max: 2 },
     { label: '2 - 3.5 kg', min: 2, max: 3.5 },
@@ -33,7 +35,6 @@ export class DesparasitanteWizardComponent implements OnInit {
     { label: 'Más de 60 kg', min: 60, max: 200 }
   ];
 
-  // Rangos que realmente tienen productos (se calcula al elegir animal)
   availableWeightRanges: WeightRange[] = [];
 
   constructor(private productService: ProductService) {}
@@ -42,12 +43,49 @@ export class DesparasitanteWizardComponent implements OnInit {
     this.loadAntiparasitarios();
   }
 
+  private triggerModalScroll() {
+    this.scrollToTop.emit();
+  }
+
   loadAntiparasitarios() {
     this.productService.getByCategory('Productos Veterinarios', { limit: 200 }).subscribe({
       next: (res) => {
-        this.allProducts = res.products.filter(p =>
+        let products = res.products.filter(p =>
           /nexgard|credeli|bravecto|simparica|advocate|advantage/i.test(p.title)
         );
+
+        this.allProducts = products.map(p => {
+          const title = p.title.toUpperCase();
+
+          const fixes: { [key: string]: string } = {
+            'CREDELIO 112 MG 2.5 - 5.5 KG': 'CREDELIO 112 MG DE 2.5 A 5.5 KG',
+            'CREDELIO 225 MG 5.5 - 11 KG': 'CREDELIO 225 MG DE 5.5 A 11 KG',
+            'CREDELIO 56 MG 1.3 - 2.5 KG': 'CREDELIO 56 MG DE 1.3 A 2.5 KG',
+            'CREDELIO COMPRIMIDO MASTICABLE POR 450MG': 'CREDELIO 450 MG DE 11 A 22 KG',
+            'CREDELIO 900 MG': 'CREDELIO 900 MG DE 22 A 45 KG',
+            'CREDELIO CAT POR 48MG': 'CREDELIO CAT 48 MG DE 2 A 8 KG',
+            'CREDELIO GATOS 12 MG 0.5 - 2 KG': 'CREDELIO GATOS 12 MG DE 0.5 A 2 KG',
+            'CREDELIO PLUS X 450 MG': 'CREDELIO PLUS 450 MG DE 11 A 22 KG',
+            'CREDELIO PLUS ANTIPARASITARIO MASTICABLE DE 900 MG': 'CREDELIO PLUS 900 MG DE 22 A 45 KG',
+            'CREDELIO PLUS X 56.25 MG': 'CREDELIO PLUS 56.25 MG DE 2 A 11 KG',
+            'ADVANTAGE ANTIPULGAS PARA GATOS (HASTA 4 KG)': 'ADVANTAGE PARA GATOS HASTA 4 KG',
+            'ADVANTAGE ANTIPULGAS PARA GATOS (DE 4 A 8 KG)': 'ADVANTAGE PARA GATOS DE 4 A 8 KG',
+            'ADVOCATE ANTIPARASITARIO PARA GATOS (HASTA 4 KG)': 'ADVOCATE PARA GATOS HASTA 4 KG',
+            'ADVOCATE ANTIPARASITARIO PARA GATOS (HASTA 8 KG)': 'ADVOCATE PARA GATOS HASTA 8 KG',
+            'ADVOCATE ANTIPARASITARIO PARA PERROS (DE 4 A 10 KG)': 'ADVOCATE PARA PERROS DE 4 A 10 KG',
+            'ADVOCATE ANTIPARASITARIO PARA PERROS (DE 25 A 40 KG)': 'ADVOCATE PARA PERROS DE 25 A 40 KG'
+          };
+
+          let newTitle = p.title;
+          for (const [wrong, correct] of Object.entries(fixes)) {
+            if (title.includes(wrong)) {
+              newTitle = correct;
+              break;
+            }
+          }
+
+          return { ...p, title: newTitle };
+        });
       }
     });
   }
@@ -59,35 +97,48 @@ export class DesparasitanteWizardComponent implements OnInit {
       p.animal_category?.toLowerCase() === this.animal
     );
 
-    // Calculamos qué rangos tienen al menos 1 producto
     this.availableWeightRanges = this.weightRanges.filter(range =>
       productsForAnimal.some(p => this.isProductForWeight(p, range.min, range.max))
     );
 
-    // Si solo hay un rango → saltamos directamente al paso 3
     if (this.availableWeightRanges.length === 1) {
       this.weightLabel = this.availableWeightRanges[0].label;
       this.step = 3;
     } else if (this.availableWeightRanges.length === 0) {
-      this.step = 3; // raro, pero evitamos bloqueo
+      this.step = 3;
     } else {
       this.step = 2;
     }
+
+    this.triggerModalScroll();
   }
 
   selectWeight(range: WeightRange) {
     this.weightLabel = range.label;
     this.step = 3;
+    this.triggerModalScroll();
   }
 
   selectProtection(type: 'externo' | 'interno' | 'completa') {
     this.protection = type;
     this.step = 4;
     this.filterProducts();
+    this.triggerModalScroll();
   }
 
   goBack() {
     if (this.step > 1) this.step--;
+    this.triggerModalScroll();
+  }
+
+  reset() {
+    this.step = 1;
+    this.animal = null;
+    this.weightLabel = '';
+    this.protection = 'completa';
+    this.filteredProducts = [];
+    this.availableWeightRanges = [];
+    this.triggerModalScroll();
   }
 
   filterProducts() {
@@ -100,15 +151,12 @@ export class DesparasitanteWizardComponent implements OnInit {
       this.isProductForWeight(p, min, max)
     );
 
-    // Filtro de protección completa
     if (this.protection === 'completa') {
       candidates = candidates.filter(p => this.isFullProtection(p));
     } else if (this.protection === 'externo') {
       candidates = candidates.filter(p => !this.isFullProtection(p));
     }
-    // 'interno' → muy pocos productos, se deja pasar si llega
 
-    // Orden por popularidad
     const brandOrder = ['Nexgard', 'Simparica', 'Credelio', 'Bravecto', 'Advocate', 'Advantage'];
     this.filteredProducts = candidates
       .sort((a, b) => {
@@ -124,25 +172,13 @@ export class DesparasitanteWizardComponent implements OnInit {
     return /spectra|trio|plus|advocate|amplio espectro|parásitos internos|interno|gusanos|lombrices/.test(text);
   }
 
-  // PARSER DE PESO SÚPER ROBUSTO (funciona con el 100% de tus productos)
   private isProductForWeight(product: Product, selectedMin: number, selectedMax: number): boolean {
-    const title = product.title.toUpperCase().replace(/–/g, '-');
+    const title = product.title.toUpperCase();
 
-    // Casos especiales conocidos (Credelio Plus sin peso en título)
-    if (product.id === 528) return selectedMin >= 22 && selectedMax <= 45; // Credelio 900mg
-    if (product.id === 531 || product.id === 533) return selectedMin <= 22; // Credelio Plus pequeños/medianos
-
-    const match = title.match(/(\d+\.?\d*)\s*[-–]\s*(\d+\.?\d*)\s*KG/);
+    const match = title.match(/(\d+\.?\d*)\s*[-A]\s*(\d+\.?\d*)\s*KG/);
     if (match) {
       const min = parseFloat(match[1]);
       const max = parseFloat(match[2]);
-      return selectedMin <= max && selectedMax >= min;
-    }
-
-    const deMatch = title.match(/DE\s+(\d+\.?\d*)\s*(A|-)\s*(\d+\.?\d*)\s*KG/);
-    if (deMatch) {
-      const min = parseFloat(deMatch[1]);
-      const max = parseFloat(deMatch[3]);
       return selectedMin <= max && selectedMax >= min;
     }
 
@@ -152,16 +188,6 @@ export class DesparasitanteWizardComponent implements OnInit {
       return selectedMax <= max;
     }
 
-    // Si no encontramos nada → no mostramos (más seguro que mostrar todo)
     return false;
-  }
-
-  reset() {
-    this.step = 1;
-    this.animal = null;
-    this.weightLabel = '';
-    this.protection = 'completa';
-    this.filteredProducts = [];
-    this.availableWeightRanges = [];
   }
 }
