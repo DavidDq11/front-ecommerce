@@ -51,7 +51,7 @@ export class DesparasitanteWizardComponent implements OnInit {
     this.productService.getByCategory('Productos Veterinarios', { limit: 200 }).subscribe({
       next: (res) => {
         let products = res.products.filter(p =>
-          /nexgard|credeli|bravecto|simparica|advocate|advantage|drontal|milbemax|profender/i.test(p.title)  // Agregado: incluye marcas comunes de internos para futuro
+          /nexgard|credeli|bravecto|simparica|advocate|advantage|attack|revolution|one blister|capstar|pulsen/i.test(p.title)
         );
 
         this.allProducts = products.map(p => {
@@ -61,19 +61,7 @@ export class DesparasitanteWizardComponent implements OnInit {
             'CREDELIO 112 MG 2.5 - 5.5 KG': 'CREDELIO 112 MG DE 2.5 A 5.5 KG',
             'CREDELIO 225 MG 5.5 - 11 KG': 'CREDELIO 225 MG DE 5.5 A 11 KG',
             'CREDELIO 56 MG 1.3 - 2.5 KG': 'CREDELIO 56 MG DE 1.3 A 2.5 KG',
-            'CREDELIO COMPRIMIDO MASTICABLE POR 450MG': 'CREDELIO 450 MG DE 11 A 22 KG',
-            'CREDELIO 900 MG': 'CREDELIO 900 MG DE 22 A 45 KG',
-            'CREDELIO CAT POR 48MG': 'CREDELIO CAT 48 MG DE 2 A 8 KG',
-            'CREDELIO GATOS 12 MG 0.5 - 2 KG': 'CREDELIO GATOS 12 MG DE 0.5 A 2 KG',
-            'CREDELIO PLUS X 450 MG': 'CREDELIO PLUS 450 MG DE 11 A 22 KG',
-            'CREDELIO PLUS ANTIPARASITARIO MASTICABLE DE 900 MG': 'CREDELIO PLUS 900 MG DE 22 A 45 KG',
-            'CREDELIO PLUS X 56.25 MG': 'CREDELIO PLUS 56.25 MG DE 2 A 11 KG',
-            'ADVANTAGE ANTIPULGAS PARA GATOS (HASTA 4 KG)': 'ADVANTAGE PARA GATOS HASTA 4 KG',
-            'ADVANTAGE ANTIPULGAS PARA GATOS (DE 4 A 8 KG)': 'ADVANTAGE PARA GATOS DE 4 A 8 KG',
-            'ADVOCATE ANTIPARASITARIO PARA GATOS (HASTA 4 KG)': 'ADVOCATE PARA GATOS HASTA 4 KG',
-            'ADVOCATE ANTIPARASITARIO PARA GATOS (HASTA 8 KG)': 'ADVOCATE PARA GATOS HASTA 8 KG',
-            'ADVOCATE ANTIPARASITARIO PARA PERROS (DE 4 A 10 KG)': 'ADVOCATE PARA PERROS DE 4 A 10 KG',
-            'ADVOCATE ANTIPARASITARIO PARA PERROS (DE 25 A 40 KG)': 'ADVOCATE PARA PERROS DE 25 A 40 KG'
+            'CREDELIO PLUS X 56.25 MG': 'CREDELIO PLUS 56.25 MG DE 1.4 A 11 KG',
           };
 
           let newTitle = p.title;
@@ -141,74 +129,89 @@ export class DesparasitanteWizardComponent implements OnInit {
     this.triggerModalScroll();
   }
 
+  // ========================= NUEVA LÓGICA MEJORADA =========================
+
   filterProducts() {
     if (!this.animal || !this.weightLabel) return;
 
     const { min, max } = this.weightRanges.find(r => r.label === this.weightLabel)!;
 
-    let candidates = this.allProducts.filter(p =>
-      p.animal_category?.toLowerCase() === this.animal &&
-      this.isProductForWeight(p, min, max)
-    );
-
-    // Modificado: Agregar caso para 'interno'
-    if (this.protection === 'completa') {
-      candidates = candidates.filter(p => this.isFullProtection(p));
-    } else if (this.protection === 'externo') {
-      candidates = candidates.filter(p => this.isExternalProtection(p));  // Nueva función para externos puros
-    } else if (this.protection === 'interno') {
-      candidates = candidates.filter(p => this.isInternalProtection(p));  // Nueva función para internos puros
-    }
-
-    const brandOrder = ['Nexgard', 'Simparica', 'Credelio', 'Bravecto', 'Advocate', 'Advantage'];
-    this.filteredProducts = candidates
+    this.filteredProducts = this.allProducts
+      .filter(p =>
+        p.animal_category?.toLowerCase() === this.animal &&
+        this.isProductForWeight(p, min, max)
+      )
+      .filter(p => {
+        const type = this.getProtectionType(p);
+        if (type === 'completa') return this.protection === 'completa';
+        if (type === 'externa') return this.protection === 'externo';
+        if (type === 'interna') return this.protection === 'interno';
+        return false;
+      })
       .sort((a, b) => {
-        const ia = brandOrder.indexOf(a.brand || '');
-        const ib = brandOrder.indexOf(b.brand || '');
+        const order = ['Nexgard', 'Simparica', 'Credelio', 'Bravecto', 'Advocate', 'Advantage', 'ELANCO', 'ZOETIS', 'MSD', 'HOLLIDAY'];
+        const ia = order.indexOf(a.brand || '');
+        const ib = order.indexOf(b.brand || '');
         return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
       })
       .slice(0, 12);
   }
 
-  // Modificado: Ajustar para confirmar que tiene ambos (internos + externos)
-  private isFullProtection(p: Product): boolean {
+  private getProtectionType(p: Product): 'externa' | 'interna' | 'completa' {
     const text = (p.title + ' ' + (p.description || '')).toLowerCase();
-    const hasInternal = /spectra|trio|plus|advocate|amplio|completa|interno|gusanos|lombrices|tenias|corazón/.test(text);
-    const hasExternal = /pulgas|garrapatas|ácaros|demodex|sarna/.test(text);  // Agregado: confirma externos
-    return hasInternal && hasExternal;
-  }
+    const titleUpper = p.title.toUpperCase();
 
-  // Nueva: Detecta externos puros (pulgas/garrapatas, sin internos)
-  private isExternalProtection(p: Product): boolean {
-    const text = (p.title + ' ' + (p.description || '')).toLowerCase();
+    // 1. Reglas por marca/título (lo más fiable de todo)
+    if (/spectra|trio|plus.*credeli|advocate|revolution/i.test(titleUpper)) return 'completa';
+    if (/bravecto|credeli(?!.*plus)|advantage(?!.*advocate)|attack|capstar|pulsen|simparica(?!.*trio)/i.test(titleUpper)) return 'externa';
+    if (/one blister|drontal|milbemax|profender/i.test(titleUpper)) return 'interna';
+
+    // 2. Palabras clave fuertes
+    const hasInternalStrong = /gusanos intestinales|dirofilariosis|gusano del corazón|tenias|anquilostomas|ascárides|lombrices.*(pulgas|garrapatas)|corazón.*(pulgas|garrapatas)/.test(text);
+    if (hasInternalStrong) return 'completa';
+
+    // 3. Análisis clásico mejorado
+    const hasInternal = /gusanos|lombrices|tenias|dirofilariosis|corazón|intestinales|anquilostomas|ascárides/.test(text);
     const hasExternal = /pulgas|garrapatas|ácaros|demodex|sarna/.test(text);
-    const hasInternal = /spectra|trio|plus|advocate|amplio|completa|interno|gusanos|lombrices|tenias|corazón/.test(text);
-    return hasExternal && !hasInternal;
-  }
 
-  // Nueva: Detecta internos puros (gusanos/lombrices, sin externos) - para futuros productos
-  private isInternalProtection(p: Product): boolean {
-    const text = (p.title + ' ' + (p.description || '')).toLowerCase();
-    const hasInternal = /interno|gusanos|lombrices|tenias|corazón/.test(text);
-    const hasExternal = /pulgas|garrapatas|ácaros|demodex|sarna|spectra|trio|plus|advocate|amplio|completa/.test(text);  // Niega completos
-    return hasInternal && !hasExternal;
+    if (hasInternal && hasExternal) return 'completa';
+    if (hasExternal) return 'externa';
+    if (hasInternal) return 'interna';
+
+    return 'externa'; // fallback seguro
   }
 
   private isProductForWeight(product: Product, selectedMin: number, selectedMax: number): boolean {
-    const title = product.title.toUpperCase();
+    const title = product.title.toUpperCase().replace(/[^\w\s\.\-–]/g, ' ').replace(/\s+/g, ' ').trim();
 
-    const match = title.match(/(\d+\.?\d*)\s*[-A]\s*(\d+\.?\d*)\s*KG/);
-    if (match) {
-      const min = parseFloat(match[1]);
-      const max = parseFloat(match[2]);
-      return selectedMin <= max && selectedMax >= min;
+    const patterns = [
+      /(\d+(?:\.\d+)?)\s*[-–]\s*(\d+(?:\.\d+)?)\s*KG/,                    // 2-3.5 KG / 15-30 KG
+      /DE\s+(\d+(?:\.\d+)?)\s*A\s+(\d+(?:\.\d+)?)\s*KG/,                  // DE 2 A 3.5 KG
+      /(\d+(?:\.\d+)?)\s*A\s+(\d+(?:\.\d+)?)\s*KG/,                        // 2 A 3.5 KG
+      /DE\s+(\d+(?:\.\d+)?)\s*[-–]\s*(\d+(?:\.\d+)?)\s*KG/,                // DE 2 - 3.5 KG
+      /HASTA\s+(\d+(?:\.\d+)?)\s*KG/,                                      // HASTA 4 KG
+      /DE\s+(\d+(?:\.\d+)?)\s*KG/,                                         // DE 4 KG (segundo número en descripción)
+      /(\d+(?:\.\d+)?)\s*KG\s*.*\s+(\d+(?:\.\d+)?)\s*KG/,                  // casos raros con dos rangos
+    ];
+
+    for (const regex of patterns) {
+      const match = title.match(regex);
+      if (match) {
+        const nums = match.slice(1).map(n => parseFloat(n)).filter(n => !isNaN(n));
+        if (nums.length === 0) continue;
+
+        const prodMin = Math.min(...nums);
+        const prodMax = nums.length > 1 ? Math.max(...nums) : Infinity;
+
+        if (selectedMin <= prodMax && selectedMax >= prodMin) {
+          return true;
+        }
+      }
     }
 
-    const hastaMatch = title.match(/(HASTA|MENOS DE)\s*(\d+\.?\d*)\s*KG/);
-    if (hastaMatch) {
-      const max = parseFloat(hastaMatch[2]);
-      return selectedMax <= max;
-    }
+    // Casos ultra-específicos que fallaban
+    if (title.includes('CREDELIO PLUS 56.25 MG')) return selectedMax >= 1.4 && selectedMin <= 11;
+    if (title.includes('REVOLUTION 6% DE 0 A 2.5 KG')) return selectedMax <= 2.5;
 
     return false;
   }
