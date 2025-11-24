@@ -11,7 +11,7 @@
   <!-- Product Details -->
   <div class="flex flex-col justify-between p-3 sm:p-4 w-full">
     <a [routerLink]="['/categories', 'product', product.id]">
-      <h5 class="mb-1 sm:mb-2 text-sm sm:text-base tracking-tight text-gray-900 line-clamp-2 font-bold" *ngIf="product?.title">
+      <h5 class="mb-1 sm:mb-2 text-sm sm:text-base tracking-tight text-gray-900 min-h-[50px] font-bold" *ngIf="product?.title">
         {{ product.title }}
       </h5>
     </a>
